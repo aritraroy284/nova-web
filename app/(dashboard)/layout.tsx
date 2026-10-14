@@ -18,7 +18,7 @@ import {
 import { createClient } from "@supabase/supabase-js";
 
 // Direct Client Initialization (Zero external file dependencies)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhrwfhtiknrboqfmvzqs.supabase.co";
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith("http")) ? process.env.NEXT_PUBLIC_SUPABASE_URL : "https://zhrwfhtiknrboqfmvzqs.supabase.co";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
