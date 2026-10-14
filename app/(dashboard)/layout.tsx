@@ -15,7 +15,12 @@ import {
   X,
   AlertCircle
 } from "lucide-react";
-import { supabase } from "../../lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+// Direct Client Initialization (Zero external file dependencies)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhrwfhtiknrboqfmvzqs.supabase.co";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -32,14 +37,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Theme sync
     const savedTheme = localStorage.getItem("nova_theme");
     const dark = savedTheme !== "light";
     setIsDark(dark);
     if (dark) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
 
-    // Supabase Session Listener
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) syncUserData(session.user);
     });
@@ -81,7 +84,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   };
 
-  // Google OAuth via Supabase
   const handleGoogleSignIn = async () => {
     setAuthError("");
     const { error } = await supabase.auth.signInWithOAuth({
@@ -93,7 +95,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (error) setAuthError(error.message);
   };
 
-  // Email Sign In / Sign Up
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError("");
@@ -105,7 +106,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     });
 
     if (error) {
-      // If user doesn't exist, try creating account
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: formEmail,
         password: formPass
@@ -147,7 +147,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={`min-h-screen flex flex-col md:flex-row ${isDark ? "bg-[#080E18] text-white" : "bg-[#FAF9F5] text-[#1F1E1D]"}`}>
-      {/* Desktop Sidebar */}
       <aside className={`w-full md:w-64 border-b md:border-b-0 md:border-r p-5 flex flex-col justify-between shrink-0 ${isDark ? "bg-[#0F1A29] border-[#1C2A3D]" : "bg-white border-[#E5E2DA]"}`}>
         <div>
           <div className="flex items-center gap-3 px-2 py-3 mb-6">
@@ -194,7 +193,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className={`px-6 py-4 border-b flex items-center justify-between glass-panel sticky top-0 z-40 ${isDark ? "border-[#1C2A3D]" : "border-[#E5E2DA]"}`}>
           <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30">
@@ -239,7 +237,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
 
-      {/* Auth Modal */}
       {authModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className={`w-full max-w-md rounded-2xl border p-6 shadow-2xl relative ${isDark ? "bg-[#0F1A29] border-[#1C2A3D] text-white" : "bg-white border-[#E5E2DA] text-[#1F1E1D]"}`}>
