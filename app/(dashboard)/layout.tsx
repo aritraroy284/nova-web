@@ -1,12 +1,88 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, KeyRound, Blocks, BookOpen, Sun, Moon } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  KeyRound, 
+  Blocks, 
+  BookOpen, 
+  Sun, 
+  Moon, 
+  LogIn, 
+  User, 
+  X, 
+  Check, 
+  ShieldCheck,
+  LogOut
+} from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [darkMode, setDarkMode] = useState(true);
+  const [isDark, setIsDark] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"menu" | "email">("menu");
+
+  // User Auth State
+  const [user, setUser] = useState<{ name: string; username: string; email: string; type: string } | null>(null);
+
+  // Email form fields
+  const [formName, setFormName] = useState("");
+  const [formUser, setFormUser] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formPass, setFormPass] = useState("");
+
+  // Sync theme with HTML root tag
+  useEffect(() => {
+    const saved = localStorage.getItem("nova_theme");
+    const dark = saved !== "light";
+    setIsDark(dark);
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    const savedUser = localStorage.getItem("nova_user_session");
+    if (savedUser) {
+      try { setUser(JSON.parse(savedUser)); } catch (e) {}
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    if (nextDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("nova_theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("nova_theme", "light");
+    }
+  };
+
+  const handleGuestLogin = () => {
+    const guest = { name: "Guest User", username: "guest_" + Math.floor(Math.random() * 9000 + 1000), email: "guest@nova.local", type: "Guest" };
+    setUser(guest);
+    localStorage.setItem("nova_user_session", JSON.stringify(guest));
+    setAuthModalOpen(false);
+  };
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formName || !formUser || !formEmail) return;
+    const u = { name: formName, username: formUser.replace("@", "").toLowerCase(), email: formEmail, type: "Email" };
+    setUser(u);
+    localStorage.setItem("nova_user_session", JSON.stringify(u));
+    setAuthModalOpen(false);
+    setAuthMode("menu");
+  };
+
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem("nova_user_session");
+  };
 
   const navItems = [
     { name: "Overview", href: "/overview", icon: LayoutDashboard },
@@ -16,22 +92,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ];
 
   return (
-    <div className={`min-h-screen flex ${darkMode ? "dark" : ""}`}>
-      <aside className="hidden md:flex w-64 border-r border-atelier-border dark:border-nova-border bg-atelier-card dark:bg-nova-card flex-col justify-between p-5">
+    <div className={`min-h-screen flex flex-col md:flex-row ${isDark ? "bg-[#080E18] text-white" : "bg-[#FAF9F5] text-[#1F1E1D]"}`}>
+      {/* Desktop Sidebar */}
+      <aside className={`w-full md:w-64 border-b md:border-b-0 md:border-r p-5 flex flex-col justify-between shrink-0 ${isDark ? "bg-[#0F1A29] border-[#1C2A3D]" : "bg-white border-[#E5E2DA]"}`}>
         <div>
-          <div className="flex items-center gap-3 px-2 py-4 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-nova-cyan/10 border border-nova-cyan/30 flex items-center justify-center font-mono font-bold text-nova-cyan">N</div>
+          <div className="flex items-center gap-3 px-2 py-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-[#00E5FF]/10 border border-[#00E5FF]/30 flex items-center justify-center font-mono font-bold text-[#00E5FF]">N</div>
             <div>
-              <div className="font-mono font-bold text-sm">NOVA CORTEX</div>
-              <div className="text-[10px] text-atelier-muted dark:text-nova-muted">CONTROL PLANE</div>
+              <div className="font-mono font-bold text-sm tracking-wider">NOVA CORTEX</div>
+              <div className={`text-[10px] ${isDark ? "text-[#8E9DAE]" : "text-[#737069]"}`}>CONTROL PLANE</div>
             </div>
           </div>
+
           <nav className="space-y-1">
             {navItems.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
               return (
-                <Link key={item.href} href={item.href} className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${active ? "bg-nova-cyan/10 text-nova-cyan border border-nova-cyan/30" : "text-atelier-muted dark:text-nova-muted hover:bg-black/5 dark:hover:bg-white/5"}`}>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${
+                    active 
+                      ? "bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30 font-bold" 
+                      : isDark ? "text-[#8E9DAE] hover:bg-white/5" : "text-[#737069] hover:bg-black/5"
+                  }`}
+                >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
                 </Link>
@@ -39,30 +125,173 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             })}
           </nav>
         </div>
-        <div className="pt-4 border-t border-atelier-border dark:border-nova-border flex items-center justify-between">
-          <button onClick={() => setDarkMode(!darkMode)} className="p-2 rounded-lg border border-atelier-border dark:border-nova-border text-xs flex items-center gap-2">
-            {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            <span className="font-mono">{darkMode ? "Light" : "Dark"}</span>
-          </button>
-          <div className="text-[10px] font-mono text-emerald-400">● Online</div>
+
+        {/* Sidebar Footer Controls */}
+        <div className={`pt-4 border-t space-y-3 ${isDark ? "border-[#1C2A3D]" : "border-[#E5E2DA]"}`}>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-xl border text-xs font-mono flex items-center gap-2 transition ${isDark ? "border-[#1C2A3D] bg-white/5 text-white hover:border-[#00E5FF]" : "border-[#E5E2DA] bg-black/5 text-[#1F1E1D] hover:border-teal-600"}`}
+            >
+              {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-600" />}
+              <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
+            </button>
+            <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">● Online</span>
+          </div>
         </div>
       </aside>
 
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto pb-24 md:pb-8">{children}</main>
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-panel border-t px-3 py-2 flex items-center justify-around z-50">
-          {navItems.map((item) => {
-            const active = pathname === item.href;
-            const Icon = item.icon;
-            return (
-              <Link key={item.href} href={item.href} className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[10px] font-mono transition ${active ? "text-nova-cyan font-bold" : "text-atelier-muted dark:text-nova-muted"}`}>
-                <Icon className="w-4 h-4" />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Top bar with Login / Profile trigger */}
+        <header className={`px-6 py-4 border-b flex items-center justify-between glass-panel sticky top-0 z-40 ${isDark ? "border-[#1C2A3D]" : "border-[#E5E2DA]"}`}>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30">
+              V1.0 LIVE
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className={`md:hidden p-2 rounded-lg border text-xs ${isDark ? "border-[#1C2A3D] text-white" : "border-[#E5E2DA] text-[#1F1E1D]"}`}
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
+            </button>
+
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <div className="text-xs font-bold">{user.name}</div>
+                  <div className={`text-[10px] font-mono ${isDark ? "text-[#8E9DAE]" : "text-[#737069]"}`}>@{user.username}</div>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  title="Sign Out"
+                  className="p-2 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => { setAuthMode("menu"); setAuthModalOpen(true); }}
+                className="px-4 py-2 rounded-xl bg-[#00E5FF] text-black font-mono font-medium text-xs flex items-center gap-2 shadow-sm shadow-[#00E5FF]/30 hover:opacity-90 transition"
+              >
+                <LogIn className="w-4 h-4" /> Sign In / Account
+              </button>
+            )}
+          </div>
+        </header>
+
+        <main className="flex-1 p-5 md:p-8 overflow-y-auto pb-24 md:pb-8">
+          {children}
+        </main>
       </div>
+
+      {/* UNIVERSAL AUTH MODAL (Google, Email, Guest) */}
+      {authModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className={`w-full max-w-md rounded-2xl border p-6 shadow-2xl relative ${isDark ? "bg-[#0F1A29] border-[#1C2A3D] text-white" : "bg-white border-[#E5E2DA] text-[#1F1E1D]"}`}>
+            <button
+              onClick={() => setAuthModalOpen(false)}
+              className="absolute top-4 right-4 text-xs font-mono opacity-60 hover:opacity-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {authMode === "menu" ? (
+              <div className="space-y-5">
+                <div className="text-center pb-2">
+                  <h3 className="text-xl font-bold font-mono tracking-tight">NOVA ACCOUNT ACCESS</h3>
+                  <p className={`text-xs mt-1 ${isDark ? "text-[#8E9DAE]" : "text-[#737069]"}`}>
+                    Sync provider keys, memory vectors, and plugin integrations.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      const gUser = { name: "Google User", username: "google_user", email: "user@gmail.com", type: "Google" };
+                      setUser(gUser);
+                      localStorage.setItem("nova_user_session", JSON.stringify(gUser));
+                      setAuthModalOpen(false);
+                    }}
+                    className={`w-full p-3.5 rounded-xl border text-sm font-medium flex items-center justify-center gap-3 transition ${isDark ? "bg-white/5 border-[#1C2A3D] hover:border-[#00E5FF]" : "bg-black/5 border-[#E5E2DA] hover:border-teal-600"}`}
+                  >
+                    <span className="font-bold text-[#00E5FF]">G</span> Sign in with Google
+                  </button>
+
+                  <button
+                    onClick={() => setAuthMode("email")}
+                    className={`w-full p-3.5 rounded-xl border text-sm font-medium flex items-center justify-center gap-3 transition ${isDark ? "bg-white/5 border-[#1C2A3D] hover:border-[#00E5FF]" : "bg-black/5 border-[#E5E2DA] hover:border-teal-600"}`}
+                  >
+                    <span>✉️</span> Continue with Email Credentials
+                  </button>
+
+                  <button
+                    onClick={handleGuestLogin}
+                    className={`w-full p-3.5 rounded-xl border text-sm font-mono text-xs flex items-center justify-center gap-2 opacity-80 hover:opacity-100 transition ${isDark ? "border-[#1C2A3D]" : "border-[#E5E2DA]"}`}
+                  >
+                    <span>👤</span> Explore as Guest (Local Preview)
+                  </button>
+                </div>
+
+                <div className="pt-2 text-center text-[11px] opacity-60 font-mono">
+                  Isolated multi-user architecture • AES-256 vault
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <div className="flex items-center justify-between pb-1">
+                  <h3 className="font-bold text-base">Create / Sign In Email</h3>
+                  <button type="button" onClick={() => setAuthMode("menu")} className="text-xs text-[#00E5FF] font-mono">&larr; Back</button>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Full Name (e.g. Aritra Roy)"
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  required
+                  className={`w-full p-3 rounded-xl border text-xs outline-none focus:border-[#00E5FF] ${isDark ? "bg-black/40 border-[#1C2A3D]" : "bg-black/5 border-[#E5E2DA]"}`}
+                />
+                <input
+                  type="text"
+                  placeholder="@username (e.g. aritra)"
+                  value={formUser}
+                  onChange={(e) => setFormUser(e.target.value)}
+                  required
+                  className={`w-full p-3 rounded-xl border text-xs outline-none focus:border-[#00E5FF] ${isDark ? "bg-black/40 border-[#1C2A3D]" : "bg-black/5 border-[#E5E2DA]"}`}
+                />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={formEmail}
+                  onChange={(e) => setFormEmail(e.target.value)}
+                  required
+                  className={`w-full p-3 rounded-xl border text-xs outline-none focus:border-[#00E5FF] ${isDark ? "bg-black/40 border-[#1C2A3D]" : "bg-black/5 border-[#E5E2DA]"}`}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={formPass}
+                  onChange={(e) => setFormPass(e.target.value)}
+                  required
+                  className={`w-full p-3 rounded-xl border text-xs outline-none focus:border-[#00E5FF] ${isDark ? "bg-black/40 border-[#1C2A3D]" : "bg-black/5 border-[#E5E2DA]"}`}
+                />
+
+                <button
+                  type="submit"
+                  className="w-full py-3 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition mt-2"
+                >
+                  SAVE & ACCESS CONSOLE
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
