@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  body { @apply bg-atelier-bg text-atelier-text dark:bg-nova-bg dark:text-nova-text font-sans antialiased; }
+}
+.glass-panel { @apply backdrop-blur-md bg-white/70 dark:bg-nova-card/80 border border-atelier-border dark:border-nova-border; }
