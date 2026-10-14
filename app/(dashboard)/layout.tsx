@@ -15,7 +15,7 @@ import {
   X,
   AlertCircle
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../../lib/supabase";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
