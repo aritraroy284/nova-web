@@ -164,15 +164,7 @@ export default function ApiModelsPage() {
               className="px-4 py-2 rounded-lg border border-[#00E5FF]/50 text-[#00E5FF] font-mono text-xs flex items-center gap-1.5 disabled:opacity-50"
             >
               {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
-              Test Connection
-            </button>
-            <button
-              onClick={handleSaveKeys}
-              disabled={saving}
-              className="px-5 py-2 rounded-lg bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition disabled:opacity-50 flex items-center gap-1.5"
-            >
-              {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}
-              {saveSuccess ? "Saved!" : "Save Keys"}
+              Test Gemini Key
             </button>
           </div>
         </div>
@@ -195,6 +187,25 @@ export default function ApiModelsPage() {
             {testResult.latency && <div className="mt-1 opacity-70">Round-trip latency: {testResult.latency}</div>}
           </div>
         )}
+      </div>
+
+      {/* Universal Save Action Bar */}
+      <div className="p-4 rounded-2xl glass-panel border border-[#00E5FF]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2.5">
+          <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="text-xs">
+            <div className="font-bold">Encrypted Credentials Vault</div>
+            <div className="opacity-70 text-[11px]">Saves Gemini, Groq, and OpenRouter keys simultaneously to your user row.</div>
+          </div>
+        </div>
+        <button
+          onClick={handleSaveKeys}
+          disabled={saving}
+          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm shadow-[#00E5FF]/20"
+        >
+          {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+          {saveSuccess ? "All Keys Saved Successfully!" : "Save All Provider Keys"}
+        </button>
       </div>
 
       {/* Optional Fallbacks */}
