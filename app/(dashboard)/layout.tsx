@@ -251,6 +251,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               )
             )}
 
+            {/* DEVELOPER CLEARANCE BUTTON */}
+            {isDev ? (
+              <span className="px-2.5 py-1 rounded-xl bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm shadow-[#00E5FF]/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-ping"></span>
+                CREATOR ACTIVE
+              </span>
+            ) : (
+              <button
+                onClick={() => setDevModalOpen(true)}
+                className="px-2.5 py-1 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/40 text-[10px] font-mono font-bold hover:bg-amber-500/20 transition flex items-center gap-1"
+              >
+                <span>⚡</span> DEV UNLOCK
+              </button>
+            )}
+
             {user ? (
               <div className="flex items-center gap-3">
                 {user.avatar ? (
