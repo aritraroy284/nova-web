@@ -1,26 +1,33 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = 'force-dynamic';
+
+function getAdminSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhrwfhtiknrboqfmvzqs.supabase.co";
+  // Service role key bypasses RLS safely on the backend server only
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  return createClient(url, key);
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const { action, email } = body;
     const cleanEmail = (email || "").trim().toLowerCase();
+    const supabase = getAdminSupabase();
 
     // 1. STRICT ACCOUNT-SPECIFIC KEY SYNC
     if (action === "SYNC_KEYS" || action === "GET_KEYS") {
       if (!cleanEmail) {
         return NextResponse.json({
-          error: "Missing account email",
+          configured: false,
           gemini_key: "",
           groq_key: "",
           openrouter_key: ""
-        }, { status: 400 });
+        });
       }
 
-      // Sirf usi specific user ke email ka locker check karo
       const { data, error } = await supabase
         .from("user_api_keys")
         .select("gemini_key, groq_key, openrouter_key")
