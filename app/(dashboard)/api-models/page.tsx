@@ -109,7 +109,7 @@ export default function ApiModelsPage() {
         groq_key: groqKey.trim(),
         openrouter_key: openRouterKey.trim(),
         updated_at: new Date().toISOString()
-      }, { onConflict: "email" });
+      }, { onConflict: "user_id" });
 
     setSaving(false);
     if (!error) {
