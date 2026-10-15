@@ -99,17 +99,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   };
 
-  const handleVerifyDev = (e: React.FormEvent) => {
+  const handleVerifyDev = async (e: React.FormEvent) => {
     e.preventDefault();
     setDevError("");
-    const entered = devInputPass.trim();
-    if (entered === "nova@creator2026" || entered.length > 0) {
-      setIsDev(true);
-      localStorage.setItem("nova_dev_active", "true");
-      setDevModalOpen(false);
-      setDevInputPass("");
-    } else {
-      setDevError("Access Denied: Invalid Security Key");
+    if (!user || !user.email) {
+      setDevError("Please sign in with your Creator Google Account first.");
+      return;
+    }
+    try {
+      const res = await fetch("/api/vault", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "VERIFY_DEV",
+          email: user.email,
+          devPassword: devInputPass
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.developer) {
+        setIsDev(true);
+        localStorage.setItem("nova_dev_active", "true");
+        setDevModalOpen(false);
+        setDevInputPass("");
+      } else {
+        setDevError(data.error || "Access Denied: Invalid Security Key");
+      }
+    } catch {
+      setDevError("Server connection error.");
     }
   };
 
