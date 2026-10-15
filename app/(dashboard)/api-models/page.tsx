@@ -93,8 +93,8 @@ export default function ApiModelsPage() {
   };
 
   const handleSaveKeys = async () => {
-    if (!userId) {
-      alert("Please Sign In first to save your API keys to the cloud vault.");
+    if (!userId || !userEmail) {
+      alert("Please Sign In first to save your API keys to your account vault.");
       return;
     }
     setSaving(true);
@@ -104,11 +104,12 @@ export default function ApiModelsPage() {
       .from("user_api_keys")
       .upsert({
         user_id: userId,
+        email: userEmail.trim().toLowerCase(),
         gemini_key: geminiKey.trim(),
         groq_key: groqKey.trim(),
         openrouter_key: openRouterKey.trim(),
         updated_at: new Date().toISOString()
-      }, { onConflict: "user_id" });
+      }, { onConflict: "email" });
 
     setSaving(false);
     if (!error) {

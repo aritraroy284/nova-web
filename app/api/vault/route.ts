@@ -6,25 +6,41 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { action } = body;
+    const { action, email } = body;
+    const cleanEmail = (email || "").trim().toLowerCase();
 
-    // UNIVERSAL MASTER KEY SYNC (Reads using existing configured client)
+    // 1. STRICT ACCOUNT-SPECIFIC KEY SYNC
     if (action === "SYNC_KEYS" || action === "GET_KEYS") {
+      if (!cleanEmail) {
+        return NextResponse.json({
+          error: "Missing account email",
+          gemini_key: "",
+          groq_key: "",
+          openrouter_key: ""
+        }, { status: 400 });
+      }
+
+      // Sirf usi specific user ke email ka locker check karo
       const { data, error } = await supabase
         .from("user_api_keys")
         .select("gemini_key, groq_key, openrouter_key")
-        .order("updated_at", { ascending: false })
-        .limit(1)
+        .eq("email", cleanEmail)
         .maybeSingle();
 
-      if (error) {
-        return NextResponse.json({ error: error.message, gemini_key: "", groq_key: "", openrouter_key: "" }, { status: 200 });
+      if (error || !data) {
+        return NextResponse.json({
+          configured: false,
+          gemini_key: "",
+          groq_key: "",
+          openrouter_key: ""
+        });
       }
 
       return NextResponse.json({
-        gemini_key: data?.gemini_key || "",
-        groq_key: data?.groq_key || "",
-        openrouter_key: data?.openrouter_key || ""
+        configured: true,
+        gemini_key: data.gemini_key || "",
+        groq_key: data.groq_key || "",
+        openrouter_key: data.openrouter_key || ""
       });
     }
 
