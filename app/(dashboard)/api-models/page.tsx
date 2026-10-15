@@ -48,6 +48,7 @@ export default function ApiModelsPage() {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const [reports, setReports] = useState<{
     gemini?: ProviderReport;
@@ -59,6 +60,7 @@ export default function ApiModelsPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
+        setUserEmail(session.user.email || null);
         loadUserKeys(session.user.id);
       }
     });
@@ -66,6 +68,7 @@ export default function ApiModelsPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUserId(session.user.id);
+        setUserEmail(session.user.email || null);
         loadUserKeys(session.user.id);
       } else {
         setUserId(null);
@@ -101,11 +104,12 @@ export default function ApiModelsPage() {
       .from("user_api_keys")
       .upsert({
         user_id: userId,
+        email: userEmail ? userEmail.trim().toLowerCase() : undefined,
         gemini_key: geminiKey.trim(),
         groq_key: groqKey.trim(),
         openrouter_key: openRouterKey.trim(),
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: userEmail ? "email" : "user_id" });
 
     setSaving(false);
     if (!error) {
