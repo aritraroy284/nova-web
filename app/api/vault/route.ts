@@ -1,17 +1,23 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhrwfhtiknrboqfmvzqs.supabase.co";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const dynamic = 'force-dynamic';
 
-// Developer Credentials (royaritra284@gmail.com)
+function getSupabase() {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith("http"))
+    ? process.env.NEXT_PUBLIC_SUPABASE_URL
+    : "https://zhrwfhtiknrboqfmvzqs.supabase.co";
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.placeholder";
+  return createClient(url, key);
+}
+
 const DEV_EMAIL = "royaritra284@gmail.com";
 const DEV_PASSWORD = process.env.NOVA_DEV_PASSWORD || "nova@creator2026";
 
 export async function POST(req: Request) {
   try {
     const { action, email, devPassword, userId } = await req.json();
+    const supabase = getSupabase();
 
     // 1. DEVELOPER AUTHENTICATION GATE
     if (action === "VERIFY_DEV") {
@@ -21,9 +27,8 @@ export async function POST(req: Request) {
       if (isDevEmail && isDevPass) {
         return NextResponse.json({
           status: "AUTHORIZED",
-          role: "CREATOR",
           developer: true,
-          message: "Welcome back, Creator Aritra."
+          message: "Developer protocol engaged."
         });
       } else {
         return NextResponse.json({
