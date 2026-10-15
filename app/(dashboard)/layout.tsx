@@ -35,6 +35,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [formPass, setFormPass] = useState("");
   const [authError, setAuthError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isDev, setIsDev] = useState(false);
+  const [devModalOpen, setDevModalOpen] = useState(false);
+  const [devInputPass, setDevInputPass] = useState("");
+  const [devError, setDevError] = useState("");
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("nova_theme");
@@ -60,6 +64,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       }
     });
 
+    const savedDev = localStorage.getItem("nova_dev_active") === "true";
+    setIsDev(savedDev);
     return () => subscription.unsubscribe();
   }, []);
 
@@ -132,6 +138,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setAuthModalOpen(false);
   };
 
+  
+  const handleVerifyDev = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDevError("");
+    try {
+      const res = await fetch("/api/vault", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "VERIFY_DEV",
+          email: user?.email || "royaritra284@gmail.com",
+          devPassword: devInputPass
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.developer) {
+        setIsDev(true);
+        localStorage.setItem("nova_dev_active", "true");
+        setDevModalOpen(false);
+        setDevInputPass("");
+      } else {
+        setDevError(data.error || "Incorrect Developer Key");
+      }
+    } catch {
+      setDevError("Server verification failed.");
+    }
+  };
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem("nova_guest_session");
@@ -200,6 +234,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </span>
 
           <div className="flex items-center gap-3">
+            {/* Developer Status Badge */}
+            {user?.email === "royaritra284@gmail.com" && (
+              isDev ? (
+                <span className="px-2.5 py-1 rounded-lg bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm shadow-[#00E5FF]/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-ping"></span>
+                  CREATOR ACTIVE
+                </span>
+              ) : (
+                <button
+                  onClick={() => setDevModalOpen(true)}
+                  className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-mono hover:bg-amber-500/20 transition"
+                >
+                  DEV UNLOCK
+                </button>
+              )
+            )}
+
             {user ? (
               <div className="flex items-center gap-3">
                 {user.avatar ? (
@@ -322,6 +373,36 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       )}
+    
+      {/* DEVELOPER CLEARANCE MODAL */}
+      {devModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-[#00E5FF]/40 bg-[#0F1A29] p-6 text-white space-y-4 shadow-2xl">
+            <div className="flex justify-between items-center pb-2 border-b border-white/10">
+              <div className="font-mono font-bold text-xs text-[#00E5FF] tracking-wider">CREATOR CLEARANCE GATE</div>
+              <button onClick={() => setDevModalOpen(false)} className="text-xs opacity-60 hover:opacity-100"><X className="w-4 h-4"/></button>
+            </div>
+            <p className="text-xs text-[#8E9DAE] font-mono">
+              Welcome Lead Architect Aritra. Enter your master access key to engage Creator Mode.
+            </p>
+            {devError && <div className="text-xs text-red-400 font-mono">{devError}</div>}
+            <form onSubmit={handleVerifyDev} className="space-y-3">
+              <input
+                type="password"
+                placeholder="Developer Access Key"
+                value={devInputPass}
+                onChange={(e) => setDevInputPass(e.target.value)}
+                required
+                className="w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-[#1C2A3D] text-xs font-mono focus:border-[#00E5FF] outline-none"
+              />
+              <button type="submit" className="w-full py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition">
+                ENGAGE CREATOR PROTOCOL
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
