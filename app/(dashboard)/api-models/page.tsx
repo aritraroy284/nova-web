@@ -12,8 +12,17 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
+interface HealthItem {
+  status: string;
+  latency?: string;
+  message: string;
+}
+
 export default function ApiModelsPage() {
   const [showGemini, setShowGemini] = useState(false);
+  const [showGroq, setShowGroq] = useState(false);
+  const [showOpenRouter, setShowOpenRouter] = useState(false);
+
   const [geminiKey, setGeminiKey] = useState("");
   const [groqKey, setGroqKey] = useState("");
   const [openRouterKey, setOpenRouterKey] = useState("");
@@ -22,7 +31,12 @@ export default function ApiModelsPage() {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [testResult, setTestResult] = useState<{ status: string; latency?: string; message: string } | null>(null);
+
+  const [testResults, setTestResults] = useState<{
+    gemini?: HealthItem;
+    groq?: HealthItem;
+    openrouter?: HealthItem;
+  } | null>(null);
 
   const models = [
     { id: "gemini-3.5-flash-lite", role: "Primary Router" },
@@ -33,7 +47,6 @@ export default function ApiModelsPage() {
     { id: "openrouter/free", role: "OpenRouter Standby" },
   ];
 
-  // Fetch saved keys from Supabase on mount
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -95,23 +108,49 @@ export default function ApiModelsPage() {
     }
   };
 
-  const handleTestConnection = async () => {
+  const handleTestAll = async () => {
     setTesting(true);
-    setTestResult(null);
+    setTestResults(null);
 
     try {
       const res = await fetch("/api/health", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: geminiKey }),
+        body: JSON.stringify({
+          geminiKey: geminiKey.trim(),
+          groqKey: groqKey.trim(),
+          openRouterKey: openRouterKey.trim()
+        }),
       });
       const data = await res.json();
-      setTestResult(data);
+      setTestResults(data);
     } catch {
-      setTestResult({ status: "ERROR", message: "Failed to connect to backend test runner." });
+      alert("Failed to reach server test runner.");
     } finally {
       setTesting(false);
     }
+  };
+
+  const renderBadge = (item?: HealthItem) => {
+    if (!item) return null;
+    const isOk = item.status === "OK";
+    const isNotSet = item.status === "NOT_CONFIGURED";
+
+    return (
+      <div className={`p-3 rounded-xl border text-xs font-mono ${
+        isOk 
+          ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" 
+          : isNotSet 
+            ? "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 opacity-60" 
+            : "bg-red-500/10 border-red-500/30 text-red-400"
+      }`}>
+        <div className="flex justify-between items-center font-bold">
+          <span>Status: {item.status}</span>
+          {item.latency && <span>{item.latency}</span>}
+        </div>
+        <div className="mt-1 text-[11px] opacity-90">{item.message}</div>
+      </div>
+    );
   };
 
   return (
@@ -123,8 +162,8 @@ export default function ApiModelsPage() {
         </p>
       </div>
 
-      {/* Gemini Required Vault */}
-      <div className="p-6 rounded-2xl glass-panel border border-[#00E5FF]/40 space-y-5">
+      {/* GEMINI CARD */}
+      <div className="p-6 rounded-2xl glass-panel border border-[#00E5FF]/40 space-y-4">
         <div className="flex justify-between items-center">
           <div>
             <h3 className="font-bold text-base">Gemini API Key (Required)</h3>
@@ -140,7 +179,7 @@ export default function ApiModelsPage() {
             type={showGemini ? "text" : "password"}
             value={geminiKey}
             onChange={(e) => setGeminiKey(e.target.value)}
-            placeholder="AIzaSy..."
+            placeholder="Enter Gemini key..."
             className="w-full px-4 py-3 rounded-xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-[#1C2A3D] font-mono text-sm focus:border-[#00E5FF] outline-none pr-20"
           />
           <button
@@ -152,88 +191,94 @@ export default function ApiModelsPage() {
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-          <div className="flex items-center gap-2 text-xs opacity-70 font-mono">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Vault Policy: Encrypted at rest. Scoped to your signed-in ID.</span>
+        {testResults?.gemini && renderBadge(testResults.gemini)}
+      </div>
+
+      {/* FALLBACKS GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* GROQ CARD */}
+        <div className="p-5 rounded-2xl glass-panel border border-black/10 dark:border-[#1C2A3D] space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="font-bold text-sm">Groq API Key (Optional Fallback)</div>
+            <span className="text-[10px] font-mono opacity-60">BACKUP 1</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="relative">
+            <input
+              type={showGroq ? "text" : "password"}
+              value={groqKey}
+              onChange={(e) => setGroqKey(e.target.value)}
+              placeholder="Enter Groq key..."
+              className="w-full px-3.5 py-2.5 rounded-lg bg-black/5 dark:bg-black/30 border border-black/10 dark:border-[#1C2A3D] font-mono text-xs focus:border-[#00E5FF] outline-none pr-12"
+            />
             <button
-              onClick={handleTestConnection}
-              disabled={testing || !geminiKey}
-              className="px-4 py-2 rounded-lg border border-[#00E5FF]/50 text-[#00E5FF] font-mono text-xs flex items-center gap-1.5 disabled:opacity-50"
+              type="button"
+              onClick={() => setShowGroq(!showGroq)}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100"
             >
-              {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
-              Test Gemini Key
+              {showGroq ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             </button>
           </div>
+          {testResults?.groq && renderBadge(testResults.groq)}
         </div>
 
-        {saveSuccess && (
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Credentials saved to cloud vault. Ready for Android co-pilot synchronization.</span>
+        {/* OPENROUTER CARD */}
+        <div className="p-5 rounded-2xl glass-panel border border-black/10 dark:border-[#1C2A3D] space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="font-bold text-sm">OpenRouter Key (Optional Fallback)</div>
+            <span className="text-[10px] font-mono opacity-60">BACKUP 2</span>
           </div>
-        )}
-
-        {testResult && (
-          <div className={`p-4 rounded-xl border text-xs font-mono ${
-            testResult.status === "OK" 
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" 
-              : "bg-red-500/10 border-red-500/30 text-red-400"
-          }`}>
-            <div className="font-bold mb-1">Status: {testResult.status}</div>
-            <div>{testResult.message}</div>
-            {testResult.latency && <div className="mt-1 opacity-70">Round-trip latency: {testResult.latency}</div>}
+          <div className="relative">
+            <input
+              type={showOpenRouter ? "text" : "password"}
+              value={openRouterKey}
+              onChange={(e) => setOpenRouterKey(e.target.value)}
+              placeholder="Enter OpenRouter key..."
+              className="w-full px-3.5 py-2.5 rounded-lg bg-black/5 dark:bg-black/30 border border-black/10 dark:border-[#1C2A3D] font-mono text-xs focus:border-[#00E5FF] outline-none pr-12"
+            />
+            <button
+              type="button"
+              onClick={() => setShowOpenRouter(!showOpenRouter)}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100"
+            >
+              {showOpenRouter ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+            </button>
           </div>
-        )}
+          {testResults?.openrouter && renderBadge(testResults.openrouter)}
+        </div>
       </div>
 
-      {/* Universal Save Action Bar */}
-      <div className="p-4 rounded-2xl glass-panel border border-[#00E5FF]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5">
+      {/* UNIVERSAL DUAL ACTION BAR */}
+      <div className="p-5 rounded-2xl glass-panel border border-[#00E5FF]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
           <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
-          <div className="text-xs">
-            <div className="font-bold">Encrypted Credentials Vault</div>
-            <div className="opacity-70 text-[11px]">Saves Gemini, Groq, and OpenRouter keys simultaneously to your user row.</div>
+          <div>
+            <div className="text-xs font-bold">Cloud Credential Vault</div>
+            <div className="opacity-70 text-[11px]">Test all configured endpoints simultaneously or save to database.</div>
           </div>
         </div>
-        <button
-          onClick={handleSaveKeys}
-          disabled={saving}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm shadow-[#00E5FF]/20"
-        >
-          {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
-          {saveSuccess ? "All Keys Saved Successfully!" : "Save All Provider Keys"}
-        </button>
-      </div>
 
-      {/* Optional Fallbacks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="p-5 rounded-2xl glass-panel border border-black/10 dark:border-[#1C2A3D] space-y-3">
-          <div className="font-bold text-sm">Groq API Key (Optional Fallback)</div>
-          <input
-            type="password"
-            value={groqKey}
-            onChange={(e) => setGroqKey(e.target.value)}
-            placeholder="gsk_..."
-            className="w-full px-3.5 py-2.5 rounded-lg bg-black/5 dark:bg-black/30 border border-black/10 dark:border-[#1C2A3D] font-mono text-xs focus:border-[#00E5FF] outline-none"
-          />
-        </div>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <button
+            onClick={handleTestAll}
+            disabled={testing || (!geminiKey && !groqKey && !openRouterKey)}
+            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-[#00E5FF]/60 text-[#00E5FF] font-mono font-bold text-xs hover:bg-[#00E5FF]/10 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+          >
+            {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
+            Test All Keys
+          </button>
 
-        <div className="p-5 rounded-2xl glass-panel border border-black/10 dark:border-[#1C2A3D] space-y-3">
-          <div className="font-bold text-sm">OpenRouter Key (Optional Fallback)</div>
-          <input
-            type="password"
-            value={openRouterKey}
-            onChange={(e) => setOpenRouterKey(e.target.value)}
-            placeholder="sk-or-v1-..."
-            className="w-full px-3.5 py-2.5 rounded-lg bg-black/5 dark:bg-black/30 border border-black/10 dark:border-[#1C2A3D] font-mono text-xs focus:border-[#00E5FF] outline-none"
-          />
+          <button
+            onClick={handleSaveKeys}
+            disabled={saving}
+            className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm shadow-[#00E5FF]/20"
+          >
+            {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+            {saveSuccess ? "All Saved!" : "Save All Keys"}
+          </button>
         </div>
       </div>
 
-      {/* Model Sequence Table */}
+      {/* MODEL SEQUENCE TABLE */}
       <div className="p-6 rounded-2xl glass-panel border border-black/10 dark:border-[#1C2A3D] space-y-4">
         <h3 className="font-bold text-base">Deterministic Core Routing Table</h3>
         <p className="text-xs opacity-70">
