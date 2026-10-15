@@ -104,12 +104,11 @@ export default function ApiModelsPage() {
       .from("user_api_keys")
       .upsert({
         user_id: userId,
-        email: userEmail ? userEmail.trim().toLowerCase() : undefined,
         gemini_key: geminiKey.trim(),
         groq_key: groqKey.trim(),
         openrouter_key: openRouterKey.trim(),
         updated_at: new Date().toISOString()
-      }, { onConflict: userEmail ? "email" : "user_id" });
+      }, { onConflict: "user_id" });
 
     setSaving(false);
     if (!error) {
