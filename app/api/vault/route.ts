@@ -11,44 +11,51 @@ function getSupabase() {
   return createClient(url, key);
 }
 
-const DEV_EMAIL = "royaritra284@gmail.com";
-const DEV_PASSWORD = process.env.NOVA_DEV_PASSWORD || "nova@creator2026";
+const AUTHORIZED_CREATOR_EMAIL = "royaritra284@gmail.com";
 
 export async function POST(req: Request) {
   try {
     const { action, email, devPassword, userId } = await req.json();
+    const activeDevPassword = process.env.NOVA_DEV_PASSWORD || "nova@creator2026";
     const supabase = getSupabase();
 
-    // 1. DEVELOPER AUTHENTICATION GATE
+    // 1. DUAL-LOCK DEVELOPER CLEARANCE GATE
     if (action === "VERIFY_DEV") {
-      const isDevEmail = email && email.trim().toLowerCase() === DEV_EMAIL;
-      const isDevPass = devPassword && devPassword.trim() === DEV_PASSWORD;
-
-      if (isDevEmail && isDevPass) {
+      const cleanEmail = (email || "").trim().toLowerCase();
+      
+      // Layer 1: Account Lock
+      if (cleanEmail !== AUTHORIZED_CREATOR_EMAIL) {
         return NextResponse.json({
-          status: "AUTHORIZED",
-          developer: true,
-          message: "Developer protocol engaged."
-        });
-      } else {
+          status: "FORBIDDEN",
+          developer: false,
+          error: "Unauthorized Account: Developer access is restricted to the master creator email."
+        }, { status: 403 });
+      }
+
+      // Layer 2: Master Security Key Lock
+      const isDevPass = devPassword && devPassword.trim() === activeDevPassword;
+      if (!isDevPass) {
         return NextResponse.json({
           status: "UNAUTHORIZED",
           developer: false,
-          error: "Invalid developer credentials or password."
+          error: "Access Denied: Invalid Security Key."
         }, { status: 401 });
       }
+
+      return NextResponse.json({
+        status: "AUTHORIZED",
+        developer: true,
+        role: "CREATOR",
+        message: "Developer protocol engaged successfully."
+      });
     }
 
     // 2. DYNAMIC KEY SYNC FOR ANDROID APP
     if (action === "SYNC_KEYS") {
-      if (!userId && !email) {
-        return NextResponse.json({ error: "Missing identifier" }, { status: 400 });
-      }
-
       let query = supabase.from("user_api_keys").select("gemini_key, groq_key, openrouter_key");
       if (userId) query = query.eq("user_id", userId);
 
-      const { data, error } = await query.maybeSingle();
+      const { data } = await query.maybeSingle();
 
       return NextResponse.json({
         gemini_key: data?.gemini_key || "",
