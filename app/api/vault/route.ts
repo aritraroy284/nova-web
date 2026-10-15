@@ -4,9 +4,17 @@ import { createClient } from "@supabase/supabase-js";
 export const dynamic = 'force-dynamic';
 
 function getAdminSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhrwfhtiknrboqfmvzqs.supabase.co";
-  // Service role key bypasses RLS safely on the backend server only
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  let url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/^["']|["']$/g, '');
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    if (url.length > 5) {
+      url = "https://" + url;
+    } else {
+      url = "https://zhrwfhtiknrboqfmvzqs.supabase.co";
+    }
+  }
+
+  let key = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim().replace(/^["']|["']$/g, '');
+  
   return createClient(url, key);
 }
 
