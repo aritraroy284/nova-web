@@ -99,6 +99,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   };
 
+  
+  const handleLockDev = () => {
+    if (confirm("Lock Developer Clearance and return to standard mode?")) {
+      setIsDev(false);
+      localStorage.removeItem("nova_dev_active");
+    }
+  };
+
   const handleVerifyDev = async (e: React.FormEvent) => {
     e.preventDefault();
     setDevError("");
@@ -225,14 +233,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* Sidebar Dev Shortcut */}
             <button
-              onClick={() => setDevModalOpen(true)}
+              onClick={() => { if (isDev) handleLockDev(); else setDevModalOpen(true); }}
               className={isDev 
-                ? "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-mono transition text-left mt-3 bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/40 font-bold" 
+                ? "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-mono transition text-left mt-3 bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/40 font-bold hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-400" 
                 : "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-mono transition text-left mt-3 bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
               }
             >
               <Zap className="w-4 h-4" />
-              <span>{isDev ? "DEV ACTIVE" : "⚡ DEV ACCESS"}</span>
+              <span>{isDev ? "DEV ACTIVE (LOCK)" : "⚡ DEV ACCESS"}</span>
             </button>
           </nav>
         </div>
@@ -261,10 +269,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* TOP BAR DEV ACCESS BUTTON */}
             {isDev ? (
-              <span className="px-2.5 py-1 rounded-xl bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm shadow-[#00E5FF]/20">
+              <button
+                onClick={handleLockDev}
+                title="Click to lock Developer Mode"
+                className="px-2.5 py-1 rounded-xl bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm shadow-[#00E5FF]/20 hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-400 transition"
+              >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-ping"></span>
-                DEV ACTIVE
-              </span>
+                DEV ACTIVE (LOCK)
+              </button>
             ) : (
               <button
                 onClick={() => setDevModalOpen(true)}
