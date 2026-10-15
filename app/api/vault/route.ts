@@ -64,6 +64,36 @@ export async function POST(req: Request) {
       });
     }
 
+    
+    // 3. CLOUD-SCOPED PLUGIN STATE MANAGEMENT (PER EMAIL)
+    if (action === "GET_PLUGINS") {
+      const cleanEmail = (email || "").trim().toLowerCase();
+      if (!cleanEmail) return NextResponse.json({ gmail_connected: false });
+
+      const { data } = await supabase
+        .from("user_plugins")
+        .select("gmail_connected")
+        .eq("email", cleanEmail)
+        .maybeSingle();
+
+      return NextResponse.json({ gmail_connected: data?.gmail_connected || false });
+    }
+
+    if (action === "SET_PLUGIN") {
+      const cleanEmail = (email || "").trim().toLowerCase();
+      const { plugin, connected } = await req.json().catch(() => ({}));
+      if (!cleanEmail) return NextResponse.json({ error: "Missing email" }, { status: 400 });
+
+      const updates: any = {
+        email: cleanEmail,
+        updated_at: new Date().toISOString()
+      };
+      if (plugin === "gmail") updates.gmail_connected = connected;
+
+      await supabase.from("user_plugins").upsert(updates);
+      return NextResponse.json({ success: true, email: cleanEmail, connected });
+    }
+
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
