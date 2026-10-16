@@ -120,6 +120,37 @@ export default function ApiModelsPage() {
     }
   };
 
+    const handleRemoveKeys = async () => {
+    if (!userId) {
+      alert("Please Sign In first.");
+      return;
+    }
+    if (!confirm("Are you sure you want to remove and revoke all saved API keys from your vault?")) {
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase
+      .from("user_api_keys")
+      .upsert({
+        user_id: userId,
+        gemini_key: "",
+        groq_key: "",
+        openrouter_key: "",
+        updated_at: new Date().toISOString()
+      }, { onConflict: "user_id" });
+
+    setSaving(false);
+    if (!error) {
+      setGeminiKey("");
+      setGroqKey("");
+      setOpenRouterKey("");
+      setReports(null);
+      alert("All API keys removed from vault successfully.");
+    } else {
+      alert("Failed to remove keys: " + error.message);
+    }
+  };
+
   const handleTestAll = async () => {
     setTesting(true);
     setReports(null);
@@ -306,6 +337,17 @@ export default function ApiModelsPage() {
             {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
             Test All Keys
           </button>
+
+          {(geminiKey || groqKey || openRouterKey) && (
+            <button
+              onClick={handleRemoveKeys}
+              disabled={saving}
+              className="px-3.5 py-2.5 rounded-xl border border-red-500/40 text-red-400 font-mono font-bold text-xs hover:bg-red-500/10 transition disabled:opacity-50"
+              title="Remove keys from vault"
+            >
+              Remove Keys
+            </button>
+          )}
 
           <button
             onClick={handleSaveKeys}
