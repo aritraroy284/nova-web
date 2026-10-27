@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       // Strictly checks against your environment key or newly set master password
       const isPassValid = (inputKey.length > 0) && (
         (envKey && inputKey === envKey) || 
-        inputKey === ""
+        inputKey === "@Aritra.nova713206"
       );
 
       if (isPassValid && targetEmail) {
