@@ -46,11 +46,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (user?.email) {
       fetch("/api/vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "GET_DEV_STATUS", email: session?.user?.email || "" })
+        body: JSON.stringify({ action: "GET_DEV_STATUS", email: user?.email || "" })
       })
       .then(r => r.json())
       .then(d => {
@@ -64,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       })
       .catch(() => {});
     }
-  }, [session?.user?.email]);
+  }, [user?.email]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("nova_theme");
