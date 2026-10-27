@@ -5,22 +5,22 @@ import { Mail, Radio, RefreshCw, ShieldCheck, CheckCircle2, AlertTriangle } from
 import { supabase } from "@/app/lib/supabase";
 
 export default function PluginsPage() {
-  const [gmailConnected, setGmailConnected] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [gmailConnected, setGmailConnected] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [statusMsg, setStatusMsg] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   const emailRef = useRef<string | null>(null);
   const isUpdatingRef = useRef<boolean>(false);
 
+  // 1. Fetch exact cloud status for strictly this user's email
   const fetchCloudStatus = async (email: string) => {
-    if (isUpdatingRef.current) return;
+    if (!email || isUpdatingRef.current) return;
     try {
       const res = await fetch("/api/vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "GET_PLUGINS", email })
+        body: JSON.stringify({ action: "GET_PLUGINS", email: email.trim().toLowerCase() })
       });
       if (res.ok) {
         const data = await res.json();
@@ -32,16 +32,10 @@ export default function PluginsPage() {
   };
 
   useEffect(() => {
-    const cachedEmail = typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null;
-    if (cachedEmail) {
-      setUserEmail(cachedEmail);
-      emailRef.current = cachedEmail;
-      fetchCloudStatus(cachedEmail);
-    }
-
+    // Detect active authenticated session strictly
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
-        const activeEmail = session?.user?.email || cachedEmail;
+        const activeEmail = session?.user?.email || (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null);
         if (activeEmail) {
           setUserEmail(activeEmail);
           emailRef.current = activeEmail;
@@ -57,33 +51,39 @@ export default function PluginsPage() {
         }
       });
 
-      // 4-second Polling with lock protection
-      const syncInterval = setInterval(() => {
+      // Background cloud sync every 3 seconds (bi-directional mirror)
+      const interval = setInterval(() => {
         if (emailRef.current && !isUpdatingRef.current) {
           fetchCloudStatus(emailRef.current);
         }
-      }, 4000);
+      }, 3000);
 
-      const handleFocus = () => {
+      const onFocus = () => {
         if (emailRef.current && !isUpdatingRef.current) {
           fetchCloudStatus(emailRef.current);
         }
       };
-      window.addEventListener("focus", handleFocus);
-      document.addEventListener("visibilitychange", handleFocus);
+      window.addEventListener("focus", onFocus);
 
       return () => {
         subscription.unsubscribe();
-        clearInterval(syncInterval);
-        window.removeEventListener("focus", handleFocus);
-        document.removeEventListener("visibilitychange", handleFocus);
+        clearInterval(interval);
+        window.removeEventListener("focus", onFocus);
       };
     }
   }, []);
 
-  const savePluginConnection = async (email: string, state: boolean) => {
+  // 2. Toggle plugin status with instant cloud save
+  const togglePlugin = async (targetState: boolean) => {
+    if (!userEmail) {
+      setErrorMsg("Please sign in to Nova before managing plugins.");
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg("");
     isUpdatingRef.current = true;
-    setGmailConnected(state); // Instant UI feedback
+    setGmailConnected(targetState); // Instant optimistic update
 
     try {
       const res = await fetch("/api/vault", {
@@ -91,69 +91,24 @@ export default function PluginsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "SET_PLUGIN",
-          email,
+          email: userEmail.trim().toLowerCase(),
           plugin: "gmail",
-          connected: state
+          connected: targetState
         })
       });
+
       const data = await res.json();
       if (!res.ok || data.error) {
         throw new Error(data.error || "Failed to update cloud vault");
       }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Sync failed");
+      setGmailConnected(!targetState); // Revert on failure
     } finally {
+      setLoading(false);
       setTimeout(() => {
         isUpdatingRef.current = false;
-      }, 3500);
-    }
-  };
-
-  const handleConnectGmail = async () => {
-    if (!userEmail) {
-      setErrorMsg("No active session found. Please authenticate first.");
-      return;
-    }
-    if (!supabase) {
-      setErrorMsg("Supabase client unavailable.");
-      return;
-    }
-
-    setLoading(true);
-    setErrorMsg("");
-    setStatusMsg(`Connecting Gmail strictly for ${userEmail}...`);
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          scopes: "https://www.googleapis.com/auth/gmail.readonly",
-          queryParams: {
-            access_type: "offline",
-            prompt: "consent",
-            login_hint: userEmail,
-          },
-          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/plugins` : undefined,
-        },
-      });
-
-      if (error) throw error;
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to launch Google authentication.");
-      setLoading(false);
-      setStatusMsg("");
-    }
-  };
-
-  const handleDisconnectGmail = async () => {
-    if (!userEmail) return;
-    setLoading(true);
-    setErrorMsg("");
-    try {
-      await savePluginConnection(userEmail, false);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to disconnect.");
-      setGmailConnected(true);
-    } finally {
-      setLoading(false);
+      }, 2000);
     }
   };
 
@@ -163,7 +118,7 @@ export default function PluginsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-mono">Plugins & Integrations</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Plugins are strictly bound to your active Google Account:{" "}
+            Plugins are strictly bound to your active account:{" "}
             <span className="text-[#00E5FF] font-mono font-semibold">
               {userEmail || "Detecting Cloud Session..."}
             </span>
@@ -197,7 +152,7 @@ export default function PluginsPage() {
                       ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-bold shadow-[0_0_10px_rgba(16,185,129,0.2)]"
                       : "bg-[#091726] text-slate-400 border-[#17344D]"
                   }`}>
-                    {gmailConnected ? "ACTIVE • APP SYNCED" : "DISCONNECTED"}
+                    {gmailConnected ? "ACTIVE • SYNCED" : "DISCONNECTED"}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
@@ -208,8 +163,8 @@ export default function PluginsPage() {
             </div>
 
             <button
-              onClick={gmailConnected ? handleDisconnectGmail : handleConnectGmail}
-              disabled={loading}
+              onClick={() => togglePlugin(!gmailConnected)}
+              disabled={loading || !userEmail}
               className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 ${
                 gmailConnected
                   ? "border border-red-500/40 text-red-400 hover:bg-red-500/10"
