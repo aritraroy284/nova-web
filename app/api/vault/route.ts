@@ -52,11 +52,11 @@ export async function POST(req: Request) {
             : {};
           currentProfile.dev_active = true;
 
-          if (existing?.id) {
+          if (existing) {
             await supabase
               .from("user_memory")
               .update({ profile: currentProfile, updated_at: new Date().toISOString() })
-              .eq("id", existing.id);
+              .eq("email", targetEmail);
           } else {
             await supabase
               .from("user_memory")

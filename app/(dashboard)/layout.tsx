@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [user, setUser] = useState<{ name: string; username: string; email: string; avatar?: string } | null>(null);
 
   // Developer Clearance States
-  const [isDev, setIsDev] = useState(false);
+  const [isDev, setIsDev] = useState(() => typeof window !== "undefined" && localStorage.getItem("nova_dev_active") === "true");
   const [devModalOpen, setDevModalOpen] = useState(false);
   const [devInputPass, setDevInputPass] = useState("");
   const [devError, setDevError] = useState("");
