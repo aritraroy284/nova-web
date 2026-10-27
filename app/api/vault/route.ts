@@ -249,6 +249,69 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, count: factsArray.length });
     }
 
+        // 4. CLOUD PLUGINS ENGINE (Account-Specific Live Sync)
+    if (action === "GET_PLUGINS") {
+      if (!cleanEmail) return NextResponse.json({ gmail_connected: false });
+
+      const { data } = await supabase
+        .from("user_memory")
+        .select("profile")
+        .eq("email", cleanEmail)
+        .maybeSingle();
+
+      const isConnected = Boolean(data?.profile?.gmail_connected);
+      return NextResponse.json({
+        gmail_connected: isConnected,
+        email: cleanEmail,
+        success: true
+      });
+    }
+
+    if (action === "SET_PLUGIN") {
+      const { plugin, connected } = body;
+      if (!cleanEmail) return NextResponse.json({ error: "Missing email" }, { status: 400 });
+
+      const { data: existing } = await supabase
+        .from("user_memory")
+        .select("id, user_id, profile")
+        .eq("email", cleanEmail)
+        .maybeSingle();
+
+      const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
+        ? { ...existing.profile }
+        : {};
+
+      if (plugin === "gmail") {
+        currentProfile.gmail_connected = Boolean(connected);
+      }
+
+      let dbError = null;
+      if (existing) {
+        const { error: updErr } = await supabase
+          .from("user_memory")
+          .update({ profile: currentProfile })
+          .eq("email", cleanEmail);
+        dbError = updErr?.message;
+      } else {
+        const finalUserId = body.userId || crypto.randomUUID();
+        const { error: insErr } = await supabase
+          .from("user_memory")
+          .insert({
+            user_id: finalUserId,
+            email: cleanEmail,
+            content: "Nova User Profile",
+            profile: currentProfile
+          });
+        dbError = insErr?.message;
+      }
+
+      return NextResponse.json({
+        success: !dbError,
+        gmail_connected: Boolean(currentProfile.gmail_connected),
+        error: dbError
+      });
+    }
+
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
