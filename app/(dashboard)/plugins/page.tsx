@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mail, Smartphone, Radio, RefreshCw, ShieldCheck, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Mail, Radio, RefreshCw, ShieldCheck, CheckCircle2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/app/lib/supabase";
 
 export default function PluginsPage() {
@@ -12,9 +12,10 @@ export default function PluginsPage() {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   const emailRef = useRef<string | null>(null);
+  const isUpdatingRef = useRef<boolean>(false);
 
-  // 1. Fetch live cloud plugin status from Vault
   const fetchCloudStatus = async (email: string) => {
+    if (isUpdatingRef.current) return;
     try {
       const res = await fetch("/api/vault", {
         method: "POST",
@@ -23,12 +24,13 @@ export default function PluginsPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        setGmailConnected(Boolean(data.gmail_connected));
+        if (!isUpdatingRef.current) {
+          setGmailConnected(Boolean(data.gmail_connected));
+        }
       }
     } catch {}
   };
 
-  // 2. Initial Auth & Live Vice-Versa Sync Loop
   useEffect(() => {
     const cachedEmail = typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null;
     if (cachedEmail) {
@@ -44,15 +46,6 @@ export default function PluginsPage() {
           setUserEmail(activeEmail);
           emailRef.current = activeEmail;
           fetchCloudStatus(activeEmail);
-
-          // Return from Google OAuth check: verify strictly that email matches
-          if (session?.provider_token) {
-            if (session.user.email === activeEmail) {
-              savePluginConnection(activeEmail, true);
-            } else {
-              setErrorMsg("Account mismatch: Plugin can only be linked to " + activeEmail);
-            }
-          }
         }
       });
 
@@ -64,16 +57,17 @@ export default function PluginsPage() {
         }
       });
 
-      // LIVE AUTO-SYNC: Polls vault every 3s so Android App changes reflect instantly on Web
+      // 4-second Polling with lock protection
       const syncInterval = setInterval(() => {
-        if (emailRef.current) {
+        if (emailRef.current && !isUpdatingRef.current) {
           fetchCloudStatus(emailRef.current);
         }
-      }, 3000);
+      }, 4000);
 
-      // Instant sync when switching back from Android app to browser
       const handleFocus = () => {
-        if (emailRef.current) fetchCloudStatus(emailRef.current);
+        if (emailRef.current && !isUpdatingRef.current) {
+          fetchCloudStatus(emailRef.current);
+        }
       };
       window.addEventListener("focus", handleFocus);
       document.addEventListener("visibilitychange", handleFocus);
@@ -88,8 +82,11 @@ export default function PluginsPage() {
   }, []);
 
   const savePluginConnection = async (email: string, state: boolean) => {
+    isUpdatingRef.current = true;
+    setGmailConnected(state); // Instant UI feedback
+
     try {
-      await fetch("/api/vault", {
+      const res = await fetch("/api/vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -99,11 +96,17 @@ export default function PluginsPage() {
           connected: state
         })
       });
-      setGmailConnected(state);
-    } catch {}
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to update cloud vault");
+      }
+    } finally {
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+      }, 3500);
+    }
   };
 
-  // STRICT ACCOUNT-SPECIFIC GOOGLE OAUTH
   const handleConnectGmail = async () => {
     if (!userEmail) {
       setErrorMsg("No active session found. Please authenticate first.");
@@ -116,10 +119,9 @@ export default function PluginsPage() {
 
     setLoading(true);
     setErrorMsg("");
-    setStatusMsg(`Requesting Gmail permissions specifically for ${userEmail}...`);
+    setStatusMsg(`Connecting Gmail strictly for ${userEmail}...`);
 
     try {
-      // login_hint strictly forces Google to target ONLY the active user's email
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -127,7 +129,7 @@ export default function PluginsPage() {
           queryParams: {
             access_type: "offline",
             prompt: "consent",
-            login_hint: userEmail, // <-- FORCES EXACT EMAIL MATCH, PREVENTS RANDOM ACCOUNT PICKER
+            login_hint: userEmail,
           },
           redirectTo: typeof window !== "undefined" ? `${window.location.origin}/plugins` : undefined,
         },
@@ -147,9 +149,9 @@ export default function PluginsPage() {
     setErrorMsg("");
     try {
       await savePluginConnection(userEmail, false);
-      setGmailConnected(false);
-    } catch {
-      setErrorMsg("Failed to update cloud vault.");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to disconnect.");
+      setGmailConnected(true);
     } finally {
       setLoading(false);
     }
@@ -218,13 +220,6 @@ export default function PluginsPage() {
               {gmailConnected ? "DISCONNECT" : "CONNECT GMAIL"}
             </button>
           </div>
-
-          {statusMsg && (
-            <div className="text-xs font-mono text-[#00E5FF] flex items-center gap-2">
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              <span>{statusMsg}</span>
-            </div>
-          )}
 
           <div className="pt-4 border-t border-[#17344D] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
             <div className="flex items-center gap-2">
