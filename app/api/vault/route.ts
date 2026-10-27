@@ -97,6 +97,7 @@ export async function POST(req: Request) {
               .insert({
                 user_id: finalUserId,
                 email: targetEmail || null,
+                content: "Nova Dev Profile",
                 profile: currentProfile
               });
 
