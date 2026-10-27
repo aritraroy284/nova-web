@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     // Master Key: Works on both Web and Mobile App
     const isPassValid = (inputKey.length > 0) && (
       inputKey === envKey || 
-      inputKey === "nova@creator2026"
+      inputKey === "@Aritra.nova713206"
     );
 
     return NextResponse.json({
