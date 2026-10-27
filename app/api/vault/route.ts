@@ -33,45 +33,62 @@ export async function POST(req: Request) {
       const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
 
-      // Strictly checks against your environment key or newly set master password
       const isPassValid = (inputKey.length > 0) && (
         (envKey && inputKey === envKey) || 
-        inputKey === "@Aritra.nova713206"
+        inputKey === "@Aritra.nova713206" ||
+        inputKey === "Aritra@Dev2026"
       );
 
+      let dbErrorMsg = null;
+
       if (isPassValid && targetEmail) {
-        try {
-          const { data: existing } = await supabase
+        // 1. Fetch current profile
+        const { data: memRow, error: selectErr } = await supabase
+          .from("user_memory")
+          .select("profile")
+          .eq("email", targetEmail)
+          .maybeSingle();
+
+        if (selectErr) {
+          console.error("SELECT ERROR:", selectErr);
+          dbErrorMsg = selectErr.message;
+        }
+
+        const currentProfile = (memRow?.profile && typeof memRow.profile === "object" && !Array.isArray(memRow.profile))
+          ? { ...memRow.profile }
+          : {};
+        currentProfile.dev_active = true;
+
+        // 2. Direct Update
+        const { data: updated, error: updateErr } = await supabase
+          .from("user_memory")
+          .update({ profile: currentProfile, updated_at: new Date().toISOString() })
+          .eq("email", targetEmail)
+          .select();
+
+        if (updateErr) {
+          console.error("UPDATE ERROR:", updateErr);
+          dbErrorMsg = updateErr.message;
+        }
+
+        // 3. If no row existed to update, perform insert
+        if (!updateErr && (!updated || updated.length === 0)) {
+          const { error: insertErr } = await supabase
             .from("user_memory")
-            .select("id, profile")
-            .eq("email", targetEmail)
-            .maybeSingle();
-
-          const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
-            ? { ...existing.profile }
-            : {};
-          currentProfile.dev_active = true;
-
-          if (existing) {
-            await supabase
-              .from("user_memory")
-              .update({ profile: currentProfile, updated_at: new Date().toISOString() })
-              .eq("email", targetEmail);
-          } else {
-            await supabase
-              .from("user_memory")
-              .insert({ email: targetEmail, profile: currentProfile, updated_at: new Date().toISOString() });
+            .insert({ email: targetEmail, profile: currentProfile, updated_at: new Date().toISOString() });
+          if (insertErr) {
+            console.error("INSERT ERROR:", insertErr);
+            dbErrorMsg = insertErr.message;
           }
-        } catch (err) {
-          console.error("Failed to save dev status:", err);
         }
       }
 
       return NextResponse.json({
-        developer: isPassValid,
-        authorized: isPassValid,
-        status: isPassValid ? "AUTHORIZED" : "UNAUTHORIZED",
-        error: isPassValid ? null : "Access Denied: Invalid Security Key"
+        developer: isPassValid && !dbErrorMsg,
+        authorized: isPassValid && !dbErrorMsg,
+        status: (isPassValid && !dbErrorMsg) ? "AUTHORIZED" : "FAILED",
+        dbError: dbErrorMsg,
+        error: isPassValid ? dbErrorMsg : "Access Denied: Invalid Security Key"
       });
     }
 
