@@ -13,7 +13,7 @@ export default function PluginsPage() {
   const emailRef = useRef<string | null>(null);
   const isUpdatingRef = useRef<boolean>(false);
 
-  // Strictly fetch status for the active authenticated account
+  // Dynamic status fetch based on current session email
   const fetchCloudStatus = async (email: string) => {
     if (!email || isUpdatingRef.current) return;
     try {
@@ -32,6 +32,20 @@ export default function PluginsPage() {
   };
 
   useEffect(() => {
+    // 1. Detect if returning from an OAuth callback or user cancel
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
+      const error = urlParams.get("error") || hashParams.get("error");
+      
+      if (error) {
+        setErrorMsg("Google authorization was cancelled or denied.");
+        // Ensure state remains strictly disconnected
+        setGmailConnected(false);
+      }
+    }
+
+    // 2. Dynamic session detection
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         const activeEmail = session?.user?.email || (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null);
@@ -42,44 +56,67 @@ export default function PluginsPage() {
         }
       });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if (session?.user?.email) {
           setUserEmail(session.user.email);
           emailRef.current = session.user.email;
-          fetchCloudStatus(session.user.email);
+
+          // If user just successfully authorized via OAuth return
+          if (event === "SIGNED_IN") {
+            // Verify if provider token exists or sync cloud
+            fetchCloudStatus(session.user.email);
+          }
         }
       });
 
-      // Live 3-second auto-sync with App
       const interval = setInterval(() => {
         if (emailRef.current && !isUpdatingRef.current) {
           fetchCloudStatus(emailRef.current);
         }
       }, 3000);
 
-      const onFocus = () => {
-        if (emailRef.current && !isUpdatingRef.current) {
-          fetchCloudStatus(emailRef.current);
-        }
-      };
-      window.addEventListener("focus", onFocus);
-
       return () => {
         subscription.unsubscribe();
         clearInterval(interval);
-        window.removeEventListener("focus", onFocus);
       };
     }
   }, []);
 
-  // 1-Click Clean Toggle (No Supabase redirect, no glitch)
-  const togglePluginState = async () => {
+  // Trigger real Google OAuth consent screen
+  const handleConnect = async () => {
     if (!userEmail) {
-      setErrorMsg("Please sign in to Nova to manage plugins.");
+      setErrorMsg("Please sign in to Nova before linking plugins.");
       return;
     }
+    if (!supabase) return;
 
-    const nextState = !gmailConnected;
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          scopes: "https://www.googleapis.com/auth/gmail.readonly",
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+            login_hint: userEmail,
+          },
+          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/plugins` : undefined,
+        },
+      });
+
+      if (error) throw error;
+      // Do NOT setConnected(true) here! State will only update after successful OAuth callback.
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to launch Google authentication.");
+      setLoading(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!userEmail) return;
     setLoading(true);
     setErrorMsg("");
     isUpdatingRef.current = true;
@@ -92,23 +129,20 @@ export default function PluginsPage() {
           action: "SET_PLUGIN",
           email: userEmail.trim().toLowerCase(),
           plugin: "gmail",
-          connected: nextState
+          connected: false
         })
       });
-
       const data = await res.json();
-      if (!res.ok || data.error) {
-        throw new Error(data.error || "Failed to update cloud vault");
+      if (res.ok && !data.error) {
+        setGmailConnected(false);
       }
-      // Strictly update UI only after server succeeds
-      setGmailConnected(nextState);
     } catch (err: any) {
-      setErrorMsg(err.message || "Failed to sync plugin state.");
+      setErrorMsg("Failed to disconnect plugin.");
     } finally {
       setLoading(false);
       setTimeout(() => {
         isUpdatingRef.current = false;
-      }, 1500);
+      }, 2000);
     }
   };
 
@@ -118,7 +152,7 @@ export default function PluginsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-mono">Plugins & Integrations</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Plugins are strictly bound to your active account:{" "}
+            Plugins are dynamically bound to active session:{" "}
             <span className="text-[#00E5FF] font-mono font-semibold">
               {userEmail || "Detecting Cloud Session..."}
             </span>
@@ -156,14 +190,13 @@ export default function PluginsPage() {
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
-                  Scans unread emails and generates AI audio briefings. Isolated strictly to{" "}
-                  <span className="text-[#00E5FF] font-mono">{userEmail || "your signed-in account"}</span>.
+                  Scans unread emails and generates AI audio briefings. Dynamic access tied to active session.
                 </p>
               </div>
             </div>
 
             <button
-              onClick={togglePluginState}
+              onClick={gmailConnected ? handleDisconnect : handleConnect}
               disabled={loading || !userEmail}
               className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 ${
                 gmailConnected
@@ -183,7 +216,7 @@ export default function PluginsPage() {
             </div>
             <div className="text-[11px] text-[#00E5FF] flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Bound Account: {userEmail || "None"}</span>
+              <span>Session: {userEmail || "None"}</span>
             </div>
           </div>
         </div>
