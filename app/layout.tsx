@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "Nova AI - Autonomous On-Device Co-Pilot",
   description: "Executive control plane for Nova AI core routing, provider credentials, and tools.",
