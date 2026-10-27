@@ -31,12 +31,22 @@ export async function POST(req: Request) {
     if (action === "VERIFY_DEV") {
     const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
     const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
-    
-    // Master Key: Works on both Web and Mobile App
+    const userEmail = (body.email || "").trim().toLowerCase();
+
     const isPassValid = (inputKey.length > 0) && (
       inputKey === envKey || 
-      inputKey === "@Aritra.nova713206"
+      inputKey === "nova@creator2026"
     );
+
+    if (isPassValid && userEmail) {
+      try {
+        await supabase
+          .from("user_memory")
+          .upsert({ email: userEmail, dev_active: true }, { onConflict: "email" });
+      } catch (err) {
+        console.error("Failed to persist dev status:", err);
+      }
+    }
 
     return NextResponse.json({
       developer: isPassValid,
@@ -44,6 +54,36 @@ export async function POST(req: Request) {
       status: isPassValid ? "AUTHORIZED" : "UNAUTHORIZED",
       error: isPassValid ? null : "Access Denied: Invalid Security Key"
     });
+  }
+
+  if (action === "LOCK_DEV") {
+    const userEmail = (body.email || "").trim().toLowerCase();
+    if (userEmail) {
+      try {
+        await supabase
+          .from("user_memory")
+          .upsert({ email: userEmail, dev_active: false }, { onConflict: "email" });
+      } catch (err) {
+        console.error("Failed to lock dev status:", err);
+      }
+    }
+    return NextResponse.json({ developer: false, authorized: false, status: "LOCKED" });
+  }
+
+  if (action === "GET_DEV_STATUS") {
+    const userEmail = (body.email || "").trim().toLowerCase();
+    let isDev = false;
+    if (userEmail) {
+      try {
+        const { data } = await supabase
+          .from("user_memory")
+          .select("dev_active")
+          .eq("email", userEmail)
+          .single();
+        if (data && data.dev_active) isDev = true;
+      } catch (err) {}
+    }
+    return NextResponse.json({ developer: isDev, authorized: isDev });
   }
 
   if (action === "SYNC_KEYS" || action === "GET_KEYS") {

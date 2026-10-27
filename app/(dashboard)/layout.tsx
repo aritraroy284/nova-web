@@ -46,6 +46,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (session?.user?.email) {
+      fetch("/api/vault", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "GET_DEV_STATUS", email: session.user.email })
+      })
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.developer) {
+          setIsDev(true);
+          localStorage.setItem("nova_dev_active", "true");
+        } else if (d && d.developer === false) {
+          setIsDev(false);
+          localStorage.removeItem("nova_dev_active");
+        }
+      })
+      .catch(() => {});
+    }
+  }, [session?.user?.email]);
+
+  useEffect(() => {
     const savedTheme = localStorage.getItem("nova_theme");
     const dark = savedTheme !== "light";
     setIsDark(dark);
