@@ -29,16 +29,24 @@ export async function POST(req: Request) {
 
     // 1. CLOUD DEVELOPER CLEARANCE GATE
     if (action === "VERIFY_DEV") {
-      const activeDevPassword = process.env.NOVA_DEV_PASSWORD || "nova@creator2026";
-      const isPassValid = devPassword && devPassword.trim() === activeDevPassword;
-      return NextResponse.json({
-        authorized: Boolean(isPassValid),
-        role: isPassValid ? "CREATOR" : "USER"
-      });
-    }
+    const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
+    const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
+    
+    // Master Key: Works on both Web and Mobile App
+    const isPassValid = (inputKey.length > 0) && (
+      inputKey === envKey || 
+      inputKey === "nova@creator2026"
+    );
 
-    // 2. ACCOUNT-SPECIFIC API KEY SYNC
-    if (action === "SYNC_KEYS" || action === "GET_KEYS") {
+    return NextResponse.json({
+      developer: isPassValid,
+      authorized: isPassValid,
+      status: isPassValid ? "AUTHORIZED" : "UNAUTHORIZED",
+      error: isPassValid ? null : "Access Denied: Invalid Security Key"
+    });
+  }
+
+  if (action === "SYNC_KEYS" || action === "GET_KEYS") {
       if (!cleanEmail) return NextResponse.json({ configured: false, gemini_key: "", groq_key: "", openrouter_key: "" });
 
       const { data } = await supabase
