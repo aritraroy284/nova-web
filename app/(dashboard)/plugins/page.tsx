@@ -1,29 +1,34 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Mail, Smartphone, Radio, RefreshCw, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Mail, Smartphone, Radio, RefreshCw, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { supabase } from "@/app/lib/supabase";
 
 export default function PluginsPage() {
   const [gmailConnected, setGmailConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [statusMsg, setStatusMsg] = useState<string>("");
 
   useEffect(() => {
-    // 1. Instant local storage pickup (0ms render)
     const cachedEmail = typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null;
     if (cachedEmail) {
       setUserEmail(cachedEmail);
       fetchCloudStatus(cachedEmail);
     }
 
-    // 2. Supabase session sync
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         const activeEmail = session?.user?.email || cachedEmail;
         if (activeEmail) {
           setUserEmail(activeEmail);
           fetchCloudStatus(activeEmail);
+
+          // Check if user just returned from Google OAuth consent flow
+          const providerToken = session?.provider_token;
+          if (providerToken) {
+            savePluginConnection(activeEmail, true);
+          }
         }
       });
 
@@ -53,28 +58,60 @@ export default function PluginsPage() {
     } catch {}
   };
 
-  const handleToggleGmail = async () => {
-    if (!userEmail) {
-      alert("Please sign in with your Google account first.");
-      return;
-    }
-    setLoading(true);
-    const nextState = !gmailConnected;
-
+  const savePluginConnection = async (email: string, state: boolean) => {
     try {
       await fetch("/api/vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "SET_PLUGIN",
-          email: userEmail,
+          email,
           plugin: "gmail",
-          connected: nextState
+          connected: state
         })
       });
-      setGmailConnected(nextState);
+      setGmailConnected(state);
+    } catch {}
+  };
+
+  const handleConnectGmail = async () => {
+    if (!supabase) {
+      alert("Supabase client not initialized.");
+      return;
+    }
+    setLoading(true);
+    setStatusMsg("Redirecting to Google Permission Screen...");
+
+    try {
+      // Trigger actual Google OAuth screen with Gmail Readonly Scope
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          scopes: "https://www.googleapis.com/auth/gmail.readonly",
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/plugins` : undefined,
+        },
+      });
+
+      if (error) throw error;
+    } catch (err: any) {
+      alert(err.message || "Failed to trigger Google access screen.");
+      setLoading(false);
+      setStatusMsg("");
+    }
+  };
+
+  const handleDisconnectGmail = async () => {
+    if (!userEmail) return;
+    setLoading(true);
+    try {
+      await savePluginConnection(userEmail, false);
+      setGmailConnected(false);
     } catch {
-      alert("Failed to update plugin state.");
+      alert("Failed to disconnect plugin.");
     } finally {
       setLoading(false);
     }
@@ -124,8 +161,8 @@ export default function PluginsPage() {
             </div>
 
             <button
-              onClick={handleToggleGmail}
-              disabled={loading || !userEmail}
+              onClick={gmailConnected ? handleDisconnectGmail : handleConnectGmail}
+              disabled={loading}
               className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 ${
                 gmailConnected
                   ? "border border-red-500/40 text-red-400 hover:bg-red-500/10"
@@ -136,6 +173,13 @@ export default function PluginsPage() {
               {gmailConnected ? "DISCONNECT" : "CONNECT GMAIL"}
             </button>
           </div>
+
+          {statusMsg && (
+            <div className="text-xs font-mono text-[#00E5FF] flex items-center gap-2">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              <span>{statusMsg}</span>
+            </div>
+          )}
 
           <div className="pt-4 border-t border-[#17344D] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
             <div className="flex items-center gap-2">
