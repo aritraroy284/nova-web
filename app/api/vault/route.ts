@@ -62,7 +62,7 @@ export async function POST(req: Request) {
         // 2. Direct Update
         const { data: updated, error: updateErr } = await supabase
           .from("user_memory")
-          .update({ profile: currentProfile, updated_at: new Date().toISOString() })
+          .update({ profile: currentProfile })
           .eq("email", targetEmail)
           .select();
 
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
         if (!updateErr && (!updated || updated.length === 0)) {
           const { error: insertErr } = await supabase
             .from("user_memory")
-            .insert({ email: targetEmail, profile: currentProfile, updated_at: new Date().toISOString() });
+            .insert({ email: targetEmail, profile: currentProfile });
           if (insertErr) {
             console.error("INSERT ERROR:", insertErr);
             dbErrorMsg = insertErr.message;
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
 
             await supabase
               .from("user_memory")
-              .update({ profile: currentProfile, updated_at: new Date().toISOString() })
+              .update({ profile: currentProfile })
               .eq("id", existing.id);
           }
         } catch (err) {
@@ -203,7 +203,7 @@ export async function POST(req: Request) {
       await supabase.from("user_memory").upsert({
         email: cleanEmail,
         facts: factsArray,
-        updated_at: new Date().toISOString()
+        
       }, { onConflict: "email" });
 
       return NextResponse.json({ success: true, count: factsArray.length });
