@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"menu" | "email">("menu");
 
-  const [user, setUser] = useState<{ name: string; username: string; email: string; avatar?: string } | null>(null);
+  const [user, setUser] = useState<{ id?: string; name: string; username: string; email: string; avatar?: string } | null>(null);
 
   // Developer Clearance States
   const [isDev, setIsDev] = useState(() => typeof window !== "undefined" && localStorage.getItem("nova_dev_active") === "true");
@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       fetch("/api/vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "GET_DEV_STATUS", email: user?.email || "" })
+        body: JSON.stringify({ action: "GET_DEV_STATUS", email: user?.email || "", userId: user?.id || "" })
       })
       .then(r => r.json())
       .then(d => {

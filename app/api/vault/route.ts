@@ -27,59 +27,86 @@ export async function POST(req: Request) {
     const cleanEmail = (email || "").trim().toLowerCase();
     const supabase = getAdminSupabase();
 
-    // 1. CLOUD DEVELOPER CLEARANCE GATE (Safe Profile-Bound DB Sync)
+    // 1. CLOUD DEVELOPER CLEARANCE GATE (Safe Profile-Bound DB Sync with user_id)
     if (action === "VERIFY_DEV") {
       const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
       const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
+      const targetUserId = (body.userId || body.user_id || "").trim();
 
       const isPassValid = (inputKey.length > 0) && (
         (envKey && inputKey === envKey) || 
-        inputKey === "@Aritra.nova713206" ||
-        inputKey === "Aritra@Dev2026"
+        inputKey === "@Aritra.nova713206"
       );
 
       let dbErrorMsg = null;
 
-      if (isPassValid && targetEmail) {
-        // 1. Fetch current profile
-        const { data: memRow, error: selectErr } = await supabase
-          .from("user_memory")
-          .select("profile")
-          .eq("email", targetEmail)
-          .maybeSingle();
-
-        if (selectErr) {
-          console.error("SELECT ERROR:", selectErr);
-          dbErrorMsg = selectErr.message;
-        }
-
-        const currentProfile = (memRow?.profile && typeof memRow.profile === "object" && !Array.isArray(memRow.profile))
-          ? { ...memRow.profile }
-          : {};
-        currentProfile.dev_active = true;
-
-        // 2. Direct Update
-        const { data: updated, error: updateErr } = await supabase
-          .from("user_memory")
-          .update({ profile: currentProfile })
-          .eq("email", targetEmail)
-          .select();
-
-        if (updateErr) {
-          console.error("UPDATE ERROR:", updateErr);
-          dbErrorMsg = updateErr.message;
-        }
-
-        // 3. If no row existed to update, perform insert
-        if (!updateErr && (!updated || updated.length === 0)) {
-          const { error: insertErr } = await supabase
-            .from("user_memory")
-            .insert({ email: targetEmail, profile: currentProfile });
-          if (insertErr) {
-            console.error("INSERT ERROR:", insertErr);
-            dbErrorMsg = insertErr.message;
+      if (isPassValid && (targetEmail || targetUserId)) {
+        try {
+          let existing = null;
+          if (targetEmail) {
+            const { data } = await supabase
+              .from("user_memory")
+              .select("id, user_id, email, profile")
+              .eq("email", targetEmail)
+              .maybeSingle();
+            existing = data;
           }
+          if (!existing && targetUserId) {
+            const { data } = await supabase
+              .from("user_memory")
+              .select("id, user_id, email, profile")
+              .eq("user_id", targetUserId)
+              .maybeSingle();
+            existing = data;
+          }
+
+          const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
+            ? { ...existing.profile }
+            : {};
+          currentProfile.dev_active = true;
+
+          if (existing) {
+            const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
+            const filterVal = existing.user_id || existing.email || existing.id;
+            const { error: updateErr } = await supabase
+              .from("user_memory")
+              .update({ profile: currentProfile })
+              .eq(filterCol, filterVal);
+
+            if (updateErr) {
+              console.error("UPDATE ERROR:", updateErr);
+              dbErrorMsg = updateErr.message;
+            }
+          } else {
+            let finalUserId = targetUserId;
+            if (!finalUserId && targetEmail) {
+              const { data: keyRow } = await supabase
+                .from("user_api_keys")
+                .select("user_id")
+                .eq("email", targetEmail)
+                .maybeSingle();
+              if (keyRow?.user_id) finalUserId = keyRow.user_id;
+            }
+            if (!finalUserId) {
+              finalUserId = crypto.randomUUID();
+            }
+
+            const { error: insertErr } = await supabase
+              .from("user_memory")
+              .insert({
+                user_id: finalUserId,
+                email: targetEmail || null,
+                profile: currentProfile
+              });
+
+            if (insertErr) {
+              console.error("INSERT ERROR:", insertErr);
+              dbErrorMsg = insertErr.message;
+            }
+          }
+        } catch (err: any) {
+          dbErrorMsg = err.message;
         }
       }
 
@@ -94,24 +121,31 @@ export async function POST(req: Request) {
 
     if (action === "LOCK_DEV") {
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
-      if (targetEmail) {
+      const targetUserId = (body.userId || body.user_id || "").trim();
+      if (targetEmail || targetUserId) {
         try {
-          const { data: existing } = await supabase
-            .from("user_memory")
-            .select("id, profile")
-            .eq("email", targetEmail)
-            .maybeSingle();
+          let existing = null;
+          if (targetEmail) {
+            const { data } = await supabase.from("user_memory").select("id, user_id, email, profile").eq("email", targetEmail).maybeSingle();
+            existing = data;
+          }
+          if (!existing && targetUserId) {
+            const { data } = await supabase.from("user_memory").select("id, user_id, email, profile").eq("user_id", targetUserId).maybeSingle();
+            existing = data;
+          }
 
-          if (existing?.id) {
+          if (existing) {
             const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
               ? { ...existing.profile }
               : {};
             currentProfile.dev_active = false;
 
+            const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
+            const filterVal = existing.user_id || existing.email || existing.id;
             await supabase
               .from("user_memory")
               .update({ profile: currentProfile })
-              .eq("id", existing.id);
+              .eq(filterCol, filterVal);
           }
         } catch (err) {
           console.error("Failed to lock dev status:", err);
@@ -122,14 +156,19 @@ export async function POST(req: Request) {
 
     if (action === "GET_DEV_STATUS") {
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
+      const targetUserId = (body.userId || body.user_id || "").trim();
       let isDev = false;
-      if (targetEmail) {
+      if (targetEmail || targetUserId) {
         try {
-          const { data: memRow } = await supabase
-            .from("user_memory")
-            .select("profile")
-            .eq("email", targetEmail)
-            .maybeSingle();
+          let memRow = null;
+          if (targetEmail) {
+            const { data } = await supabase.from("user_memory").select("profile").eq("email", targetEmail).maybeSingle();
+            memRow = data;
+          }
+          if (!memRow && targetUserId) {
+            const { data } = await supabase.from("user_memory").select("profile").eq("user_id", targetUserId).maybeSingle();
+            memRow = data;
+          }
 
           if (memRow?.profile && typeof memRow.profile === "object" && memRow.profile.dev_active === true) {
             isDev = true;
