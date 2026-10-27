@@ -27,79 +27,123 @@ export async function POST(req: Request) {
     const cleanEmail = (email || "").trim().toLowerCase();
     const supabase = getAdminSupabase();
 
-    // 1. CLOUD DEVELOPER CLEARANCE GATE
+    // 1. CLOUD DEVELOPER CLEARANCE GATE (JSON-Profile Bound)
     if (action === "VERIFY_DEV") {
-    const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
-    const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
-    const userEmail = (body.email || "").trim().toLowerCase();
+      const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
+      const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
+      const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
 
-    const isPassValid = (inputKey.length > 0) && (
-      inputKey === envKey || 
-      inputKey === "nova@creator2026"
-    );
+      const isPassValid = (inputKey.length > 0) && (
+        inputKey === envKey || 
+        inputKey === "nova@creator2026"
+      );
 
-    if (isPassValid && userEmail) {
-      try {
-        await supabase
-          .from("user_memory")
-          .upsert({ email: userEmail, dev_active: true }, { onConflict: "email" });
-      } catch (err) {
-        console.error("Failed to persist dev status:", err);
+      if (isPassValid && targetEmail) {
+        try {
+          const { data: memRow } = await supabase
+            .from("user_memory")
+            .select("profile")
+            .eq("email", targetEmail)
+            .maybeSingle();
+
+          const currentProfile = (memRow?.profile && typeof memRow.profile === "object" && !Array.isArray(memRow.profile))
+            ? { ...memRow.profile }
+            : {};
+          currentProfile.dev_active = true;
+
+          await supabase.from("user_memory").upsert({
+            email: targetEmail,
+            profile: currentProfile,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "email" });
+        } catch (err) {
+          console.error("Failed to persist dev status in profile JSON:", err);
+        }
       }
+
+      return NextResponse.json({
+        developer: isPassValid,
+        authorized: isPassValid,
+        status: isPassValid ? "AUTHORIZED" : "UNAUTHORIZED",
+        error: isPassValid ? null : "Access Denied: Invalid Security Key"
+      });
     }
 
-    return NextResponse.json({
-      developer: isPassValid,
-      authorized: isPassValid,
-      status: isPassValid ? "AUTHORIZED" : "UNAUTHORIZED",
-      error: isPassValid ? null : "Access Denied: Invalid Security Key"
-    });
-  }
+    if (action === "LOCK_DEV") {
+      const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
+      if (targetEmail) {
+        try {
+          const { data: memRow } = await supabase
+            .from("user_memory")
+            .select("profile")
+            .eq("email", targetEmail)
+            .maybeSingle();
 
-  if (action === "LOCK_DEV") {
-    const userEmail = (body.email || "").trim().toLowerCase();
-    if (userEmail) {
-      try {
-        await supabase
-          .from("user_memory")
-          .upsert({ email: userEmail, dev_active: false }, { onConflict: "email" });
-      } catch (err) {
-        console.error("Failed to lock dev status:", err);
+          const currentProfile = (memRow?.profile && typeof memRow.profile === "object" && !Array.isArray(memRow.profile))
+            ? { ...memRow.profile }
+            : {};
+          currentProfile.dev_active = false;
+
+          await supabase.from("user_memory").upsert({
+            email: targetEmail,
+            profile: currentProfile,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "email" });
+        } catch (err) {
+          console.error("Failed to lock dev status in profile JSON:", err);
+        }
       }
+      return NextResponse.json({ developer: false, authorized: false, status: "LOCKED" });
     }
-    return NextResponse.json({ developer: false, authorized: false, status: "LOCKED" });
-  }
 
-  if (action === "GET_DEV_STATUS") {
-    const userEmail = (body.email || "").trim().toLowerCase();
-    let isDev = false;
-    if (userEmail) {
-      try {
-        const { data } = await supabase
-          .from("user_memory")
-          .select("dev_active")
-          .eq("email", userEmail)
-          .single();
-        if (data && data.dev_active) isDev = true;
-      } catch (err) {}
+    if (action === "GET_DEV_STATUS") {
+      const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
+      let isDev = false;
+      if (targetEmail) {
+        try {
+          const { data: memRow } = await supabase
+            .from("user_memory")
+            .select("profile")
+            .eq("email", targetEmail)
+            .maybeSingle();
+
+          if (memRow?.profile && typeof memRow.profile === "object" && memRow.profile.dev_active === true) {
+            isDev = true;
+          }
+        } catch (err) {
+          console.error("GET_DEV_STATUS error:", err);
+        }
+      }
+      return NextResponse.json({ developer: isDev, authorized: isDev });
     }
-    return NextResponse.json({ developer: isDev, authorized: isDev });
-  }
 
-  if (action === "SYNC_KEYS" || action === "GET_KEYS") {
-      if (!cleanEmail) return NextResponse.json({ configured: false, gemini_key: "", groq_key: "", openrouter_key: "" });
+    if (action === "SYNC_KEYS" || action === "GET_KEYS") {
+      if (!cleanEmail) return NextResponse.json({ configured: false, gemini_key: "", groq_key: "", openrouter_key: "", dev_active: false });
 
-      const { data } = await supabase
+      const { data: keyData } = await supabase
         .from("user_api_keys")
         .select("gemini_key, groq_key, openrouter_key")
         .eq("email", cleanEmail)
         .maybeSingle();
 
+      let isDev = false;
+      try {
+        const { data: memRow } = await supabase
+          .from("user_memory")
+          .select("profile")
+          .eq("email", cleanEmail)
+          .maybeSingle();
+        if (memRow?.profile && typeof memRow.profile === "object" && memRow.profile.dev_active === true) {
+          isDev = true;
+        }
+      } catch (err) {}
+
       return NextResponse.json({
-        configured: Boolean(data?.gemini_key),
-        gemini_key: data?.gemini_key || "",
-        groq_key: data?.groq_key || "",
-        openrouter_key: data?.openrouter_key || ""
+        configured: Boolean(keyData?.gemini_key),
+        gemini_key: keyData?.gemini_key || "",
+        groq_key: keyData?.groq_key || "",
+        openrouter_key: keyData?.openrouter_key || "",
+        dev_active: isDev
       });
     }
 
