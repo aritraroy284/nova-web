@@ -38,18 +38,36 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [pathname]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const email = localStorage.getItem("nova_user_email") || "";
-      setUserEmail(email);
+    if (typeof window === "undefined") return;
 
-      const devCached = localStorage.getItem("nova_dev_active") === "true";
-      setIsDev(devCached);
+    let localMail = localStorage.getItem("nova_user_email") || "";
+    if (localMail) setUserEmail(localMail);
 
-      if (email) {
+    const devCached = localStorage.getItem("nova_dev_active") === "true";
+    setIsDev(devCached);
+
+    // Dynamic browser-side Supabase recovery (SSR safe)
+    async function restoreSession() {
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        if (url && key) {
+          const client = createClient(url, key);
+          const { data } = await client.auth.getSession();
+          if (data?.session?.user?.email) {
+            localMail = data.session.user.email;
+            setUserEmail(localMail);
+            localStorage.setItem("nova_user_email", localMail);
+          }
+        }
+      } catch (err) {}
+
+      if (localMail) {
         fetch("/api/vault", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "GET_DEV_STATUS", email }),
+          body: JSON.stringify({ action: "GET_DEV_STATUS", email: localMail }),
         })
           .then((r) => r.json())
           .then((d) => {
@@ -61,6 +79,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           .catch(() => {});
       }
     }
+
+    restoreSession();
   }, []);
 
   const handleVerifyDev = async (e: React.FormEvent) => {
@@ -216,7 +236,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </button>
                 </div>
               ) : (
-                <Link href="/login" className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2">
+                <Link href="/" className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2">
                   <UserCheck className="w-4 h-4" />
                   <span>SIGN IN / REGISTER</span>
                 </Link>
@@ -279,7 +299,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </button>
             </div>
           ) : (
-            <Link href="/login" className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2">
+            <Link href="/" className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2">
               <UserCheck className="w-4 h-4" />
               <span>SIGN IN / REGISTER</span>
             </Link>
