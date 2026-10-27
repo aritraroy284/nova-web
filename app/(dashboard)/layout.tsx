@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       fetch("/api/vault", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "GET_DEV_STATUS", email: session.user.email })
+        body: JSON.stringify({ action: "GET_DEV_STATUS", email: session?.user?.email || "" })
       })
       .then(r => r.json())
       .then(d => {
