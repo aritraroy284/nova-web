@@ -27,27 +27,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const [userEmail, setUserEmail] = useState<string>("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  // Dev Clearance State
   const [isDev, setIsDev] = useState<boolean>(false);
   const [isDevModalOpen, setIsDevModalOpen] = useState<boolean>(false);
   const [devPasswordInput, setDevPasswordInput] = useState<string>("");
   const [devAuthLoading, setDevAuthLoading] = useState<boolean>(false);
   const [devErrorMsg, setDevErrorMsg] = useState<string>("");
 
+  // User Auth Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
+  const [authEmail, setAuthEmail] = useState<string>("");
+  const [authPassword, setAuthPassword] = useState<string>("");
+  const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string>("");
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Session Recovery via Supabase client
+  // Session Recovery
   useEffect(() => {
+    let isMounted = true;
     async function loadSession() {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const email = session?.user?.email || localStorage.getItem("nova_user_email") || "";
-        if (email) {
+        if (!supabase) return;
+        const { data } = await supabase.auth.getSession();
+        const email = data?.session?.user?.email || (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : "") || "";
+        if (email && isMounted) {
           setUserEmail(email);
           localStorage.setItem("nova_user_email", email);
 
-          // Fetch cloud dev status
           const res = await fetch("/api/vault", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -65,15 +76,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
     loadSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
-        localStorage.setItem("nova_user_email", session.user.email);
-      }
-    });
+    let sub: any = null;
+    if (supabase) {
+      const listener = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user?.email && isMounted) {
+          setUserEmail(session.user.email);
+          localStorage.setItem("nova_user_email", session.user.email);
+        }
+      });
+      sub = listener?.data?.subscription;
+    }
 
     return () => {
-      subscription.unsubscribe();
+      isMounted = false;
+      if (sub && typeof sub.unsubscribe === "function") sub.unsubscribe();
     };
   }, []);
 
@@ -123,6 +139,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const handleGoogleSignIn = async () => {
     try {
+      if (!supabase) return;
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -185,7 +202,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      if (supabase) await supabase.auth.signOut();
     } catch {}
     localStorage.removeItem("nova_user_email");
     localStorage.removeItem("nova_dev_active");
@@ -209,9 +226,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-[#040B14] text-slate-100 flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20">
-      {/* =========================================================
-          MOBILE STICKY TOP BAR (Visible only on mobile < 768px)
-      ========================================================= */}
+      {/* MOBILE STICKY TOP BAR (< 768px) */}
       <header className="md:hidden sticky top-0 z-40 h-16 w-full bg-[#040B14]/95 backdrop-blur-md border-b border-[#17344D] px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
@@ -238,9 +253,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </button>
       </header>
 
-      {/* =========================================================
-          MOBILE SLIDE-OVER DRAWER (Visible only when opened on mobile)
-      ========================================================= */}
+      {/* MOBILE SLIDE-OVER DRAWER */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex">
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
@@ -292,7 +305,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </button>
                 </div>
               ) : (
-                <button onClick={() => { setIsAuthModalOpen(true); setIsMobileMenuOpen(false); setAuthError(""); }} className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all">
+                <button
+                  onClick={() => { setIsAuthModalOpen(true); setIsMobileMenuOpen(false); setAuthError(""); }}
+                  className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all"
+                >
                   <UserCheck className="w-4 h-4" />
                   <span>SIGN IN / REGISTER</span>
                 </button>
@@ -302,9 +318,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* =========================================================
-          DESKTOP PERSISTENT SIDEBAR (Visible on md: >= 768px)
-      ========================================================= */}
+      {/* DESKTOP SIDEBAR (>= 768px) */}
       <aside className="hidden md:flex md:w-64 lg:w-72 md:flex-col md:fixed md:inset-y-0 bg-[#06101E] border-r border-[#17344D] z-30 select-none justify-between p-5">
         <div>
           <div className="flex items-center gap-3 pb-6 border-b border-[#17344D]">
@@ -360,26 +374,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </button>
             </div>
           ) : (
-            <Link href="/" className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2">
+            <button
+              onClick={() => { setIsAuthModalOpen(true); setAuthError(""); }}
+              className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all"
+            >
               <UserCheck className="w-4 h-4" />
-              <span>SIGN IN</span>
-            </Link>
+              <span>SIGN IN / REGISTER</span>
+            </button>
           )}
         </div>
       </aside>
 
-      {/* =========================================================
-          MAIN VIEWPORT (Auto-adjusts for mobile vs desktop)
-      ========================================================= */}
+      {/* MAIN VIEWPORT */}
       <div className="flex-1 flex flex-col md:pl-64 lg:pl-72 min-w-0 w-full">
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6">
           {children}
         </main>
       </div>
 
-            {/* =========================================================
-          USER AUTHENTICATION MODAL (Sign In / Register)
-      ========================================================= */}
+      {/* AUTHENTICATION MODAL */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl bg-[#091726] border border-[#00E5FF]/50 p-6 space-y-4 shadow-[0_0_30px_rgba(0,229,255,0.2)]">
@@ -395,7 +408,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </button>
             </div>
 
-            {/* Toggle Sign In / Sign Up */}
             <div className="flex p-1 rounded-xl bg-[#040B14] border border-[#17344D]">
               <button
                 type="button"
