@@ -13,7 +13,7 @@ export default function PluginsPage() {
   const emailRef = useRef<string | null>(null);
   const isUpdatingRef = useRef<boolean>(false);
 
-  // Dynamic status fetch based on current session email
+  // Fetch status from cloud vault
   const fetchCloudStatus = async (email: string) => {
     if (!email || isUpdatingRef.current) return;
     try {
@@ -31,44 +31,82 @@ export default function PluginsPage() {
     } catch {}
   };
 
-  useEffect(() => {
-    // 1. Detect if returning from an OAuth callback or user cancel
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
-      const error = urlParams.get("error") || hashParams.get("error");
-      
-      if (error) {
-        setErrorMsg("Google authorization was cancelled or denied.");
-        // Ensure state remains strictly disconnected
-        setGmailConnected(false);
+  // Save plugin state to cloud vault
+  const savePluginState = async (email: string, state: boolean) => {
+    isUpdatingRef.current = true;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/vault", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "SET_PLUGIN",
+          email: email.trim().toLowerCase(),
+          plugin: "gmail",
+          connected: state
+        })
+      });
+      const data = await res.json();
+      if (res.ok && !data.error) {
+        setGmailConnected(state);
+      } else {
+        throw new Error(data.error || "Failed to update cloud vault");
       }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to sync state.");
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+      }, 1500);
+    }
+  };
+
+  useEffect(() => {
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const pendingPlugin = typeof window !== "undefined" ? sessionStorage.getItem("nova_pending_plugin") : null;
+
+    // Detect if Google returned a token or an error
+    const isOAuthReturn = currentUrl.includes("access_token=") || currentUrl.includes("code=");
+    const isOAuthError = currentUrl.includes("error=");
+
+    if (isOAuthError) {
+      if (typeof window !== "undefined") sessionStorage.removeItem("nova_pending_plugin");
+      setErrorMsg("Google authorization was cancelled or denied.");
+      setGmailConnected(false);
     }
 
-    // 2. Dynamic session detection
+    const handleAuthSession = async (email: string) => {
+      setUserEmail(email);
+      emailRef.current = email;
+
+      // SUCCESSFUL RETURN FROM GOOGLE CONSENT!
+      if (pendingPlugin === "gmail" && isOAuthReturn && !isOAuthError) {
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem("nova_pending_plugin");
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        await savePluginState(email, true);
+      } else {
+        await fetchCloudStatus(email);
+      }
+    };
+
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         const activeEmail = session?.user?.email || (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null);
         if (activeEmail) {
-          setUserEmail(activeEmail);
-          emailRef.current = activeEmail;
-          fetchCloudStatus(activeEmail);
+          handleAuthSession(activeEmail);
         }
       });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user?.email) {
-          setUserEmail(session.user.email);
-          emailRef.current = session.user.email;
-
-          // If user just successfully authorized via OAuth return
-          if (event === "SIGNED_IN") {
-            // Verify if provider token exists or sync cloud
-            fetchCloudStatus(session.user.email);
-          }
+          handleAuthSession(session.user.email);
         }
       });
 
+      // Bi-directional live polling (mirrors App every 3 seconds)
       const interval = setInterval(() => {
         if (emailRef.current && !isUpdatingRef.current) {
           fetchCloudStatus(emailRef.current);
@@ -82,7 +120,6 @@ export default function PluginsPage() {
     }
   }, []);
 
-  // Trigger real Google OAuth consent screen
   const handleConnect = async () => {
     if (!userEmail) {
       setErrorMsg("Please sign in to Nova before linking plugins.");
@@ -94,6 +131,10 @@ export default function PluginsPage() {
     setErrorMsg("");
 
     try {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("nova_pending_plugin", "gmail");
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -108,8 +149,8 @@ export default function PluginsPage() {
       });
 
       if (error) throw error;
-      // Do NOT setConnected(true) here! State will only update after successful OAuth callback.
     } catch (err: any) {
+      if (typeof window !== "undefined") sessionStorage.removeItem("nova_pending_plugin");
       setErrorMsg(err.message || "Failed to launch Google authentication.");
       setLoading(false);
     }
@@ -117,33 +158,7 @@ export default function PluginsPage() {
 
   const handleDisconnect = async () => {
     if (!userEmail) return;
-    setLoading(true);
-    setErrorMsg("");
-    isUpdatingRef.current = true;
-
-    try {
-      const res = await fetch("/api/vault", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "SET_PLUGIN",
-          email: userEmail.trim().toLowerCase(),
-          plugin: "gmail",
-          connected: false
-        })
-      });
-      const data = await res.json();
-      if (res.ok && !data.error) {
-        setGmailConnected(false);
-      }
-    } catch (err: any) {
-      setErrorMsg("Failed to disconnect plugin.");
-    } finally {
-      setLoading(false);
-      setTimeout(() => {
-        isUpdatingRef.current = false;
-      }, 2000);
-    }
+    await savePluginState(userEmail, false);
   };
 
   return (
