@@ -27,37 +27,43 @@ export async function POST(req: Request) {
     const cleanEmail = (email || "").trim().toLowerCase();
     const supabase = getAdminSupabase();
 
-    // 1. CLOUD DEVELOPER CLEARANCE GATE (JSON-Profile Bound)
+    // 1. CLOUD DEVELOPER CLEARANCE GATE (Safe Profile-Bound DB Sync)
     if (action === "VERIFY_DEV") {
       const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
       const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
 
+      // Strictly checks against your environment key or newly set master password
       const isPassValid = (inputKey.length > 0) && (
-        inputKey === envKey || 
-        inputKey === "nova@creator2026"
+        (envKey && inputKey === envKey) || 
+        inputKey === ""
       );
 
       if (isPassValid && targetEmail) {
         try {
-          const { data: memRow } = await supabase
+          const { data: existing } = await supabase
             .from("user_memory")
-            .select("profile")
+            .select("id, profile")
             .eq("email", targetEmail)
             .maybeSingle();
 
-          const currentProfile = (memRow?.profile && typeof memRow.profile === "object" && !Array.isArray(memRow.profile))
-            ? { ...memRow.profile }
+          const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
+            ? { ...existing.profile }
             : {};
           currentProfile.dev_active = true;
 
-          await supabase.from("user_memory").upsert({
-            email: targetEmail,
-            profile: currentProfile,
-            updated_at: new Date().toISOString()
-          }, { onConflict: "email" });
+          if (existing?.id) {
+            await supabase
+              .from("user_memory")
+              .update({ profile: currentProfile, updated_at: new Date().toISOString() })
+              .eq("id", existing.id);
+          } else {
+            await supabase
+              .from("user_memory")
+              .insert({ email: targetEmail, profile: currentProfile, updated_at: new Date().toISOString() });
+          }
         } catch (err) {
-          console.error("Failed to persist dev status in profile JSON:", err);
+          console.error("Failed to save dev status:", err);
         }
       }
 
@@ -73,24 +79,25 @@ export async function POST(req: Request) {
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
       if (targetEmail) {
         try {
-          const { data: memRow } = await supabase
+          const { data: existing } = await supabase
             .from("user_memory")
-            .select("profile")
+            .select("id, profile")
             .eq("email", targetEmail)
             .maybeSingle();
 
-          const currentProfile = (memRow?.profile && typeof memRow.profile === "object" && !Array.isArray(memRow.profile))
-            ? { ...memRow.profile }
-            : {};
-          currentProfile.dev_active = false;
+          if (existing?.id) {
+            const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
+              ? { ...existing.profile }
+              : {};
+            currentProfile.dev_active = false;
 
-          await supabase.from("user_memory").upsert({
-            email: targetEmail,
-            profile: currentProfile,
-            updated_at: new Date().toISOString()
-          }, { onConflict: "email" });
+            await supabase
+              .from("user_memory")
+              .update({ profile: currentProfile, updated_at: new Date().toISOString() })
+              .eq("id", existing.id);
+          }
         } catch (err) {
-          console.error("Failed to lock dev status in profile JSON:", err);
+          console.error("Failed to lock dev status:", err);
         }
       }
       return NextResponse.json({ developer: false, authorized: false, status: "LOCKED" });
