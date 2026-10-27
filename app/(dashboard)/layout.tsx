@@ -77,6 +77,63 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
   }, []);
 
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authEmail.trim() || !authPassword.trim()) {
+      setAuthError("Email and password are required.");
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError("");
+
+    try {
+      if (authMode === "signin") {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: authEmail.trim(),
+          password: authPassword.trim(),
+        });
+        if (error) throw error;
+        if (data?.user?.email) {
+          setUserEmail(data.user.email);
+          localStorage.setItem("nova_user_email", data.user.email);
+          setIsAuthModalOpen(false);
+          setAuthPassword("");
+        }
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email: authEmail.trim(),
+          password: authPassword.trim(),
+        });
+        if (error) throw error;
+        if (data?.user?.email) {
+          setUserEmail(data.user.email);
+          localStorage.setItem("nova_user_email", data.user.email);
+          setIsAuthModalOpen(false);
+          setAuthPassword("");
+        } else {
+          setAuthError("Check your email for confirmation link.");
+        }
+      }
+    } catch (err: any) {
+      setAuthError(err.message || "Authentication failed.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/overview` : undefined,
+        },
+      });
+    } catch (err: any) {
+      setAuthError(err.message || "Google sign-in failed.");
+    }
+  };
+
   const handleVerifyDev = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!devPasswordInput.trim()) {
@@ -235,10 +292,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </button>
                 </div>
               ) : (
-                <Link href="/" className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2">
+                <button onClick={() => { setIsAuthModalOpen(true); setIsMobileMenuOpen(false); setAuthError(""); }} className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all">
                   <UserCheck className="w-4 h-4" />
-                  <span>SIGN IN</span>
-                </Link>
+                  <span>SIGN IN / REGISTER</span>
+                </button>
               )}
             </div>
           </aside>
@@ -319,6 +376,98 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+
+            {/* =========================================================
+          USER AUTHENTICATION MODAL (Sign In / Register)
+      ========================================================= */}
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-[#091726] border border-[#00E5FF]/50 p-6 space-y-4 shadow-[0_0_30px_rgba(0,229,255,0.2)]">
+            <div className="flex items-center justify-between border-b border-[#17344D] pb-3">
+              <div className="flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-[#00E5FF]" />
+                <h3 className="font-mono text-sm font-bold text-white tracking-wider uppercase">
+                  {authMode === "signin" ? "NOVA CLOUD ACCESS" : "REGISTER OPERATOR"}
+                </h3>
+              </div>
+              <button onClick={() => setIsAuthModalOpen(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Toggle Sign In / Sign Up */}
+            <div className="flex p-1 rounded-xl bg-[#040B14] border border-[#17344D]">
+              <button
+                type="button"
+                onClick={() => { setAuthMode("signin"); setAuthError(""); }}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-mono transition-all ${authMode === "signin" ? "bg-[#00E5FF] text-black font-bold" : "text-slate-400 hover:text-white"}`}
+              >
+                SIGN IN
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode("signup"); setAuthError(""); }}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-mono transition-all ${authMode === "signup" ? "bg-[#00E5FF] text-black font-bold" : "text-slate-400 hover:text-white"}`}
+              >
+                CREATE ACCOUNT
+              </button>
+            </div>
+
+            <form onSubmit={handleAuthSubmit} className="space-y-3 pt-1">
+              <div>
+                <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder="operator@nova.ai"
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#040B14] border border-[#17344D] text-sm text-white font-mono focus:border-[#00E5FF] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">Password</label>
+                <input
+                  type="password"
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#040B14] border border-[#17344D] text-sm text-white font-mono focus:border-[#00E5FF] focus:outline-none"
+                />
+              </div>
+
+              {authError && (
+                <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-300">
+                  {authError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={authLoading}
+                className="w-full py-2.5 mt-2 rounded-xl bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#040B14] font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(0,229,255,0.3)] disabled:opacity-50"
+              >
+                {authLoading ? "AUTHENTICATING..." : authMode === "signin" ? "AUTHENTICATE SESSION" : "REGISTER NEW ACCOUNT"}
+              </button>
+
+              <div className="relative py-2 text-center">
+                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest bg-[#091726] px-2 relative z-10">OR</span>
+                <div className="absolute inset-x-0 top-1/2 border-t border-[#17344D]" />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="w-full py-2.5 rounded-xl bg-[#040B14] hover:bg-[#06101E] border border-[#17344D] hover:border-[#00E5FF]/40 text-slate-200 font-mono text-xs flex items-center justify-center gap-2 transition-all"
+              >
+                <span>Continue with Google</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* DEV SECURITY GATE MODAL */}
       {isDevModalOpen && (
