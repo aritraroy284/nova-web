@@ -31,10 +31,16 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = React.useMemo(() => createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-  ), []);
+  const supabase = React.useMemo(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return null;
+    try {
+      return createClient(url, key);
+    } catch {
+      return null;
+    }
+  }, []);
 
   const [userEmail, setUserEmail] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
@@ -79,13 +85,16 @@ export default function DashboardLayout({
           setIsDev(true);
         }
 
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        let activeEmail = (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : "") || "";
+        let activeUid = "";
 
-        const activeEmail =
-          user?.email || localStorage.getItem("nova_user_email") || "";
-        const activeUid = user?.id || "";
+        if (supabase) {
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user?.email) activeEmail = user.email;
+            if (user?.id) activeUid = user.id;
+          } catch (e) {}
+        }
 
         if (isMounted) {
           setUserEmail(activeEmail);
@@ -127,19 +136,23 @@ export default function DashboardLayout({
 
     initSession();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
-        setUserId(session.user.id);
-        localStorage.setItem("nova_user_email", session.user.email);
-      }
-    });
+    let sub: any = null;
+    if (supabase) {
+      const authListener = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user?.email) {
+          setUserEmail(session.user.email);
+          setUserId(session.user.id);
+          localStorage.setItem("nova_user_email", session.user.email);
+        }
+      });
+      sub = authListener?.data?.subscription;
+    }
 
     return () => {
       isMounted = false;
-      subscription.unsubscribe();
+      if (sub && typeof sub.unsubscribe === "function") {
+        sub.unsubscribe();
+      }
     };
   }, [supabase]);
 
@@ -208,7 +221,7 @@ export default function DashboardLayout({
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      if (supabase) await supabase.auth.signOut();
     } catch (err) {
       console.error("Sign out error:", err);
     }
