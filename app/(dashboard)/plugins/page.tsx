@@ -13,7 +13,7 @@ export default function PluginsPage() {
   const emailRef = useRef<string | null>(null);
   const isUpdatingRef = useRef<boolean>(false);
 
-  // 1. Fetch exact cloud status for strictly this user's email
+  // Strictly fetch status for the active authenticated account
   const fetchCloudStatus = async (email: string) => {
     if (!email || isUpdatingRef.current) return;
     try {
@@ -24,15 +24,14 @@ export default function PluginsPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        if (!isUpdatingRef.current) {
-          setGmailConnected(Boolean(data.gmail_connected));
+        if (!isUpdatingRef.current && typeof data.gmail_connected === "boolean") {
+          setGmailConnected(data.gmail_connected);
         }
       }
     } catch {}
   };
 
   useEffect(() => {
-    // Detect active authenticated session strictly
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         const activeEmail = session?.user?.email || (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : null);
@@ -51,7 +50,7 @@ export default function PluginsPage() {
         }
       });
 
-      // Background cloud sync every 3 seconds (bi-directional mirror)
+      // Live 3-second auto-sync with App
       const interval = setInterval(() => {
         if (emailRef.current && !isUpdatingRef.current) {
           fetchCloudStatus(emailRef.current);
@@ -73,17 +72,17 @@ export default function PluginsPage() {
     }
   }, []);
 
-  // 2. Toggle plugin status with instant cloud save
-  const togglePlugin = async (targetState: boolean) => {
+  // 1-Click Clean Toggle (No Supabase redirect, no glitch)
+  const togglePluginState = async () => {
     if (!userEmail) {
-      setErrorMsg("Please sign in to Nova before managing plugins.");
+      setErrorMsg("Please sign in to Nova to manage plugins.");
       return;
     }
 
+    const nextState = !gmailConnected;
     setLoading(true);
     setErrorMsg("");
     isUpdatingRef.current = true;
-    setGmailConnected(targetState); // Instant optimistic update
 
     try {
       const res = await fetch("/api/vault", {
@@ -93,7 +92,7 @@ export default function PluginsPage() {
           action: "SET_PLUGIN",
           email: userEmail.trim().toLowerCase(),
           plugin: "gmail",
-          connected: targetState
+          connected: nextState
         })
       });
 
@@ -101,14 +100,15 @@ export default function PluginsPage() {
       if (!res.ok || data.error) {
         throw new Error(data.error || "Failed to update cloud vault");
       }
+      // Strictly update UI only after server succeeds
+      setGmailConnected(nextState);
     } catch (err: any) {
-      setErrorMsg(err.message || "Sync failed");
-      setGmailConnected(!targetState); // Revert on failure
+      setErrorMsg(err.message || "Failed to sync plugin state.");
     } finally {
       setLoading(false);
       setTimeout(() => {
         isUpdatingRef.current = false;
-      }, 2000);
+      }, 1500);
     }
   };
 
@@ -163,7 +163,7 @@ export default function PluginsPage() {
             </div>
 
             <button
-              onClick={() => togglePlugin(!gmailConnected)}
+              onClick={togglePluginState}
               disabled={loading || !userEmail}
               className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 ${
                 gmailConnected
