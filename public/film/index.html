@@ -1,26 +1,23 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>NOVA AI — Kinetic Film</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
-:root{--bg:#060B11;--fg:#e6f7fb;--acc:#00e5ff;box-sizing:border-box}
-body{margin:0;background:#060B11;color:var(--fg);font:14px/1.4 system-ui,-apple-system,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
+:root{--bg:#060B11;--fg:#e6f7fb;--acc:#00E5FF;box-sizing:border-box}
+body{margin:0;background:#060B11;color:var(--fg);font:14px/1.4 system-ui,-apple-system,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .st{position:relative;width:100vw;height:100vh;background:#060B11;overflow:hidden;display:flex;align-items:center;justify-content:center}
 canvas{width:100%;height:100%;display:block;object-fit:contain}
-#playOverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,11,17,0.45);backdrop-filter:blur(4px);cursor:pointer;transition:opacity .35s ease,visibility .35s}
+#playOverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,11,17,0.5);backdrop-filter:blur(4px);cursor:pointer;z-index:10;transition:opacity .3s ease,visibility .3s}
 #playOverlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.playBtn{width:76px;height:76px;border-radius:50%;border:1.5px solid rgba(0,229,255,0.6);background:rgba(0,229,255,0.12);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(0,229,255,0.3);transition:all .25s ease}
-.playBtn:hover{transform:scale(1.08);background:rgba(0,229,255,0.22);box-shadow:0 0 45px rgba(0,229,255,0.5)}
+.playBtn{width:76px;height:76px;border-radius:50%;border:1.5px solid rgba(0,229,255,0.7);background:rgba(0,229,255,0.12);display:flex;align-items:center;justify-content:center;box-shadow:0 0 32px rgba(0,229,255,0.35);transition:all .2s ease}
 .playBtn svg{fill:#00E5FF;margin-left:4px}
-.hudOverlay{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:16px;opacity:1;transition:opacity .4s ease}
+.hudOverlay{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:16px;z-index:20;opacity:1;transition:opacity .4s ease}
 .hudOverlay.fade{opacity:0}
 .hudTop{display:flex;justify-content:flex-end;gap:10px;pointer-events:auto}
-.hudBtn{background:rgba(11,22,32,0.65);border:1px solid rgba(0,229,255,0.3);color:#00E5FF;border-radius:20px;padding:6px 14px;font:600 11px ui-monospace,monospace;letter-spacing:.08em;cursor:pointer;backdrop-filter:blur(8px);transition:all .2s}
-.hudBtn:hover{background:rgba(0,229,255,0.2);border-color:#00E5FF}
+.hudBtn{background:rgba(11,22,32,0.7);border:1px solid rgba(0,229,255,0.35);color:#00E5FF;border-radius:20px;padding:6px 14px;font:600 11px ui-monospace,monospace;letter-spacing:.08em;cursor:pointer;backdrop-filter:blur(8px)}
 .hudBottom{width:100%;pointer-events:auto;display:flex;align-items:center;gap:12px}
-.barWrap{position:relative;flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;cursor:pointer;overflow:hidden}
+.barWrap{position:relative;flex:1;height:5px;background:rgba(255,255,255,0.12);border-radius:3px;cursor:pointer;overflow:hidden}
 .barFill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,#00E5FF,#00F5A0);width:0%}
-.timeLabel{font:11px ui-monospace,monospace;color:#7d95a6;min-width:65px;text-align:right}
+.timeLabel{font:11px ui-monospace,monospace;color:#7d95a6;min-width:68px;text-align:right}
 </style></head><body>
-
 <div class="st" id="stage">
   <canvas id="cv"></canvas>
   <div id="playOverlay">
@@ -39,8 +36,6 @@ canvas{width:100%;height:100%;display:block;object-fit:contain}
     </div>
   </div>
 </div>
-<audio id="studioAudio" src="/audio/nova_vo.mp3" preload="auto"></audio>
-
 <script>
 const W=1280,H=720,DUR=70,DISP='"Helvetica Neue",Arial,system-ui,sans-serif',MONO='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
@@ -49,7 +44,6 @@ const LINES=[[.4,4.6,'Another chatbot. Another *tab*. Another box that waits for
 const BEATS=[.4,1.3,4.7,5.3,7.6,10.4,18.4,21,23.4,26.5,29.4,32.4,38.6,44.4,48.6,52.1,58.6,61.4,63.6,66.6];
 const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t;
 const ex=x=>x>=1?1:x<=0?0:1-Math.pow(2,-10*x),eb=x=>{x=cl(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)},ic=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
-const bz=(a,b,c,d)=>x=>{if(x<=0||x>=1)return x;let lo=0,hi=1,t=x;for(let i=0;i<20;i++){const u=1-t,xx=3*u*u*t*a+3*u*t*t*c+t*t*t;xx<x?lo=t:hi=t;t=(lo+hi)/2}const u=1-t;return 3*u*u*t*b+3*u*t*t*d+t*t*t};
 const rn=i=>{const s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s)};
 let BA=1;const A=x=>ctx.globalAlpha=BA*x;
 function tx(s,x,y,sz,col,o={}){ctx.save();ctx.translate(x,y);if(o.sc)ctx.scale(o.sc,o.sy||o.sc);A(o.a??1);ctx.font=`${o.w||900} ${sz}px ${o.f||DISP}`;ctx.textBaseline='middle';
@@ -131,59 +125,115 @@ const v=ctx.createRadialGradient(W/2,H/2,H*.4,W/2,H/2,W*.7);v.addColorStop(0,'rg
 [10,18,32,48,58].forEach(b=>{const d=Math.abs(t-b);if(d<.3){ctx.fillStyle=`rgba(0,229,255,${.5*(1-d/.3)})`;ctx.fillRect(0,H/2-3,W,6);ctx.fillStyle=`rgba(0,229,255,${.07*(1-d/.3)})`;ctx.fillRect(0,0,W,H)}});
 if(t>=63.4&&t<64.4){ctx.fillStyle=`rgba(255,255,255,${.8*Math.exp(-(t-63.4)*6)})`;ctx.fillRect(0,0,W,H)}
 subs(t);hud(t,sc)}
-let T=0,playing=false,last=0,dirty=true,bi=0,li=-1,AU=true,ac,hasStudio=false;
+let T=0,playing=false,last=0,dirty=true,bi=0,li=-1,AU=true,ac;
 const $=id=>document.getElementById(id);
-const hud=$('hud'), playOverlay=$('playOverlay'), barFill=$('barFill'), stage=$('stage'), barWrap=$('barWrap');
+const hudEl=$('hud'), playOverlay=$('playOverlay'), barFill=$('barFill'), stage=$('stage'), barWrap=$('barWrap');
 let hudTimer=null;
-
 function resetHudTimer(){
-  hud.classList.remove('fade');
+  if(!hudEl) return;
+  hudEl.classList.remove('fade');
   if(hudTimer) clearTimeout(hudTimer);
-  if(playing){
-    hudTimer=setTimeout(()=>hud.classList.add('fade'), 2200);
-  }
+  if(playing) hudTimer=setTimeout(()=>{ if(hudEl) hudEl.classList.add('fade'); }, 2200);
 }
 stage.addEventListener('mousemove', resetHudTimer);
 stage.addEventListener('touchstart', resetHudTimer, {passive:true});
-
+function hit(){
+  if(!AU) return;
+  try{
+    ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended') ac.resume();
+    const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime;
+    o.frequency.setValueAtTime(150,n);
+    o.frequency.exponentialRampToValueAtTime(40,n+.25);
+    g.gain.setValueAtTime(.35,n);
+    g.gain.exponentialRampToValueAtTime(.001,n+.3);
+    o.connect(g).connect(ac.destination);
+    o.start();o.stop(n+.32);
+  }catch(e){}
+}
+function say(s){
+  if(!AU||!window.speechSynthesis) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(s.replace(/\*/g,''));
+    u.rate=1.08;u.pitch=.95;
+    const v=speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang)&&/male|daniel|alex|david/i.test(v.name));
+    if(v) u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function seek(x){
+  T=cl(x,0,DUR);
+  bi=BEATS.filter(b=>b<=T).length;
+  li=-1;
+  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+  dirty=true;
+}
 function setPlay(p){
   playing=p;
-  if(p && T>=DUR) seek(0);
-  playOverlay.classList.toggle('hidden', p);
-  if(hasStudio){
-    if(p){ studio.currentTime=T; studio.play().catch(()=>{}); }
-    else { studio.pause(); }
+  if(p&&T>=DUR) seek(0);
+  if(playOverlay) playOverlay.classList.toggle('hidden', p);
+  if(!p){
+    try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
   } else {
-    if(!p) try{speechSynthesis.cancel()}catch(e){}
+    try{
+      ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+      if(ac.state==='suspended') ac.resume();
+    }catch(e){}
   }
   last=performance.now();
   resetHudTimer();
 }
-
-playOverlay.onclick=()=>setPlay(true);
-cv.onclick=()=>setPlay(!playing);
-$('rp').onclick=(e)=>{e.stopPropagation(); seek(0); setPlay(true);};
+function loop(n){
+  if(playing){
+    T+=Math.min(.1,(n-last)/1000);
+    if(T>=DUR){ T=DUR; setPlay(false); }
+    while(bi<BEATS.length&&BEATS[bi]<=T){ hit(); bi++; }
+    const q=LINES.findIndex(l=>T>=l[0]&&T<l[1]);
+    if(q!==li){ li=q; if(q>=0) say(LINES[q][2]); }
+    dirty=true;
+  }
+  last=n;
+  if(dirty){
+    draw(T);
+    dirty=false;
+    if(barFill) barFill.style.width=(T/DUR*100)+'%';
+    if($('tm')) $('tm').textContent=T.toFixed(1)+' / '+DUR.toFixed(1);
+  }
+  requestAnimationFrame(loop);
+}
+function handleTap(e){ e.stopPropagation(); setPlay(!playing); }
+playOverlay.addEventListener('click', (e)=>{ e.stopPropagation(); setPlay(true); });
+playOverlay.addEventListener('touchend', (e)=>{ e.stopPropagation(); e.preventDefault(); setPlay(true); });
+cv.addEventListener('click', handleTap);
+$('rp').onclick=(e)=>{ e.stopPropagation(); seek(0); setPlay(true); };
 $('au').onclick=(e)=>{
   e.stopPropagation();
   AU=!AU;
   $('au').textContent=AU?'VOICE: ON':'VOICE: MUTED';
   $('au').style.borderColor=AU?'#00E5FF':'#7d95a6';
   $('au').style.color=AU?'#00E5FF':'#7d95a6';
-  if(hasStudio){ studio.muted=!AU; }
-  else if(!AU){ try{speechSynthesis.cancel()}catch(e){} }
+  if(!AU){ try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} }
 };
-barWrap.onclick=(e)=>{
-  e.stopPropagation();
-  const rect=barWrap.getBoundingClientRect();
-  const ratio=Math.max(0, Math.min(1, (e.clientX-rect.left)/rect.width));
-  seek(ratio*DUR);
-};
-function loop(n){if(playing){T+=Math.min(.1,(n-last)/1000);if(T>=DUR){T=DUR;setPlay(false)}while(bi<BEATS.length&&BEATS[bi]<=T){hit();bi++}const q=LINES.findIndex(l=>T>=l[0]&&T<l[1]);if(q!==li){li=q;if(q>=0)say(LINES[q][2])}dirty=true}last=n;
-if(dirty){draw(T);dirty=false;if(barFill) barFill.style.width=(T/DUR*100)+'\%';$('tm').textContent=T.toFixed(1)+' / '+DUR.toFixed(1);const ci=SC.findIndex(s=>T>=s[1]&&T<s[2]);document.querySelectorAll('.ch button').forEach((b,i)=>b.classList.toggle('on',i===(ci<0?5:ci)))}requestAnimationFrame(loop)}
-
-$('rp').onclick=()=>{seek(0);setPlay(true)};$('sc').oninput=e=>seek(+e.target.value);
-$('au').onclick=()=>{AU=!AU;$('au').classList.toggle('on',AU);if(!AU)try{speechSynthesis.cancel()}catch(e){}};
-addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();setPlay(!playing)}});
-function fit(){const r=cv.parentElement.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(r.width*d);cv.height=Math.round(r.width*9/16*d);dirty=true}
-addEventListener('resize',fit);fit();seek(4.3);requestAnimationFrame(loop);
+if(barWrap){
+  barWrap.onclick=(e)=>{
+    e.stopPropagation();
+    const rect=barWrap.getBoundingClientRect();
+    const ratio=Math.max(0, Math.min(1, (e.clientX-rect.left)/rect.width));
+    seek(ratio*DUR);
+  };
+}
+addEventListener('keydown', e=>{
+  if(e.code==='Space'){ e.preventDefault(); setPlay(!playing); }
+});
+function fit(){
+  const r=cv.parentElement.getBoundingClientRect(), d=Math.min(devicePixelRatio||1, 2);
+  cv.width=Math.round(r.width*d);
+  cv.height=Math.round(r.width*9/16*d);
+  dirty=true;
+}
+addEventListener('resize', fit);
+fit();
+seek(0);
+requestAnimationFrame(loop);
 </script></body></html>
