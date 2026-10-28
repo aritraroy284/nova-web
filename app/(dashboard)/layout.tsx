@@ -11,14 +11,11 @@ import {
   BookOpen,
   ShieldCheck,
   Lock,
-  Unlock,
   LogOut,
   Menu,
   X,
   Cpu,
-  ChevronRight,
-  UserCheck,
-  Loader2
+  UserCheck
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -54,7 +51,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       try {
         if (!supabase) return;
         const { data } = await supabase.auth.getSession();
-        const email = data?.session?.user?.email || (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : "") || "";
+        const email =
+          data?.session?.user?.email ||
+          (typeof window !== "undefined" ? localStorage.getItem("nova_user_email") : "") ||
+          "";
         if (email && isMounted) {
           setUserEmail(email);
           localStorage.setItem("nova_user_email", email);
@@ -226,18 +226,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-[#060B11] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20">
-            {/* MOBILE STICKY TOP BAR */}
+      {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E3045] px-4 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs">N</div>
-          <div>
-            <div className="font-mono font-bold text-xs tracking-wider text-white">NOVA AI</div>
-            <div className="text-[9px] font-mono text-[#00F5A0] leading-none">CORE ONLINE</div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-1.5 rounded-lg bg-[#0D1520] border border-[#1E3045] text-[#00E5FF] active:scale-95 transition"
+            aria-label="Open Sidebar"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs">
+              N
+            </div>
+            <div>
+              <div className="font-mono font-bold text-xs tracking-wider text-white">NOVA AI</div>
+              <div className="text-[9px] font-mono text-[#00F5A0] leading-none">CORE ONLINE</div>
+            </div>
           </div>
         </div>
+
         <button
           onClick={() => { setDevErrorMsg(""); setIsDevModalOpen(true); }}
-          className={`px-2.5 py-1 rounded-full font-mono text-[10px] tracking-wider border flex items-center gap-1.5 ${
+          className={`px-2.5 py-1 rounded-full font-mono text-[10px] tracking-wider border flex items-center gap-1.5 transition ${
             isDev ? "bg-[#00F5A0]/10 border-[#00F5A0]/40 text-[#00F5A0]" : "bg-[#0D1520] border-[#1E3045] text-[#8E9DAE]"
           }`}
         >
@@ -245,19 +257,94 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <span>{isDev ? "DEV ACTIVE" : "DEV LOCK"}</span>
         </button>
       </header>
+      {/* MOBILE SLIDE-IN SIDEBAR OVERLAY */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+          <aside className="relative w-[78%] max-w-[280px] bg-[#060B11] border-r border-[#1E3045] h-full flex flex-col justify-between z-10 p-5 shadow-2xl">
+            <div>
+              <div className="flex items-center justify-between pb-5 border-b border-[#1E3045]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs shadow-[0_0_12px_rgba(0,229,255,0.2)]">
+                    N
+                  </div>
+                  <div>
+                    <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
+                    <div className="text-[9px] font-mono text-[#8E9DAE] tracking-wider uppercase">AI Workspace</div>
+                  </div>
+                </div>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-[#8E9DAE] hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <nav className="py-5 space-y-1.5">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = pathname?.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                        active
+                          ? "bg-[#142030] text-[#00E5FF] border border-[#00E5FF]/40 shadow-[0_0_12px_rgba(0,229,255,0.1)]"
+                          : "text-[#8E9DAE] hover:bg-[#0D1520] hover:text-white border border-transparent"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="pt-4 border-t border-[#1E3045] space-y-3">
+              {userEmail ? (
+                <div className="p-3 rounded-xl bg-[#0D1520] border border-[#1E3045] flex items-center justify-between">
+                  <div className="min-w-0 pr-2">
+                    <div className="text-xs font-medium text-white truncate">{maskEmail(userEmail)}</div>
+                    <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
+                  </div>
+                  <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setIsAuthModalOpen(true); setIsMobileMenuOpen(false); setAuthError(""); }}
+                  className="w-full py-2.5 rounded-xl bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all"
+                >
+                  <UserCheck className="w-4 h-4" />
+                  <span>SIGN IN / REGISTER</span>
+                </button>
+              )}
+
+              <div className="flex items-center gap-2 px-1">
+                <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
+                <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* DESKTOP SIDEBAR (>= 768px) */}
       <aside className="hidden md:flex md:w-64 lg:w-72 md:flex-col md:fixed md:inset-y-0 bg-[#060B11] border-r border-[#1E3045] z-30 select-none justify-between p-5">
         <div>
-          <div className="flex items-center gap-3 pb-6 border-b border-[#1E3045]">
-            <div className="w-9 h-9 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.15)]">N</div>
+          <div className="flex items-center gap-3 pb-6 border-b border-[#1E3045]/60">
+            <div className="w-9 h-9 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.15)]">
+              N
+            </div>
             <div>
               <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
               <div className="text-[10px] font-mono text-[#8E9DAE] tracking-wider uppercase">AI Workspace</div>
             </div>
           </div>
 
-          <div className="py-6 space-y-1.5">
+          <nav className="py-6 space-y-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = pathname?.startsWith(item.href);
@@ -265,27 +352,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all ${
-                    active ? "bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/40 shadow-[0_0_15px_rgba(0,229,255,0.08)]" : "text-[#8E9DAE] hover:text-white hover:bg-[#0D1520]"
+                  className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-xs font-medium transition-all ${
+                    active
+                      ? "bg-[#142030] text-[#00E5FF] border border-[#00E5FF]/40 shadow-[0_0_15px_rgba(0,229,255,0.08)]"
+                      : "text-[#8E9DAE] hover:text-white hover:bg-[#0D1520] border border-transparent"
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
                 </Link>
               );
             })}
-          </div>
+          </nav>
         </div>
 
-        <div className="pt-4 border-t border-[#1E3045] space-y-3">
+        <div className="pt-4 border-t border-[#1E3045]/60 space-y-3">
           <button
             onClick={() => { setDevErrorMsg(""); setIsDevModalOpen(true); }}
-            className={`w-full py-2.5 px-3 rounded-xl font-mono text-xs border flex items-center justify-between ${
-              isDev ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300" : "bg-[#0D1520] border-[#1E3045] text-[#8E9DAE] hover:text-white"
+            className={`w-full py-2.5 px-3 rounded-xl font-mono text-xs border flex items-center justify-between transition ${
+              isDev ? "bg-[#00F5A0]/10 border-[#00F5A0]/40 text-[#00F5A0]" : "bg-[#0D1520] border-[#1E3045] text-[#8E9DAE] hover:text-white"
             }`}
           >
             <span className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-[#00F5A0]" />
               <span>{isDev ? "DEV ACTIVE" : "DEV ACCESS"}</span>
             </span>
             <span className="text-[10px]">{isDev ? "CLOUD" : "LOCKED"}</span>
@@ -295,9 +384,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="p-3 rounded-xl bg-[#0D1520] border border-[#1E3045] flex items-center justify-between">
               <div className="min-w-0 pr-2">
                 <div className="text-xs font-medium text-white truncate">{maskEmail(userEmail)}</div>
-                <div className="text-[10px] font-mono text-emerald-400">Authenticated</div>
+                <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
               </div>
-              <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg">
+              <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
@@ -310,35 +399,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span>SIGN IN / REGISTER</span>
             </button>
           )}
+
+          <div className="flex items-center gap-2 px-1 pt-1">
+            <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
+            <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
+          </div>
         </div>
       </aside>
 
       {/* MAIN VIEWPORT */}
       <div className="flex-1 flex flex-col md:pl-64 lg:pl-72 min-w-0 w-full">
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 pb-24 md:pb-8">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6">
           {children}
         </main>
       </div>
-
-            {/* MOBILE BOTTOM NAVIGATION DOCK (Template 02/03) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#060B11]/95 backdrop-blur-md border-t border-[#1E3045] flex items-center justify-around px-2 z-50">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = pathname?.startsWith(item.href);
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 py-1.5 transition-colors ${
-                active ? "text-[#00E5FF]" : "text-[#8E9DAE]"
-              }`}
-            >
-              <Icon className="w-5 h-5 mb-1" />
-              <span className="text-[10px] font-medium tracking-tight">{item.name}</span>
-            </Link>
-          );
-        })}
-      </nav>
 
       {/* AUTHENTICATION MODAL */}
       {isAuthModalOpen && (
@@ -420,7 +494,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                className="w-full py-2.5 rounded-xl bg-[#060B11] hover:bg-[#060B11] border border-[#1E3045] hover:border-[#00E5FF]/40 text-slate-200 font-mono text-xs flex items-center justify-center gap-2 transition-all"
+                className="w-full py-2.5 rounded-xl bg-[#060B11] hover:bg-[#142030] border border-[#1E3045] hover:border-[#00E5FF]/40 text-slate-200 font-mono text-xs flex items-center justify-center gap-2 transition-all"
               >
                 <span>Continue with Google</span>
               </button>
@@ -432,15 +506,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* DEV SECURITY GATE MODAL */}
       {isDevModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl bg-[#0D1520] border border-[#00E5FF]/50 p-6 space-y-4">
+          <div className="w-full max-w-md rounded-2xl bg-[#0D1520] border border-[#00E5FF]/50 p-6 space-y-4 shadow-[0_0_30px_rgba(0,229,255,0.2)]">
             <div className="flex items-center justify-between border-b border-[#1E3045] pb-3">
               <h3 className="font-mono text-sm font-bold text-white uppercase">Developer Clearance Gate</h3>
               <button onClick={() => setIsDevModalOpen(false)} className="text-[#8E9DAE] hover:text-white"><X className="w-4 h-4" /></button>
             </div>
             {isDev ? (
               <div className="space-y-4">
-                <p className="text-xs text-emerald-300">Master Architect Clearance active on this cloud session.</p>
-                <button onClick={handleLockDev} className="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-semibold">
+                <p className="text-xs text-[#00F5A0]">Master Architect Clearance active on this cloud session.</p>
+                <button onClick={handleLockDev} className="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-semibold transition">
                   REVOKE & LOCK ACCESS
                 </button>
               </div>
@@ -454,7 +528,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   className="w-full px-4 py-2.5 rounded-xl bg-[#060B11] border border-[#1E3045] text-sm text-white font-mono focus:border-[#00E5FF] focus:outline-none"
                 />
                 {devErrorMsg && <div className="text-xs text-rose-400">{devErrorMsg}</div>}
-                <button type="submit" disabled={devAuthLoading} className="w-full py-2.5 rounded-xl bg-[#00E5FF] text-[#060B11] font-mono text-xs font-bold">
+                <button type="submit" disabled={devAuthLoading} className="w-full py-2.5 rounded-xl bg-[#00E5FF] text-[#060B11] font-mono text-xs font-bold transition">
                   {devAuthLoading ? "VERIFYING..." : "AUTHORIZE"}
                 </button>
               </form>
