@@ -1,16 +1,32 @@
 import type { Config } from "tailwindcss";
+
 const config: Config = {
   darkMode: "class",
-  content: ["./pages/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}", "./app/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}"
+  ],
   theme: {
     extend: {
       colors: {
-        nova: { bg: "#080E18", card: "#0F1A29", border: "#1C2A3D", cyan: "#00E5FF", muted: "#8E9DAE", text: "#FFFFFF" },
-        atelier: { bg: "#FAF9F5", card: "#FFFFFF", border: "#E5E2DA", text: "#1F1E1D", muted: "#737069", accent: "#0D9488" }
+        nova: {
+          canvas: "#060B11",   // Deep base layer
+          surface: "#0D1520",  // Card / panel layer
+          raised: "#142030",   // Elevated hover / inputs / active tabs
+          border: "#1E3045",   // Technical subtle 1px border
+          cyan: "#00E5FF",     // Brand primary accent
+          mint: "#00F5A0",     // Online / active status accent
+          muted: "#8E9DAE",    // Secondary technical text
+          text: "#FFFFFF"
+        }
       },
-      fontFamily: { mono: ["monospace"] }
+      fontFamily: {
+        mono: ["monospace", "Courier New", "Menlo"]
+      }
     }
   },
   plugins: []
 };
+
 export default config;

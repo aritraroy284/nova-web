@@ -1,7 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
-  body { @apply bg-atelier-bg text-atelier-text dark:bg-nova-bg dark:text-nova-text font-sans antialiased; }
+  body {
+    background-color: #060B11;
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    -webkit-font-smoothing: antialiased;
+  }
 }
-.glass-panel { @apply backdrop-blur-md bg-white/70 dark:bg-nova-card/80 border border-atelier-border dark:border-nova-border; }
+
+.nova-surface {
+  background-color: #0D1520;
+  border: 1px solid #1E3045;
+}
+
+.nova-surface-hover:hover {
+  border-color: rgba(0, 229, 255, 0.35);
+  background-color: #101B2A;
+}

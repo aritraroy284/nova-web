@@ -2,53 +2,111 @@
 
 import React from "react";
 import Link from "next/link";
-import { AlertCircle, Clock, CheckCircle2, Key, ShieldCheck, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function OverviewPage() {
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-black/10 dark:border-[#1C2A3D]">
+    <div className="space-y-6 max-w-5xl">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Workspace Overview</h1>
-          <p className="text-sm opacity-70 mt-1">Control plane for Nova AI core routing, provider credentials, and tools.</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Workspace Overview</h1>
+          <p className="text-xs md:text-sm text-[#8E9DAE] mt-1">Your workspace, providers and connected tools at a glance.</p>
         </div>
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-mono">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>Core Agent Online</span>
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/30 text-[#00F5A0] text-xs font-mono font-semibold tracking-wider">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00F5A0] animate-pulse"></span>
+          <span>LIVE STATUS</span>
         </div>
       </div>
 
-      <div className="p-6 rounded-2xl border border-[#00E5FF]/40 bg-[#00E5FF]/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div>
-          <div className="text-xs font-mono text-[#00E5FF] uppercase tracking-wider font-bold">Next Recommended Step</div>
-          <h3 className="text-lg font-bold mt-1">Configure Primary Gemini API Key</h3>
-          <p className="text-sm opacity-80 max-w-xl mt-1">Nova Cortex requires a Gemini API key to power conversational reasoning, speech synthesis, and UI automation.</p>
-        </div>
-        <Link href="/api-models" className="px-5 py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-medium text-sm flex items-center gap-2 shadow-sm hover:opacity-90 transition shrink-0">
-          <Key className="w-4 h-4" /> Manage API Keys
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="p-5 rounded-2xl border bg-white dark:bg-[#0F1A29] border-black/10 dark:border-[#1C2A3D] shadow-sm">
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-mono text-xs font-bold text-[#00E5FF] px-2 py-0.5 rounded bg-[#00E5FF]/10">PRIMARY</span>
-            <span className="text-xs text-amber-500 flex items-center gap-1 font-mono"><AlertCircle className="w-3.5 h-3.5" /> Needs Setup</span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-2 bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00F5A0] shadow-[0_0_8px_#00F5A0]"></span>
+                <h2 className="text-base font-semibold text-white tracking-wide">Core Agent Online</h2>
+              </div>
+              <span className="text-[10px] font-mono text-[#8E9DAE] uppercase bg-[#142030] px-2 py-0.5 rounded border border-[#1E3045]">Shielded Build</span>
+            </div>
+            <p className="text-xs text-[#8E9DAE] max-w-lg leading-relaxed">
+              Autonomous mobile runtime is calibrated. Ready to process multi-tier cognitive queries, voice commands, and Ghost Protocol automations.
+            </p>
           </div>
-          <h4 className="font-bold text-base">Gemini Flash Models</h4>
-          <p className="text-xs opacity-70 mt-1">3.5 Flash-Lite &rarr; 3.1 Flash-Lite &rarr; 3.7 Flash &rarr; 3.5 Flash</p>
+          <div className="mt-5 pt-3 border-t border-[#1E3045]/60 flex flex-wrap items-center gap-4 text-[11px] font-mono text-[#8E9DAE]">
+            <span>Latency: <strong className="text-white">12ms</strong></span>
+            <span>Vault: <strong className="text-[#00E5FF]">Synced</strong></span>
+            <span>Security: <strong className="text-[#00F5A0]">Zero-Secret</strong></span>
+          </div>
         </div>
 
-        <div className="p-5 rounded-2xl border bg-white dark:bg-[#0F1A29] border-black/10 dark:border-[#1C2A3D] shadow-sm">
-          <span className="font-mono text-xs opacity-70 px-2 py-0.5 rounded bg-black/5 dark:bg-white/5">BACKUP 1</span>
-          <h4 className="font-bold text-base mt-2">Groq Qwen 27B</h4>
-          <p className="text-xs opacity-70 mt-1">High-speed token fallback when primary rates exceed capacity.</p>
+        <div className="bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5 flex flex-col justify-between hover:border-[#00E5FF]/40 transition-colors">
+          <div>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#00E5FF]">Action Item</span>
+            <h3 className="text-sm font-semibold text-white mt-1">Next Recommended Step</h3>
+            <p className="text-xs text-[#8E9DAE] mt-2 leading-relaxed">Manage your Gemini, Groq, and OpenRouter API credentials to guarantee uninterrupted fallback.</p>
+          </div>
+          <Link href="/api-models" className="mt-4 w-full py-2.5 bg-[#142030] hover:bg-[#00E5FF] hover:text-[#060B11] border border-[#1E3045] hover:border-[#00E5FF] rounded-xl text-xs font-mono font-bold text-white transition-all text-center flex items-center justify-center gap-1.5">
+            <span>Configure Keys</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
+      </div>
 
-        <div className="p-5 rounded-2xl border bg-white dark:bg-[#0F1A29] border-black/10 dark:border-[#1C2A3D] shadow-sm">
-          <span className="font-mono text-xs opacity-70 px-2 py-0.5 rounded bg-black/5 dark:bg-white/5">BACKUP 2</span>
-          <h4 className="font-bold text-base mt-2">OpenRouter Free</h4>
-          <p className="text-xs opacity-70 mt-1">Deep general cognitive fallback route.</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="bg-[#0D1520] border border-[#1E3045] rounded-xl p-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#00E5FF]"></span>
+            <div>
+              <div className="text-xs font-semibold text-white">Gemini</div>
+              <div className="text-[10px] text-[#8E9DAE]">Primary provider</div>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-[#00F5A0] bg-[#00F5A0]/10 px-2 py-0.5 rounded border border-[#00F5A0]/20 font-semibold">PRIMARY</span>
+        </div>
+        <div className="bg-[#0D1520] border border-[#1E3045] rounded-xl p-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#8E9DAE]"></span>
+            <div>
+              <div className="text-xs font-semibold text-white">Groq</div>
+              <div className="text-[10px] text-[#8E9DAE]">Fallback provider</div>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-[#8E9DAE] bg-[#142030] px-2 py-0.5 rounded border border-[#1E3045]">STANDBY</span>
+        </div>
+        <div className="bg-[#0D1520] border border-[#1E3045] rounded-xl p-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#8E9DAE]"></span>
+            <div>
+              <div className="text-xs font-semibold text-white">OpenRouter</div>
+              <div className="text-[10px] text-[#8E9DAE]">Additional models</div>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-[#8E9DAE] bg-[#142030] px-2 py-0.5 rounded border border-[#1E3045]">STANDBY</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5">
+          <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#8E9DAE] mb-3">Workspace Activity</h3>
+          <ul className="space-y-2.5 text-xs text-[#8E9DAE]">
+            <li className="flex items-center gap-2"><span className="text-[#00E5FF]">•</span><span>Ghost Protocol UI automation pipeline verified</span></li>
+            <li className="flex items-center gap-2"><span className="text-[#00E5FF]">•</span><span>Cloud Vault cryptographic handshake established</span></li>
+            <li className="flex items-center gap-2"><span className="text-[#00E5FF]">•</span><span>APK binary shielded against credential extraction</span></li>
+          </ul>
+        </div>
+        <div className="bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5">
+          <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#8E9DAE] mb-3">Quick Access</h3>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <Link href="/api-models" className="p-2.5 rounded-xl bg-[#142030] hover:bg-[#1E3045] text-left text-white font-medium border border-[#1E3045]/60 transition-colors flex items-center justify-between">
+              <span>API & Models</span><span className="text-[#00E5FF]">→</span>
+            </Link>
+            <Link href="/plugins" className="p-2.5 rounded-xl bg-[#142030] hover:bg-[#1E3045] text-left text-white font-medium border border-[#1E3045]/60 transition-colors flex items-center justify-between">
+              <span>Plugins Hub</span><span className="text-[#00E5FF]">→</span>
+            </Link>
+            <Link href="/guide" className="col-span-2 p-2.5 rounded-xl bg-[#142030] hover:bg-[#1E3045] text-left text-white font-medium border border-[#1E3045]/60 transition-colors flex items-center justify-between">
+              <span>Architecture & System Guide</span><span className="text-[#00E5FF]">→</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
