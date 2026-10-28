@@ -334,14 +334,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* DESKTOP SIDEBAR (>= 768px) */}
       <aside className="hidden md:flex md:w-64 lg:w-72 md:flex-col md:fixed md:inset-y-0 bg-[#060B11] border-r border-[#1E3045] z-30 select-none justify-between p-5">
         <div>
-          <div className="flex items-center gap-3 pb-6 border-b border-[#1E3045]/60">
-            <div className="w-9 h-9 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.15)]">
-              N
-            </div>
-            <div>
-              <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
-              <div className="text-[10px] font-mono text-[#8E9DAE] tracking-wider uppercase">AI Workspace</div>
-            </div>
+          <div className="pb-6 border-b border-[#1E3045]/60">
+            <Link href="/overview" className="flex items-center gap-3 hover:opacity-80 transition cursor-pointer">
+              <div className="w-9 h-9 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.15)]">
+                N
+              </div>
+              <div>
+                <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
+                <div className="text-[10px] font-mono text-[#00E5FF] tracking-wider uppercase flex items-center gap-1">
+                  LAUNCH CONSOLE <span>↗</span>
+                </div>
+              </div>
+            </Link>
           </div>
 
           <nav className="py-6 space-y-1.5">
