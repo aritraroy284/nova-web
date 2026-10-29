@@ -21,55 +21,84 @@
   background-color: #101B2A;
 }
 
+
+
 /* =========================================================
-   2ND IMAGE PRISTINE HIGH-TECH CYBER THEME PALETTE
+   NOVA INTERFACE SYSTEM: 19615 CYBER DARK + EXECUTIVE LIGHT
    ========================================================= */
-:root {
-  --bg-deep: #050B14;
-  --bg-sidebar: #060C16;
-  --bg-card: #09121E;
-  --border-card: #152538;
-  --border-highlight: rgba(0, 229, 255, 0.25);
-  --cyan-glow: #00E5FF;
-  --green-glow: #00F5A0;
+
+/* Smooth Page Transitions */
+@keyframes pageSlideFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-transition-enter {
+  animation: pageSlideFade 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Base Body Vibe */
-body {
-  background-color: #050B14 !important;
-  color: #E6F7FB;
+/* ---------------------------------------------------------
+   IMAGE 19615 EXACT DARK PALETTE
+   --------------------------------------------------------- */
+.dashboard-dark {
+  background-color: #060B11 !important;
+  color: #E6F7FB !important;
 }
 
-/* Card Glows Matching 2nd Image */
-.cyber-card {
-  background-color: #09121E !important;
-  border: 1px solid #16273A !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
-}
-.cyber-card:hover {
-  border-color: rgba(0, 229, 255, 0.35) !important;
+/* Sidebar background and border matching 19615 */
+.dashboard-dark aside,
+.dashboard-dark header {
+  background-color: #060B11 !important;
+  border-color: #142334 !important;
 }
 
-/* Active Nav Pill Matching 2nd Image */
-.nav-active-pill {
-  border: 1px solid rgba(0, 229, 255, 0.6) !important;
-  background-color: rgba(0, 229, 255, 0.12) !important;
+/* Active Nav Pill matching 19615 */
+.dashboard-dark a[data-active="true"],
+.dashboard-dark .nav-active {
+  background-color: #0B2538 !important;
+  border: 1px solid rgba(0, 229, 255, 0.55) !important;
   color: #00E5FF !important;
   box-shadow: 0 0 15px rgba(0, 229, 255, 0.22) !important;
 }
 
-/* Bottom Pill Switch */
-.nova-theme-bar {
-  background-color: #0F1B2B;
+/* Inactive Nav items */
+.dashboard-dark a[data-active="false"] {
+  color: #8CA4B5 !important;
+}
+.dashboard-dark a[data-active="false"]:hover {
+  color: #FFFFFF !important;
+  background-color: #0D1A29 !important;
+}
+
+/* Cards matching 19615 deep obsidian navy */
+.dashboard-dark .cyber-card,
+.dashboard-dark div[class*="bg-[#0B1520]"],
+.dashboard-dark div[class*="bg-[#060B11]"],
+.dashboard-dark div[class*="bg-[#081018]"] {
+  background-color: #09131F !important;
+  border: 1px solid #16273A !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Theme switch styling */
+.theme-bar {
+  background-color: #0A1420;
   border: 1px solid rgba(0, 229, 255, 0.4);
 }
-.nova-theme-dot {
+.theme-dot {
   transform: translateX(0px);
   background-color: #00E5FF;
   box-shadow: 0 0 8px #00E5FF;
 }
 
-/* Clean Isolated Light Theme (Never Inverts or Ruins Text) */
+/* ---------------------------------------------------------
+   CLEAN SAAS LIGHT MODE REDESIGN (ZERO INVERT, ZERO GLITCH)
+   --------------------------------------------------------- */
 .dashboard-light {
   background-color: #F8FAFC !important;
   color: #0F172A !important;
@@ -82,30 +111,50 @@ body {
 .dashboard-light main {
   background-color: #F8FAFC !important;
 }
-.dashboard-light div[class*="bg-[#0"],
-.dashboard-light .cyber-card {
+.dashboard-light .cyber-card,
+.dashboard-light div[class*="bg-[#0B1520]"],
+.dashboard-light div[class*="bg-[#060B11]"],
+.dashboard-light div[class*="bg-[#081018]"],
+.dashboard-light div[class*="bg-slate-900"],
+.dashboard-light div[class*="bg-cyan-950"] {
   background-color: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
 }
 .dashboard-light h1, .dashboard-light h2, .dashboard-light h3, .dashboard-light h4, .dashboard-light .text-white {
   color: #0F172A !important;
 }
-.dashboard-light p, .dashboard-light .text-[#8CA4B5], .dashboard-light .text-slate-400 {
+.dashboard-light p,
+.dashboard-light .text-[#8CA4B5],
+.dashboard-light .text-slate-400,
+.dashboard-light .text-gray-400 {
   color: #475569 !important;
 }
-.dashboard-light .nav-active-pill {
-  border-color: #0284C7 !important;
+.dashboard-light a[data-active="true"],
+.dashboard-light .nav-active {
   background-color: #E0F2FE !important;
+  border: 1px solid #38BDF8 !important;
   color: #0369A1 !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.12) !important;
 }
-.dashboard-light .nova-theme-bar {
-  background-color: #00E5FF !important;
-  border-color: #00E5FF !important;
+.dashboard-light a[data-active="false"] {
+  color: #64748B !important;
 }
-.dashboard-light .nova-theme-dot {
+.dashboard-light a[data-active="false"]:hover {
+  color: #0F172A !important;
+  background-color: #F1F5F9 !important;
+}
+.dashboard-light .theme-bar {
+  background-color: #0284C7 !important;
+  border-color: #0284C7 !important;
+}
+.dashboard-light .theme-dot {
   transform: translateX(16px) !important;
   background-color: #FFFFFF !important;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
+}
+.dashboard-light button[class*="bg-cyan-500"],
+.dashboard-light button[class*="bg-[#00E5FF]"] {
+  background-color: #0284C7 !important;
+  color: #FFFFFF !important;
 }

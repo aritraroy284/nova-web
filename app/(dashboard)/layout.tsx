@@ -19,26 +19,25 @@ import {
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [isLight, setIsLight] = React.useState(false);
+  
+  
+  const pathname = usePathname();
+  const [themeMode, setThemeMode] = React.useState<"dark" | "light">("dark");
 
   React.useEffect(() => {
     try {
-      if (typeof window !== "undefined" && localStorage.getItem("nova_theme") === "light") {
-        setIsLight(true);
-      }
-    } catch(e) {}
+      const saved = localStorage.getItem("nova_theme");
+      if (saved === "light" || saved === "dark") setThemeMode(saved);
+    } catch (e) {}
   }, []);
 
-  const handleThemeToggle = (e: React.MouseEvent) => {
+  const toggleTheme = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsLight(prev => {
-      const next = !prev;
-      try { localStorage.setItem("nova_theme", next ? "light" : "dark"); } catch(err) {}
-      return next;
-    });
+    const next = themeMode === "dark" ? "light" : "dark";
+    setThemeMode(next);
+    try { localStorage.setItem("nova_theme", next); } catch (e) {}
   };
-  const pathname = usePathname();
   const router = useRouter();
 
   const [userEmail, setUserEmail] = useState<string>("");
@@ -244,7 +243,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className={`min-h-screen bg-[#050B14] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${isLight ? "dashboard-light" : ""}`}>
+    <div className={`min-h-screen flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${themeMode === "light" ? "dashboard-light" : "dashboard-dark"}`}>
       {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E3045] px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -324,20 +323,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
                   </div>
 
-        {/* Sleek Bottom Light/Dark Theme Switch */}
-        <div className="pt-3 mt-3 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+        {/* Theme Switch Pill (Desktop & Mobile) */}
+        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
           <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
-            {isLight ? "LIGHT MODE" : "DARK MODE"}
+            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
           </span>
           <button
             type="button"
-            onClick={handleThemeToggle}
-            className="nova-theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
-            title="Toggle Theme"
+            onClick={toggleTheme}
+            className="theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
+            title="Toggle Light / Dark Interface"
           >
-            <div className="nova-theme-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
+            <div className="theme-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
           </button>
         </div>
+
+        
+
+        
                   <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -418,6 +421,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="text-xs font-medium text-white truncate">{maskEmail(userEmail)}</div>
                 <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
               </div>
+
+        {/* Theme Switch Pill (Desktop & Mobile) */}
+        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
+            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
+          </span>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
+            title="Toggle Light / Dark Interface"
+          >
+            <div className="theme-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
+          </button>
+        </div>
+
+        
               <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
                 <LogOut className="w-4 h-4" />
               </button>
@@ -441,9 +461,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* MAIN VIEWPORT */}
       <div className="flex-1 flex flex-col md:pl-64 lg:pl-72 min-w-0 w-full">
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6">
-          {children}
-        </main>
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6"><div key={pathname} className="page-transition-enter w-full">{children}</div></main>
       </div>
 
       {/* AUTHENTICATION MODAL */}

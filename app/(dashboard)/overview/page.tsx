@@ -14,7 +14,13 @@ export default function OverviewPage() {
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/30 text-[#00F5A0] text-xs font-mono font-semibold tracking-wider">
           <span className="w-1.5 h-1.5 rounded-full bg-[#00F5A0] animate-pulse"></span>
-          <span className="px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/35 shadow-[0_0_12px_rgba(0,245,160,0.25)] flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#00F5A0] shadow-[0_0_6px_#00F5A0]"></span>LIVE STATUS</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/35 shadow-[0_0_12px_rgba(0,245,160,0.2)] select-none">
+  <span className="relative flex h-2 w-2">
+    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F5A0] opacity-75"></span>
+    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F5A0] shadow-[0_0_6px_#00F5A0]"></span>
+  </span>
+  <span className="text-[11px] font-mono font-bold tracking-widest text-[#00F5A0] uppercase">LIVE STATUS</span>
+</div>
         </div>
       </div>
 
