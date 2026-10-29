@@ -10,8 +10,8 @@ import {
 export default function OverviewPage() {
   return (
     <div className="space-y-6">
-      {/* HEADER SECTION */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* HEADER SECTION: Cleanly Aligned with LIVE STATUS */}
+      <div className="flex flex-row items-center justify-between gap-4 pb-1">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-white">
             Workspace Overview
@@ -22,7 +22,7 @@ export default function OverviewPage() {
         </div>
 
         {/* Clean Single Live Status Capsule */}
-        <div className="live-status-pill self-start sm:self-auto flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/35 shadow-[0_0_12px_rgba(0,245,160,0.25)] select-none">
+        <div className="live-status-pill shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/35 shadow-[0_0_12px_rgba(0,245,160,0.25)] select-none">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F5A0] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F5A0] shadow-[0_0_6px_#00F5A0]"></span>
@@ -55,8 +55,8 @@ export default function OverviewPage() {
 
           <div className="pt-3 border-t border-[#16273A] flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono">
             <span className="text-slate-400">Latency: <span className="text-white font-bold">12ms</span></span>
-            <span className="text-slate-400">Vault: <span className="text-[#00E5FF] font-bold">Synced</span></span>
-            <span className="text-slate-400">Security: <span className="text-[#00F5A0] font-bold">Zero-Secret</span></span>
+            <span className="text-slate-400">Vault: <span className="metric-cyan text-[#00E5FF] font-bold">Synced</span></span>
+            <span className="text-slate-400">Security: <span className="metric-green text-[#00F5A0] font-bold">Zero-Secret</span></span>
           </div>
         </div>
 
@@ -68,14 +68,15 @@ export default function OverviewPage() {
             <h3 className="text-sm font-bold font-mono text-white mb-2">
               Next Recommended Step
             </h3>
-            <p className="text-xs font-mono text-slate-400 leading-relaxed mb-4">
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
               Manage your Gemini, Groq, and OpenRouter API credentials to guarantee uninterrupted fallback.
             </p>
           </div>
 
+          {/* Original Sleek Button Style */}
           <Link
             href="/api-models"
-            className="btn-primary-action w-full py-2.5 px-4 rounded-xl bg-[#00E5FF] hover:bg-[#33ECFF] text-[#04080E] font-mono text-xs font-bold tracking-wider shadow-[0_0_15px_rgba(0,229,255,0.35)] transition-all flex items-center justify-center gap-2"
+            className="btn-action-card w-full py-2.5 px-4 rounded-xl font-mono text-xs font-semibold tracking-wider transition-all flex items-center justify-center gap-2 mt-4"
           >
             <span>Configure Keys</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -83,8 +84,8 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* PROVIDERS STATUS ROW */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* PROVIDERS STATUS ROW: Stacks cleanly on mobile, 3 cols on tablet/desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="nova-card p-3.5 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_6px_#00E5FF]"></span>
@@ -93,7 +94,7 @@ export default function OverviewPage() {
               <p className="text-[10px] font-mono text-slate-400">Primary provider</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono font-bold text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 px-2 py-0.5 rounded">
+          <span className="badge-primary text-[10px] font-mono font-bold text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 px-2 py-0.5 rounded">
             PRIMARY
           </span>
         </div>
@@ -106,7 +107,7 @@ export default function OverviewPage() {
               <p className="text-[10px] font-mono text-slate-400">Fallback provider</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-slate-400 bg-slate-800/40 border border-slate-700/50 px-2 py-0.5 rounded">
+          <span className="badge-standby text-[10px] font-mono text-slate-400 bg-slate-800/40 border border-slate-700/50 px-2 py-0.5 rounded">
             STANDBY
           </span>
         </div>
@@ -119,7 +120,7 @@ export default function OverviewPage() {
               <p className="text-[10px] font-mono text-slate-400">Additional models</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-slate-400 bg-slate-800/40 border border-slate-700/50 px-2 py-0.5 rounded">
+          <span className="badge-standby text-[10px] font-mono text-slate-400 bg-slate-800/40 border border-slate-700/50 px-2 py-0.5 rounded">
             STANDBY
           </span>
         </div>
@@ -154,14 +155,14 @@ export default function OverviewPage() {
           <div className="grid grid-cols-2 gap-3">
             <Link
               href="/api-models"
-              className="p-3 rounded-xl border border-[#16273A] bg-slate-900/30 hover:border-cyan-500/40 transition-colors flex items-center justify-between text-xs font-mono text-slate-300 hover:text-white"
+              className="quick-access-btn p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
             >
               <span>API & Models</span>
               <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
             </Link>
             <Link
               href="/plugins"
-              className="p-3 rounded-xl border border-[#16273A] bg-slate-900/30 hover:border-cyan-500/40 transition-colors flex items-center justify-between text-xs font-mono text-slate-300 hover:text-white"
+              className="quick-access-btn p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
             >
               <span>Plugins Hub</span>
               <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
@@ -169,7 +170,7 @@ export default function OverviewPage() {
           </div>
           <Link
             href="/guide"
-            className="mt-3 p-3 rounded-xl border border-[#16273A] bg-slate-900/30 hover:border-cyan-500/40 transition-colors flex items-center justify-between text-xs font-mono text-slate-300 hover:text-white"
+            className="quick-access-btn mt-3 p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
           >
             <span>Architecture & System Guide</span>
             <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />

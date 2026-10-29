@@ -71,7 +71,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   );
 
   const ThemeToggleElement = (
-    <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+    <div className="pt-2 mt-1 border-t border-[#142334] flex items-center justify-between px-2 select-none">
       <span className="text-[10px] font-mono tracking-wider font-semibold uppercase theme-label text-cyan-400">
         {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
       </span>
@@ -90,16 +90,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className={`min-h-screen flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${themeMode === "light" ? "dashboard-light" : "dashboard-dark"}`}>
       
-      {/* MOBILE STICKY TOP BAR */}
+      {/* MOBILE STICKY TOP BAR - Clean, zero clutter */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full border-b border-[#142334] px-4 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen(true)}
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#0D1A29] transition-colors focus:outline-none"
-            aria-label="Toggle Navigation Menu"
+            aria-label="Open Navigation Menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
+            <Menu className="w-5 h-5" />
           </button>
           {BrandElement}
         </div>
@@ -111,16 +111,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </header>
 
-      {/* MOBILE DRAWER */}
+      {/* MOBILE DRAWER (Smooth 60fps Slide-in Animation) */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="relative w-72 max-w-[80vw] h-full bg-[#060B11] border-r border-[#142334] p-4 flex flex-col justify-between z-10">
+          <div 
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setMobileMenuOpen(false)} 
+          />
+          <div className="animate-drawer-slide relative w-72 max-w-[82vw] h-[100dvh] bg-[#060B11] border-r border-[#142334] p-4 flex flex-col justify-between z-10">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-[#142334] mb-4">
                 {BrandElement}
-                <button onClick={() => setMobileMenuOpen(false)} className="p-1 text-slate-400 hover:text-white">
-                  <X className="w-5 h-5" />
+                <button 
+                  onClick={() => setMobileMenuOpen(false)} 
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#0D1A29]"
+                >
+                  <X className="w-5 h-5 text-cyan-400" />
                 </button>
               </div>
               <nav className="space-y-1.5">
@@ -147,7 +153,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </nav>
             </div>
 
-            <div className="pt-4 border-t border-[#142334] space-y-3">
+            {/* Mobile Drawer Bottom: Docked cleanly */}
+            <div className="pt-3 border-t border-[#142334] space-y-2.5">
               <div className="p-2.5 rounded-xl user-account-box flex items-center justify-between">
                 <div className="min-w-0 pr-2">
                   <p className="text-xs font-mono font-medium truncate text-white">
@@ -171,8 +178,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex md:w-64 lg:w-72 flex-col justify-between border-r border-[#142334] h-screen sticky top-0 p-4 z-30 shrink-0">
+      {/* DESKTOP SIDEBAR: Fits 100dvh without scrolling */}
+      <aside className="hidden md:flex md:w-64 lg:w-72 flex-col justify-between border-r border-[#142334] h-[100dvh] sticky top-0 p-4 z-30 shrink-0 overflow-hidden">
         <div>
           <div className="mb-6 px-1">
             {BrandElement}
@@ -200,7 +207,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </div>
 
-        <div className="pt-4 border-t border-[#142334] space-y-3">
+        {/* Desktop Sidebar Bottom */}
+        <div className="pt-3 border-t border-[#142334] space-y-2.5">
           <div className="flex items-center justify-between px-1">
             <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold tracking-wider text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 flex items-center gap-1.5">
               <ShieldCheck className="w-3 h-3 text-[#00F5A0]" />
@@ -230,9 +238,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* MAIN CONTENT WITH PAGE TRANSITION */}
-      <main className="flex-1 min-w-0 overflow-y-auto">
-        <div key={pathname} className="page-transition-enter w-full p-4 md:p-8 max-w-7xl mx-auto">
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 min-w-0 h-[100dvh] overflow-y-auto">
+        <div className="w-full p-4 md:p-8 max-w-7xl mx-auto">
           {children}
         </div>
       </main>
