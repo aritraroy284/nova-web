@@ -60,6 +60,7 @@ canvas {
   visibility: hidden;
   pointer-events: none;
 }
+.playBtn, .playBtn *, .playCaption { pointer-events: none; }
 .playBtn {
   position: relative;
   width: 82px;
@@ -1444,17 +1445,24 @@ function seek(x) {
 function setPlay(p) {
   playing = p;
   if (p && T >= DUR) seek(0);
-  if (playOverlay) playOverlay.classList.toggle('hidden', p);
+  if (playOverlay) {
+    if (p) playOverlay.classList.add("hidden");
+    else playOverlay.classList.remove("hidden");
+  }
   ensureAudio();
   bgmCtl();
-  if (hasStudio) {
-    if (p) {
-      studio.currentTime = T;
-      studio.play().catch(() => {});
-    } else {
-      studio.pause();
-    }
-  } else if (!p) {
+  if (p) {
+    try {
+      if (AU) {
+        studio.currentTime = T;
+        const pr = studio.play();
+        if (pr && pr.then) {
+          pr.then(() => { hasStudio = true; }).catch(() => {});
+        }
+      }
+    } catch (e) {}
+  } else {
+    try { studio.pause(); } catch (e) {}
     try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
   }
   last = performance.now();
@@ -1500,9 +1508,28 @@ function loop(n) {
   requestAnimationFrame(loop);
 }
 
-playOverlay.addEventListener('click', e => { e.stopPropagation(); setPlay(true); });
-playOverlay.addEventListener('touchend', e => { e.stopPropagation(); e.preventDefault(); setPlay(true); });
-cv.addEventListener('click', e => { e.stopPropagation(); setPlay(!playing); });
+let lastActionTime = 0;
+function handleTrigger(e) {
+  if (e) {
+    e.stopPropagation();
+    if (e.cancelable) e.preventDefault();
+  }
+  const now = performance.now();
+  if (now - lastActionTime < 600) return;
+  lastActionTime = now;
+  setPlay(true);
+}
+
+playOverlay.addEventListener("pointerup", handleTrigger);
+playOverlay.addEventListener("click", handleTrigger);
+
+cv.addEventListener("click", e => {
+  e.stopPropagation();
+  const now = performance.now();
+  if (now - lastActionTime < 600) return;
+  lastActionTime = now;
+  setPlay(!playing);
+});
 
 $('rp').onclick = e => { e.stopPropagation(); seek(0); setPlay(true); };
 $('au').onclick = e => {
