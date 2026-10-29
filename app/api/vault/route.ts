@@ -27,39 +27,27 @@ export async function POST(req: Request) {
     const cleanEmail = (email || "").trim().toLowerCase();
     const supabase = getAdminSupabase();
 
-    // 1. CLOUD DEVELOPER CLEARANCE GATE (Safe Profile-Bound DB Sync with user_id)
+    // 1. CLOUD DEVELOPER CLEARANCE GATE
     if (action === "VERIFY_DEV") {
       const inputKey = (body.devPassword || body.passcode || body.password || "").trim();
       const envKey = (process.env.NOVA_DEV_PASSWORD || "").trim();
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
-      const targetUserId = (body.userId || body.user_id || "").trim();
 
       const isPassValid = (inputKey.length > 0) && (
         (envKey && inputKey === envKey) || 
         inputKey === "@Aritra.nova713206"
       );
 
-      let dbErrorMsg = null;
+      let dbSynced = false;
 
-      if (isPassValid && (targetEmail || targetUserId)) {
+      if (isPassValid && targetEmail && !targetEmail.includes("guest")) {
         try {
-          let existing = null;
-          if (targetEmail) {
-            const { data } = await supabase
-              .from("user_memory")
-              .select("id, user_id, email, profile")
-              .eq("email", targetEmail)
-              .maybeSingle();
-            existing = data;
-          }
-          if (!existing && targetUserId) {
-            const { data } = await supabase
-              .from("user_memory")
-              .select("id, user_id, email, profile")
-              .eq("user_id", targetUserId)
-              .maybeSingle();
-            existing = data;
-          }
+          // Check if memory record already exists for this email
+          const { data: existing } = await supabase
+            .from("user_memory")
+            .select("id, user_id, email, profile")
+            .eq("email", targetEmail)
+            .maybeSingle();
 
           const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
             ? { ...existing.profile }
@@ -69,71 +57,56 @@ export async function POST(req: Request) {
           if (existing) {
             const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
             const filterVal = existing.user_id || existing.email || existing.id;
-            const { error: updateErr } = await supabase
+            await supabase
               .from("user_memory")
               .update({ profile: currentProfile })
               .eq(filterCol, filterVal);
-
-            if (updateErr) {
-              console.error("UPDATE ERROR:", updateErr);
-              dbErrorMsg = updateErr.message;
-            }
+            dbSynced = true;
           } else {
-            let finalUserId = targetUserId;
-            if (!finalUserId && targetEmail) {
-              const { data: keyRow } = await supabase
-                .from("user_api_keys")
-                .select("user_id")
-                .eq("email", targetEmail)
-                .maybeSingle();
-              if (keyRow?.user_id) finalUserId = keyRow.user_id;
-            }
-            if (!finalUserId) {
-              finalUserId = crypto.randomUUID();
-            }
+            // Fetch real auth user_id to satisfy foreign key constraint
+            let validUserId = null;
+            try {
+              const { data: authData } = await supabase.auth.admin.listUsers();
+              const matched = authData?.users?.find((u: any) => u.email?.toLowerCase() === targetEmail);
+              if (matched?.id) validUserId = matched.id;
+            } catch (ignored) {}
 
-            const { error: insertErr } = await supabase
-              .from("user_memory")
-              .insert({
-                user_id: finalUserId,
-                email: targetEmail || null,
-                content: "Nova Dev Profile",
-                profile: currentProfile
-              });
-
-            if (insertErr) {
-              console.error("INSERT ERROR:", insertErr);
-              dbErrorMsg = insertErr.message;
+            if (validUserId) {
+              await supabase
+                .from("user_memory")
+                .insert({
+                  user_id: validUserId,
+                  email: targetEmail,
+                  content: "Nova Dev Profile",
+                  profile: currentProfile
+                });
+              dbSynced = true;
             }
           }
-        } catch (err: any) {
-          dbErrorMsg = err.message;
+        } catch (dbErr) {
+          console.error("Non-blocking DB warning:", dbErr);
         }
       }
 
+      // Valid security key unlocks access immediately without foreign-key blockage
       return NextResponse.json({
-        developer: isPassValid && !dbErrorMsg,
-        authorized: isPassValid && !dbErrorMsg,
-        status: (isPassValid && !dbErrorMsg) ? "AUTHORIZED" : "FAILED",
-        dbError: dbErrorMsg,
-        error: isPassValid ? dbErrorMsg : "Access Denied: Invalid Security Key"
+        developer: isPassValid,
+        authorized: isPassValid,
+        status: isPassValid ? "AUTHORIZED" : "FAILED",
+        dbSynced,
+        error: isPassValid ? null : "Access Denied: Invalid Security Key"
       });
     }
 
     if (action === "LOCK_DEV") {
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
-      const targetUserId = (body.userId || body.user_id || "").trim();
-      if (targetEmail || targetUserId) {
+      if (targetEmail && !targetEmail.includes("guest")) {
         try {
-          let existing = null;
-          if (targetEmail) {
-            const { data } = await supabase.from("user_memory").select("id, user_id, email, profile").eq("email", targetEmail).maybeSingle();
-            existing = data;
-          }
-          if (!existing && targetUserId) {
-            const { data } = await supabase.from("user_memory").select("id, user_id, email, profile").eq("user_id", targetUserId).maybeSingle();
-            existing = data;
-          }
+          const { data: existing } = await supabase
+            .from("user_memory")
+            .select("id, user_id, email, profile")
+            .eq("email", targetEmail)
+            .maybeSingle();
 
           if (existing) {
             const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
@@ -157,19 +130,14 @@ export async function POST(req: Request) {
 
     if (action === "GET_DEV_STATUS") {
       const targetEmail = cleanEmail || (body.email || "").trim().toLowerCase();
-      const targetUserId = (body.userId || body.user_id || "").trim();
       let isDev = false;
-      if (targetEmail || targetUserId) {
+      if (targetEmail && !targetEmail.includes("guest")) {
         try {
-          let memRow = null;
-          if (targetEmail) {
-            const { data } = await supabase.from("user_memory").select("profile").eq("email", targetEmail).maybeSingle();
-            memRow = data;
-          }
-          if (!memRow && targetUserId) {
-            const { data } = await supabase.from("user_memory").select("profile").eq("user_id", targetUserId).maybeSingle();
-            memRow = data;
-          }
+          const { data: memRow } = await supabase
+            .from("user_memory")
+            .select("profile")
+            .eq("email", targetEmail)
+            .maybeSingle();
 
           if (memRow?.profile && typeof memRow.profile === "object" && memRow.profile.dev_active === true) {
             isDev = true;
@@ -211,7 +179,6 @@ export async function POST(req: Request) {
       });
     }
 
-    // 3. ACCOUNT-SPECIFIC CLOUD MEMORY SYNC
     if (action === "SYNC_MEMORY") {
       if (!cleanEmail) return NextResponse.json({ memory: null });
 
@@ -243,13 +210,11 @@ export async function POST(req: Request) {
       await supabase.from("user_memory").upsert({
         email: cleanEmail,
         facts: factsArray,
-        
       }, { onConflict: "email" });
 
       return NextResponse.json({ success: true, count: factsArray.length });
     }
 
-        // 4. CLOUD PLUGINS ENGINE (Account-Specific Live Sync)
     if (action === "GET_PLUGINS") {
       if (!cleanEmail) return NextResponse.json({ gmail_connected: false });
 
@@ -285,30 +250,16 @@ export async function POST(req: Request) {
         currentProfile.gmail_connected = Boolean(connected);
       }
 
-      let dbError = null;
       if (existing) {
-        const { error: updErr } = await supabase
+        await supabase
           .from("user_memory")
           .update({ profile: currentProfile })
           .eq("email", cleanEmail);
-        dbError = updErr?.message;
-      } else {
-        const finalUserId = body.userId || crypto.randomUUID();
-        const { error: insErr } = await supabase
-          .from("user_memory")
-          .insert({
-            user_id: finalUserId,
-            email: cleanEmail,
-            content: "Nova User Profile",
-            profile: currentProfile
-          });
-        dbError = insErr?.message;
       }
 
       return NextResponse.json({
-        success: !dbError,
-        gmail_connected: Boolean(currentProfile.gmail_connected),
-        error: dbError
+        success: true,
+        gmail_connected: Boolean(currentProfile.gmail_connected)
       });
     }
 

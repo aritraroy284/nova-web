@@ -38,29 +38,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showDevModal, setShowDevModal] = useState<boolean>(false);
 
-  useEffect(() => {
-    try {
-      const savedTheme = localStorage.getItem("nova_theme");
-      if (savedTheme === "light" || savedTheme === "dark") setThemeMode(savedTheme);
-
-      const savedEmail = localStorage.getItem("nova_session_email");
-      const savedName = localStorage.getItem("nova_session_name");
-      const savedGuest = localStorage.getItem("nova_session_guest");
-
-      if (savedEmail) {
-        setUserEmail(savedEmail);
-        setUserName(savedName || savedEmail.split("@")[0]);
-        setIsGuest(false);
-      } else if (savedGuest === "true") {
-        setIsGuest(true);
-        setUserEmail(null);
-        setUserName("Guest User");
-      }
-    } catch (e) {}
-  }, []);
-
   const syncDevStatusFromCloud = async (email: string | null) => {
-    if (!email) return;
+    if (!email || email.includes("guest")) return;
     try {
       const res = await fetch("/api/vault", {
         method: "POST",
@@ -74,9 +53,56 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     } catch (e) {}
   };
 
+  // Real-Time Supabase OAuth Session Listener
   useEffect(() => {
-    if (userEmail) syncDevStatusFromCloud(userEmail);
-  }, [userEmail]);
+    try {
+      const savedTheme = localStorage.getItem("nova_theme");
+      if (savedTheme === "light" || savedTheme === "dark") setThemeMode(savedTheme);
+
+      const savedEmail = localStorage.getItem("nova_session_email");
+      const savedName = localStorage.getItem("nova_session_name");
+      if (savedEmail) {
+        setUserEmail(savedEmail);
+        setUserName(savedName || savedEmail.split("@")[0]);
+        setIsGuest(false);
+        syncDevStatusFromCloud(savedEmail);
+      }
+    } catch (e) {}
+
+    // 1. Listen for Supabase Google OAuth callback & token exchanges
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user?.email) {
+        const email = session.user.email.toLowerCase().trim();
+        const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split("@")[0];
+        setUserEmail(email);
+        setUserName(name);
+        setIsGuest(false);
+        localStorage.setItem("nova_session_email", email);
+        localStorage.setItem("nova_session_name", name);
+        localStorage.removeItem("nova_session_guest");
+        syncDevStatusFromCloud(email);
+      }
+    });
+
+    // 2. Immediate session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email) {
+        const email = session.user.email.toLowerCase().trim();
+        const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split("@")[0];
+        setUserEmail(email);
+        setUserName(name);
+        setIsGuest(false);
+        localStorage.setItem("nova_session_email", email);
+        localStorage.setItem("nova_session_name", name);
+        localStorage.removeItem("nova_session_guest");
+        syncDevStatusFromCloud(email);
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
 
   const toggleTheme = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -128,6 +154,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const BottomAccountSection = (
     <div className="pt-3.5 border-t border-[#142334] space-y-3">
+      {/* Dev Access Button */}
       <div className="flex items-center justify-between px-1">
         <button
           type="button"
@@ -147,6 +174,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </span>
       </div>
 
+      {/* Dynamic User Account Card */}
       <div 
         onClick={() => { if (!userEmail) setShowAuthModal(true); }}
         className="p-3 rounded-xl user-account-box flex items-center justify-between cursor-pointer hover:border-cyan-500/40 transition-colors"
@@ -177,6 +205,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
       </div>
 
+      {/* Core Online Status */}
       <div className="flex items-center gap-2 px-1 py-0.5">
         <span className="w-2 h-2 rounded-full bg-[#00F5A0] shadow-[0_0_8px_#00F5A0]"></span>
         <span className="text-xs font-mono text-slate-300 tracking-wider">CORE ONLINE</span>
@@ -203,7 +232,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         syncDevStatusFromCloud={syncDevStatusFromCloud}
       />
 
-      {/* MOBILE STICKY TOP BAR */}
+      {/* MOBILE HEADER */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full border-b border-[#142334] px-4 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button
@@ -301,7 +330,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {BottomAccountSection}
       </aside>
 
-      {/* MAIN CONTENT AREA */}
+      {/* MAIN VIEWPORT */}
       <main className="flex-1 min-w-0 h-[100dvh] overflow-y-auto">
         <div className="w-full p-4 md:p-8 max-w-7xl mx-auto">
           {children}
