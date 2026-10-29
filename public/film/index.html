@@ -1410,10 +1410,13 @@ function bgmCtl() {
 
 function duck() {
   try {
-    const sp = LINES.some(q => T >= q[0] && T < q[1]);
-    bv += ((sp ? 0.10 : 0.38) - bv) * 0.12;
+    const sp = LINES.some(q => T >= q[0] && T <= q[1]);
+    let target = sp ? 0.08 : 0.36;
+    if (T > 67.0) target *= Math.max(0, 1 - (T - 67.0) / 2.8);
+    bv += (target - bv) * 0.14;
     bgm.volume = cl(bv);
   } catch (e) {}
+} catch (e) {}
 }
 
 function seek(x) {
