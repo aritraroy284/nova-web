@@ -52,15 +52,19 @@ canvas {
   background: radial-gradient(circle at center, rgba(6,11,17,0.35) 0%, rgba(4,8,14,0.82) 100%);
   backdrop-filter: blur(6px);
   cursor: pointer;
-  z-index: 40;
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
+  z-index: 50;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
-#playOverlay.hidden {
-  opacity: 0;
-  visibility: hidden;
+#playOverlay * {
   pointer-events: none;
 }
-.playBtn, .playBtn *, .playCaption { pointer-events: none; }
+#playOverlay.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
+}
 .playBtn {
   position: relative;
   width: 82px;
@@ -110,7 +114,7 @@ canvas {
   flex-direction: column;
   justify-content: space-between;
   padding: 14px 18px;
-  z-index: 100;
+  z-index: 60;
   opacity: 1;
   transition: opacity 0.4s ease;
 }
@@ -124,7 +128,7 @@ canvas {
   pointer-events: auto;
 }
 .hudBtn {
-  background: rgba(8, 16, 26, 0.72);
+  background: rgba(8, 16, 26, 0.85);
   border: 1px solid rgba(0, 229, 255, 0.35);
   color: #00E5FF;
   border-radius: 999px;
@@ -136,7 +140,7 @@ canvas {
   transition: all 0.2s ease;
 }
 .hudBtn:hover {
-  background: rgba(0, 229, 255, 0.18);
+  background: rgba(0, 229, 255, 0.22);
   border-color: #00E5FF;
   box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
 }
@@ -176,7 +180,7 @@ canvas {
 <body>
 <div class="st" id="stage">
   <canvas id="cv"></canvas>
-  <div id="playOverlay" onclick="startFilm()" style="z-index: 40; cursor: pointer;">
+  <div id="playOverlay" onclick="setPlay(true)" ontouchend="setPlay(true)">
     <div class="playBtn">
       <svg width="28" height="28" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
@@ -195,12 +199,12 @@ canvas {
   </div>
 </div>
 
-<audio id="studioAudio" preload="auto">
+<audio id="studioAudio" preload="auto" playsinline>
   <source src="/audio/nova_vo.mp3" type="audio/mpeg">
   <source src="./nova_vo.mp3" type="audio/mpeg">
   <source src="nova_vo.mp3" type="audio/mpeg">
 </audio>
-<audio id="bgm" loop preload="auto">
+<audio id="bgm" loop preload="auto" playsinline>
   <source src="/audio/bgm.mp3" type="audio/mpeg">
   <source src="./bgm.mp3" type="audio/mpeg">
   <source src="bgm.mp3" type="audio/mpeg">
@@ -283,7 +287,9 @@ function rRect(x, y, w, h, r) {
 let T = 0, playing = false, last = 0, dirty = true, bi = 0, ci = 0, li = -1, AU = true, ac, noiseBuf, hasStudio = false, lastTick = 0;
 const $ = id => document.getElementById(id);
 
-studio.addEventListener('canplay', () => { hasStudio = true; });
+['canplay', 'canplaythrough', 'playing', 'loadeddata'].forEach(ev => {
+  studio.addEventListener(ev, () => { hasStudio = true; });
+});
 studio.addEventListener('error', () => { hasStudio = false; });
 
 function ensureAudio() {
@@ -1397,7 +1403,7 @@ function draw(t) {
 // TIMELINE CONTROLLER, AUDIO DUCKING & TOUCH UI
 // ---------------------------------------------------------
 const hudEl = $('hud'), playOverlay = $('playOverlay'), barFill = $('barFill'), stage = $('stage'), barWrap = $('barWrap');
-let hudTimer = null, bv = 0.38;
+let hudTimer = null, bv = 0.36;
 
 function resetHudTimer() {
   if (!hudEl) return;
@@ -1412,8 +1418,12 @@ stage.addEventListener('touchstart', resetHudTimer, { passive: true });
 
 function bgmCtl() {
   try {
-    if (playing && AU) bgm.play().catch(() => {});
-    else bgm.pause();
+    if (playing && AU) {
+      const p = bgm.play();
+      if (p !== undefined) p.catch(() => {});
+    } else {
+      bgm.pause();
+    }
   } catch (e) {}
 }
 
@@ -1425,7 +1435,6 @@ function duck() {
     bv += (target - bv) * 0.14;
     bgm.volume = cl(bv);
   } catch (e) {}
-} catch (e) {}
 }
 
 function seek(x) {
@@ -1442,31 +1451,18 @@ function seek(x) {
   dirty = true;
 }
 
-
-function startFilm() {
-  const ov = document.getElementById("playOverlay");
-  if (ov) {
-    ov.style.display = "none";
-    ov.classList.add("hidden");
-  }
-  setPlay(true);
-}
-window.startFilm = startFilm;
-
-
-window.addEventListener("message", function(e) {
-  if (e.data === "PLAY" || (e.data && e.data.type === "PLAY")) {
-    if (typeof startFilm === "function") startFilm();
-    else setPlay(true);
-  }
-});
-
 function setPlay(p) {
   playing = p;
   if (p && T >= DUR) seek(0);
-  if (playOverlay) {
-    if (p) playOverlay.classList.add("hidden");
-    else playOverlay.classList.remove("hidden");
+  const ov = document.getElementById('playOverlay');
+  if (ov) {
+    if (p) {
+      ov.style.display = 'none';
+      ov.classList.add('hidden');
+    } else {
+      ov.style.display = 'flex';
+      ov.classList.remove('hidden');
+    }
   }
   ensureAudio();
   bgmCtl();
@@ -1475,7 +1471,7 @@ function setPlay(p) {
       if (AU) {
         studio.currentTime = T;
         const pr = studio.play();
-        if (pr && pr.then) {
+        if (pr !== undefined) {
           pr.then(() => { hasStudio = true; }).catch(() => {});
         }
       }
@@ -1487,6 +1483,30 @@ function setPlay(p) {
   last = performance.now();
   resetHudTimer();
 }
+
+function startFilm(e) {
+  if (e) {
+    e.stopPropagation();
+    if (e.cancelable) e.preventDefault();
+  }
+  setPlay(true);
+}
+window.startFilm = startFilm;
+
+let lastActionTime = 0;
+cv.addEventListener('click', e => {
+  e.stopPropagation();
+  const now = performance.now();
+  if (now - lastActionTime < 500) return;
+  lastActionTime = now;
+  setPlay(!playing);
+});
+
+window.addEventListener('message', e => {
+  if (e.data === 'PLAY' || (e.data && e.data.type === 'PLAY')) {
+    startFilm();
+  }
+});
 
 function loop(n) {
   if (playing) {
@@ -1526,25 +1546,6 @@ function loop(n) {
   }
   requestAnimationFrame(loop);
 }
-
-function handleTrigger(e) {
-  if (e) e.stopPropagation();
-  if (playOverlay) {
-    playOverlay.style.display = "none";
-    playOverlay.classList.add("hidden");
-  }
-  setPlay(true);
-}
-playOverlay.addEventListener("click", handleTrigger);
-playOverlay.addEventListener("touchend", handleTrigger);
-
-cv.addEventListener("click", e => {
-  e.stopPropagation();
-  const now = performance.now();
-  if (now - lastActionTime < 600) return;
-  lastActionTime = now;
-  setPlay(!playing);
-});
 
 $('rp').onclick = e => { e.stopPropagation(); seek(0); setPlay(true); };
 $('au').onclick = e => {
