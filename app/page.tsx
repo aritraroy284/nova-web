@@ -52,7 +52,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#060B11]/80 px-6 py-4 flex items-center justify-between border-b border-[#1E3045]/60">
         <div className="flex items-center gap-2.5 select-none pointer-events-none cursor-default">
         <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
-        <span className="font-extrabold tracking-widest text-base sm:text-lg font-mono text-white drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]">NOVA AI</span>
+        <span className="font-black tracking-widest text-base sm:text-lg font-mono text-white drop-shadow-[0_0_14px_rgba(0,229,255,0.5)]">NOVA AI</span>
       </div>
         <Link
           href="/overview"
@@ -65,10 +65,10 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="px-6 pt-16 pb-24 max-w-5xl mx-auto text-center flex flex-col items-center">
         {/* Full Form Badge */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 shadow-[0_0_20px_rgba(0,229,255,0.25)] backdrop-blur-md select-none mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF] animate-pulse"></span>
-            <span className="text-xs sm:text-sm font-mono font-bold tracking-widest text-[#00E5FF] uppercase">
-              NEURAL OPERATIONS & VIRTUAL AUTOMATION <span className="text-white/60 font-medium">(NOVA)</span>
+        <div className="flex items-center justify-center gap-2 mb-4 select-none">
+            <span className="w-2 h-2 rounded-full bg-[#00F5A0] shadow-[0_0_8px_#00F5A0] animate-pulse"></span>
+            <span className="font-extrabold font-mono text-sm sm:text-base tracking-widest bg-gradient-to-r from-[#00E5FF] via-[#00F5A0] to-[#00E5FF] bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(0,229,255,0.4)] uppercase">
+              NEURAL OPERATIONS & VIRTUAL AUTOMATION (NOVA)
             </span>
           </div>
 
