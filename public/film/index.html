@@ -180,7 +180,7 @@ canvas {
 <body>
 <div class="st" id="stage">
   <canvas id="cv"></canvas>
-  <div id="playOverlay" onclick="setPlay(true)" ontouchend="setPlay(true)">
+  <div id="playOverlay">
     <div class="playBtn">
       <svg width="28" height="28" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
@@ -1452,6 +1452,7 @@ function seek(x) {
 }
 
 function setPlay(p) {
+  lastActionTime = performance.now();
   playing = p;
   if (p && T >= DUR) seek(0);
   const ov = document.getElementById('playOverlay');
@@ -1494,10 +1495,26 @@ function startFilm(e) {
 window.startFilm = startFilm;
 
 let lastActionTime = 0;
-cv.addEventListener('click', e => {
+
+function handlePlayStart(e) {
+  if (e) {
+    e.stopPropagation();
+    if (e.cancelable) e.preventDefault();
+  }
+  setPlay(true);
+}
+
+const ovEl = document.getElementById("playOverlay");
+if (ovEl) {
+  ovEl.addEventListener("pointerup", handlePlayStart);
+  ovEl.addEventListener("touchend", handlePlayStart);
+  ovEl.addEventListener("click", handlePlayStart);
+}
+
+cv.addEventListener("click", e => {
   e.stopPropagation();
   const now = performance.now();
-  if (now - lastActionTime < 500) return;
+  if (now - lastActionTime < 600) return;
   lastActionTime = now;
   setPlay(!playing);
 });
