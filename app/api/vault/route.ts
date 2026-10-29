@@ -232,13 +232,13 @@ export async function POST(req: Request) {
       });
     }
 
-    if (action === "SET_PLUGIN") {
+        if (action === "SET_PLUGIN") {
       const { plugin, connected } = body;
       if (!cleanEmail) return NextResponse.json({ error: "Missing email" }, { status: 400 });
 
       const { data: existing } = await supabase
         .from("user_memory")
-        .select("id, user_id, profile")
+        .select("id, user_id, email, profile")
         .eq("email", cleanEmail)
         .maybeSingle();
 
@@ -251,10 +251,12 @@ export async function POST(req: Request) {
       }
 
       if (existing) {
+        const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
+        const filterVal = existing.user_id || existing.email || existing.id;
         await supabase
           .from("user_memory")
           .update({ profile: currentProfile })
-          .eq("email", cleanEmail);
+          .eq(filterCol, filterVal);
       }
 
       return NextResponse.json({
