@@ -17,39 +17,7 @@ import { Radio, ArrowRight, Download, Play } from "lucide-react";
 
 export default function LandingPage() {
 
-  const handleSignIn = async (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    try {
-      if (typeof window !== "undefined") {
-        const origin = window.location.origin;
-        // Check if supabase is configured with a real URL
-        const isConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && 
-                             !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
-        
-        if (isConfigured && supabase?.auth) {
-          const { error } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: {
-              redirectTo: `${origin}/overview`,
-            },
-          });
-          if (error) {
-            console.warn("Supabase auth redirecting to overview fallback:", error.message);
-            window.location.href = "/overview";
-          }
-        } else {
-          // Direct fallback to dashboard if Supabase credentials are placeholder
-          window.location.href = "/overview";
-        }
-      }
-    } catch (err) {
-      console.error("Sign in error:", err);
-      if (typeof window !== "undefined") window.location.href = "/overview";
-    }
-  };
+  
 
 
   React.useEffect(() => {
@@ -125,12 +93,9 @@ export default function LandingPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-14">
-          <button onClick={handleSignIn} 
-            
-            className="px-6 py-3.5 rounded-xl bg-nova-cyan text-black font-mono font-semibold text-sm flex items-center gap-2 shadow-[0_0_25px_rgba(0,229,255,0.3)] hover:scale-105 transition"
-          >
+          <Link href="/overview" className="px-5 py-2.5 rounded-xl bg-[#00E5FF] hover:bg-[#33ECFF] text-[#04080E] font-mono text-xs font-bold tracking-wider shadow-[0_0_20px_rgba(0,229,255,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer">
             Open Control Plane <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
 
           <div className="relative">
             <button
