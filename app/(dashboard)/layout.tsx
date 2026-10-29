@@ -19,8 +19,6 @@ import {
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  
-  
   const pathname = usePathname();
   const [themeMode, setThemeMode] = React.useState<"dark" | "light">("dark");
 
@@ -255,11 +253,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
+            <div className="w-7 h-7 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs">
+              N
+            </div>
             <div>
               <div className="font-mono font-bold text-xs tracking-wider text-white">NOVA AI</div>
               <div className="text-[9px] font-mono text-[#00F5A0] leading-none">CORE ONLINE</div>
             </div>
+
+        {/* Dedicated Sidebar Bottom Theme Switch */}
+        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
+            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
+          </span>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-switch-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
+            title="Toggle Interface Theme"
+          >
+            <div className="theme-switch-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
+          </button>
+        </div>
           </div>
         </div>
 
@@ -281,7 +296,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div>
               <div className="flex items-center justify-between pb-5 border-b border-[#1E3045]">
                 <div className="flex items-center gap-2.5">
-                  <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
+                  <div className="w-8 h-8 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs shadow-[0_0_12px_rgba(0,229,255,0.2)]">
+                    N
+                  </div>
                   <div>
                     <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
                     <div className="text-[9px] font-mono text-[#8E9DAE] tracking-wider uppercase">AI Workspace</div>
@@ -322,25 +339,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <div className="text-xs font-medium text-white truncate">{maskEmail(userEmail)}</div>
                     <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
                   </div>
-
-        {/* Theme Switch Pill (Desktop & Mobile) */}
-        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
-          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
-            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
-          </span>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
-            title="Toggle Light / Dark Interface"
-          >
-            <div className="theme-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
-          </button>
-        </div>
-
-        
-
-        
                   <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -359,6 +357,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
                 <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
               </div>
+
+        {/* Dedicated Sidebar Bottom Theme Switch */}
+        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
+            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
+          </span>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-switch-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
+            title="Toggle Interface Theme"
+          >
+            <div className="theme-switch-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
+          </button>
+        </div>
             </div>
           </aside>
         </div>
@@ -369,7 +382,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div>
           <div className="pb-6 border-b border-[#1E3045]/60">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition cursor-pointer">
-              <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
+              <div className="w-9 h-9 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.15)]">
+                N
+              </div>
               <div>
                 <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
                 <div className="text-[10px] font-mono text-[#00E5FF] tracking-wider uppercase flex items-center gap-1">
@@ -421,23 +436,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="text-xs font-medium text-white truncate">{maskEmail(userEmail)}</div>
                 <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
               </div>
-
-        {/* Theme Switch Pill (Desktop & Mobile) */}
-        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
-          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
-            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
-          </span>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
-            title="Toggle Light / Dark Interface"
-          >
-            <div className="theme-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
-          </button>
-        </div>
-
-        
               <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
                 <LogOut className="w-4 h-4" />
               </button>
@@ -456,6 +454,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
             <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
           </div>
+
+        {/* Dedicated Sidebar Bottom Theme Switch */}
+        <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
+            {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
+          </span>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-switch-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
+            title="Toggle Interface Theme"
+          >
+            <div className="theme-switch-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
+          </button>
+        </div>
         </div>
       </aside>
 
