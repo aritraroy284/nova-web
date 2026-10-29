@@ -2,111 +2,178 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { 
+  ArrowRight, 
+  ExternalLink 
+} from "lucide-react";
 
 export default function OverviewPage() {
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {/* HEADER SECTION */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Workspace Overview</h1>
-          <p className="text-xs md:text-sm text-[#8E9DAE] mt-1">Your workspace, providers and connected tools at a glance.</p>
+          <h1 className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-white">
+            Workspace Overview
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 font-mono mt-1">
+            Your workspace, providers and connected tools at a glance.
+          </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/30 text-[#00F5A0] text-xs font-mono font-semibold tracking-wider">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00F5A0] animate-pulse"></span>
-          <span>LIVE STATUS</span>
+
+        {/* Clean Single Live Status Capsule (Zero Glitch) */}
+        <div className="live-status-pill self-start sm:self-auto flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/35 shadow-[0_0_12px_rgba(0,245,160,0.25)] select-none">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F5A0] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F5A0] shadow-[0_0_6px_#00F5A0]"></span>
+          </span>
+          <span className="live-status-text text-[11px] font-mono font-bold tracking-widest text-[#00F5A0] uppercase">
+            LIVE STATUS
+          </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-2 bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5 flex flex-col justify-between">
+      {/* TOP ROW: CORE AGENT & ACTION ITEM */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="nova-card lg:col-span-2 p-5 rounded-2xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00F5A0] shadow-[0_0_8px_#00F5A0]"></span>
-                <h2 className="text-base font-semibold text-white tracking-wide">Core Agent Online</h2>
+                <h2 className="text-sm sm:text-base font-bold font-mono text-white">
+                  Core Agent Online
+                </h2>
               </div>
-              <span className="text-[10px] font-mono text-[#8E9DAE] uppercase bg-[#142030] px-2 py-0.5 rounded border border-[#1E3045]">Shielded Build</span>
+              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-slate-800/40 border border-slate-700/50 uppercase">
+                SHIELDED BUILD
+              </span>
             </div>
-            <p className="text-xs text-[#8E9DAE] max-w-lg leading-relaxed">
+            <p className="text-xs font-mono text-slate-400 leading-relaxed mb-4">
               Autonomous mobile runtime is calibrated. Ready to process multi-tier cognitive queries, voice commands, and Ghost Protocol automations.
             </p>
           </div>
-          <div className="mt-5 pt-3 border-t border-[#1E3045]/60 flex flex-wrap items-center gap-4 text-[11px] font-mono text-[#8E9DAE]">
-            <span>Latency: <strong className="text-white">12ms</strong></span>
-            <span>Vault: <strong className="text-[#00E5FF]">Synced</strong></span>
-            <span>Security: <strong className="text-[#00F5A0]">Zero-Secret</strong></span>
+
+          <div className="pt-3 border-t border-[#16273A] flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono">
+            <span className="text-slate-400">Latency: <span className="text-white font-bold">12ms</span></span>
+            <span className="text-slate-400">Vault: <span className="text-[#00E5FF] font-bold">Synced</span></span>
+            <span className="text-slate-400">Security: <span className="text-[#00F5A0] font-bold">Zero-Secret</span></span>
           </div>
         </div>
 
-        <div className="bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5 flex flex-col justify-between hover:border-[#00E5FF]/40 transition-colors">
+        <div className="nova-card p-5 rounded-2xl flex flex-col justify-between">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[#00E5FF]">Action Item</span>
-            <h3 className="text-sm font-semibold text-white mt-1">Next Recommended Step</h3>
-            <p className="text-xs text-[#8E9DAE] mt-2 leading-relaxed">Manage your Gemini, Groq, and OpenRouter API credentials to guarantee uninterrupted fallback.</p>
+            <span className="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase block mb-1.5">
+              ACTION ITEM
+            </span>
+            <h3 className="text-sm font-bold font-mono text-white mb-2">
+              Next Recommended Step
+            </h3>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed mb-4">
+              Manage your Gemini, Groq, and OpenRouter API credentials to guarantee uninterrupted fallback.
+            </p>
           </div>
-          <Link href="/api-models" className="mt-4 w-full py-2.5 bg-[#142030] hover:bg-[#00E5FF] hover:text-[#060B11] border border-[#1E3045] hover:border-[#00E5FF] rounded-xl text-xs font-mono font-bold text-white transition-all text-center flex items-center justify-center gap-1.5">
+
+          <Link
+            href="/api-models"
+            className="btn-primary-action w-full py-2.5 px-4 rounded-xl bg-[#00E5FF] hover:bg-[#33ECFF] text-[#04080E] font-mono text-xs font-bold tracking-wider shadow-[0_0_15px_rgba(0,229,255,0.35)] transition-all flex items-center justify-center gap-2"
+          >
             <span>Configure Keys</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="bg-[#0D1520] border border-[#1E3045] rounded-xl p-3.5 flex items-center justify-between">
+      {/* PROVIDERS STATUS ROW */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="nova-card p-3.5 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#00E5FF]"></span>
+            <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_6px_#00E5FF]"></span>
             <div>
-              <div className="text-xs font-semibold text-white">Gemini</div>
-              <div className="text-[10px] text-[#8E9DAE]">Primary provider</div>
+              <p className="text-xs font-mono font-bold text-white">Gemini</p>
+              <p className="text-[10px] font-mono text-slate-400">Primary provider</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-[#00F5A0] bg-[#00F5A0]/10 px-2 py-0.5 rounded border border-[#00F5A0]/20 font-semibold">PRIMARY</span>
+          <span className="text-[10px] font-mono font-bold text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 px-2 py-0.5 rounded">
+            PRIMARY
+          </span>
         </div>
-        <div className="bg-[#0D1520] border border-[#1E3045] rounded-xl p-3.5 flex items-center justify-between">
+
+        <div className="nova-card p-3.5 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#8E9DAE]"></span>
+            <span className="w-2 h-2 rounded-full bg-slate-500"></span>
             <div>
-              <div className="text-xs font-semibold text-white">Groq</div>
-              <div className="text-[10px] text-[#8E9DAE]">Fallback provider</div>
+              <p className="text-xs font-mono font-bold text-white">Groq</p>
+              <p className="text-[10px] font-mono text-slate-400">Fallback provider</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-[#8E9DAE] bg-[#142030] px-2 py-0.5 rounded border border-[#1E3045]">STANDBY</span>
+          <span className="text-[10px] font-mono text-slate-400 bg-slate-800/40 border border-slate-700/50 px-2 py-0.5 rounded">
+            STANDBY
+          </span>
         </div>
-        <div className="bg-[#0D1520] border border-[#1E3045] rounded-xl p-3.5 flex items-center justify-between">
+
+        <div className="nova-card p-3.5 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#8E9DAE]"></span>
+            <span className="w-2 h-2 rounded-full bg-slate-500"></span>
             <div>
-              <div className="text-xs font-semibold text-white">OpenRouter</div>
-              <div className="text-[10px] text-[#8E9DAE]">Additional models</div>
+              <p className="text-xs font-mono font-bold text-white">OpenRouter</p>
+              <p className="text-[10px] font-mono text-slate-400">Additional models</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-[#8E9DAE] bg-[#142030] px-2 py-0.5 rounded border border-[#1E3045]">STANDBY</span>
+          <span className="text-[10px] font-mono text-slate-400 bg-slate-800/40 border border-slate-700/50 px-2 py-0.5 rounded">
+            STANDBY
+          </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5">
-          <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#8E9DAE] mb-3">Workspace Activity</h3>
-          <ul className="space-y-2.5 text-xs text-[#8E9DAE]">
-            <li className="flex items-center gap-2"><span className="text-[#00E5FF]">•</span><span>Ghost Protocol UI automation pipeline verified</span></li>
-            <li className="flex items-center gap-2"><span className="text-[#00E5FF]">•</span><span>Cloud Vault cryptographic handshake established</span></li>
-            <li className="flex items-center gap-2"><span className="text-[#00E5FF]">•</span><span>APK binary shielded against credential extraction</span></li>
+      {/* BOTTOM ROW: WORKSPACE ACTIVITY & QUICK ACCESS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="nova-card p-5 rounded-2xl">
+          <span className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-3">
+            WORKSPACE ACTIVITY
+          </span>
+          <ul className="space-y-2.5 text-xs font-mono text-slate-300">
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+              <span>Ghost Protocol UI automation pipeline verified</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+              <span>Cloud Vault cryptographic handshake established</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+              <span>APK binary shielded against credential extraction</span>
+            </li>
           </ul>
         </div>
-        <div className="bg-[#0D1520] border border-[#1E3045] rounded-2xl p-5">
-          <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#8E9DAE] mb-3">Quick Access</h3>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <Link href="/api-models" className="p-2.5 rounded-xl bg-[#142030] hover:bg-[#1E3045] text-left text-white font-medium border border-[#1E3045]/60 transition-colors flex items-center justify-between">
-              <span>API & Models</span><span className="text-[#00E5FF]">→</span>
+
+        <div className="nova-card p-5 rounded-2xl flex flex-col justify-between">
+          <span className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-3">
+            QUICK ACCESS
+          </span>
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/api-models"
+              className="p-3 rounded-xl border border-[#16273A] bg-slate-900/30 hover:border-cyan-500/40 transition-colors flex items-center justify-between text-xs font-mono text-slate-300 hover:text-white"
+            >
+              <span>API & Models</span>
+              <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
             </Link>
-            <Link href="/plugins" className="p-2.5 rounded-xl bg-[#142030] hover:bg-[#1E3045] text-left text-white font-medium border border-[#1E3045]/60 transition-colors flex items-center justify-between">
-              <span>Plugins Hub</span><span className="text-[#00E5FF]">→</span>
-            </Link>
-            <Link href="/guide" className="col-span-2 p-2.5 rounded-xl bg-[#142030] hover:bg-[#1E3045] text-left text-white font-medium border border-[#1E3045]/60 transition-colors flex items-center justify-between">
-              <span>Architecture & System Guide</span><span className="text-[#00E5FF]">→</span>
+            <Link
+              href="/plugins"
+              className="p-3 rounded-xl border border-[#16273A] bg-slate-900/30 hover:border-cyan-500/40 transition-colors flex items-center justify-between text-xs font-mono text-slate-300 hover:text-white"
+            >
+              <span>Plugins Hub</span>
+              <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
             </Link>
           </div>
+          <Link
+            href="/guide"
+            className="mt-3 p-3 rounded-xl border border-[#16273A] bg-slate-900/30 hover:border-cyan-500/40 transition-colors flex items-center justify-between text-xs font-mono text-slate-300 hover:text-white"
+          >
+            <span>Architecture & System Guide</span>
+            <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+          </Link>
         </div>
       </div>
     </div>
