@@ -2,22 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 60fps Silky Route Transition */
 @keyframes pageSlideFade {
-  0% {
+  from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(8px);
   }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 .page-transition-enter {
-  animation: pageSlideFade 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageSlideFade 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Mobile Drawer Smooth Slide In */
 @keyframes drawerSlideIn {
   from {
     transform: translateX(-100%);
@@ -31,7 +29,7 @@
 }
 
 /* ---------------------------------------------------------
-   IMAGE 19615 EXACT DARK MODE (OBSIDIAN NAVY CYBERPUNK)
+   DARK MODE (19615 EXACT OBSIDIAN NAVY)
    --------------------------------------------------------- */
 .dashboard-dark {
   background-color: #060B11 !important;
@@ -48,7 +46,6 @@
   background-color: #060B11 !important;
 }
 
-/* 19615 Deep Obsidian Navy Cards */
 .dashboard-dark .nova-card {
   background-color: #09131F !important;
   border: 1px solid #16273A !important;
@@ -58,7 +55,6 @@
   border-color: rgba(0, 229, 255, 0.35) !important;
 }
 
-/* 19615 Active Nav Pill */
 .dashboard-dark a[data-active="true"] {
   background-color: #0B2538 !important;
   border: 1px solid rgba(0, 229, 255, 0.55) !important;
@@ -92,29 +88,29 @@
   box-shadow: 0 0 8px #00E5FF;
 }
 
-.dashboard-dark .btn-action-card {
+.dashboard-dark .btn-dark-action {
   background-color: #101F30;
   border: 1px solid #1E3A5A;
-  color: #E2E8F0;
+  color: #F1F5F9;
 }
-.dashboard-dark .btn-action-card:hover {
+.dashboard-dark .btn-dark-action:hover {
   border-color: #00E5FF;
   color: #FFFFFF;
   box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
 }
 
-.dashboard-dark .quick-access-btn {
+.dashboard-dark .quick-btn {
   background-color: rgba(13, 26, 41, 0.7);
   border: 1px solid #16273A;
   color: #94A3B8;
 }
-.dashboard-dark .quick-access-btn:hover {
+.dashboard-dark .quick-btn:hover {
   border-color: rgba(0, 229, 255, 0.4);
   color: #FFFFFF;
 }
 
 /* ---------------------------------------------------------
-   HIGH-CONTRAST SAAS LIGHT MODE (CLEAN, SHARP, COMFORTABLE)
+   LIGHT MODE (HIGH CONTRAST SAAS - ZERO FADED TEXT)
    --------------------------------------------------------- */
 .dashboard-light {
   background-color: #F8FAFC !important;
@@ -131,30 +127,25 @@
   background-color: #F8FAFC !important;
 }
 
-/* Pure White Cards with Crisp Borders */
-.dashboard-light .nova-card {
+.dashboard-light .nova-card,
+.dashboard-light div[class*="bg-[#0"],
+.dashboard-light div[class*="bg-slate-9"] {
   background-color: #FFFFFF !important;
   border: 1px solid #E2E8F0 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-}
-.dashboard-light .nova-card:hover {
-  border-color: #CBD5E1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 }
 
-/* 100% Readable High-Contrast Slate Typography */
 .dashboard-light h1,
 .dashboard-light h2,
 .dashboard-light h3,
 .dashboard-light h4,
-.dashboard-light span.text-white,
-.dashboard-light p.text-white,
-.dashboard-light div.text-white,
 .dashboard-light .text-white {
   color: #0F172A !important;
 }
 
 .dashboard-light p,
 .dashboard-light .text-slate-400,
+.dashboard-light .text-slate-300,
 .dashboard-light .text-gray-400 {
   color: #334155 !important;
 }
@@ -163,15 +154,17 @@
   color: #475569 !important;
 }
 
-/* High Contrast Metric Badges in Light Mode */
-.dashboard-light .metric-cyan {
+.dashboard-light .core-online-sub {
   color: #0284C7 !important;
 }
-.dashboard-light .metric-green {
+
+.dashboard-light .stat-cyan {
+  color: #0284C7 !important;
+}
+.dashboard-light .stat-green {
   color: #059669 !important;
 }
 
-/* Active Nav Pill in Light Mode */
 .dashboard-light a[data-active="true"] {
   background-color: #E0F2FE !important;
   border: 1px solid #38BDF8 !important;
@@ -193,11 +186,7 @@
   background-color: #F8FAFC !important;
   border: 1px solid #E2E8F0 !important;
 }
-.dashboard-light .user-account-box .text-white {
-  color: #0F172A !important;
-}
 
-/* Switch in Light Mode */
 .dashboard-light .theme-label {
   color: #0284C7 !important;
 }
@@ -211,28 +200,26 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Action button in Light Mode */
-.dashboard-light .btn-action-card {
+.dashboard-light .btn-dark-action {
   background-color: #0F172A !important;
   border: 1px solid #0F172A !important;
   color: #FFFFFF !important;
 }
-.dashboard-light .btn-action-card:hover {
+.dashboard-light .btn-dark-action:hover {
   background-color: #1E293B !important;
 }
 
-.dashboard-light .quick-access-btn {
+.dashboard-light .quick-btn {
   background-color: #F8FAFC !important;
   border: 1px solid #E2E8F0 !important;
   color: #334155 !important;
 }
-.dashboard-light .quick-access-btn:hover {
+.dashboard-light .quick-btn:hover {
   background-color: #F1F5F9 !important;
   color: #0F172A !important;
   border-color: #CBD5E1 !important;
 }
 
-/* Badges in Light Mode */
 .dashboard-light .live-status-pill {
   background-color: #ECFDF5 !important;
   border-color: #A7F3D0 !important;
@@ -250,5 +237,5 @@
 .dashboard-light .badge-standby {
   background-color: #F1F5F9 !important;
   border-color: #E2E8F0 !important;
-  color: #64748B !important;
+  color: #475569 !important;
 }

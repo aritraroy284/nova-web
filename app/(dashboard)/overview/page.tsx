@@ -9,8 +9,8 @@ import {
 
 export default function OverviewPage() {
   return (
-    <div className="space-y-6">
-      {/* HEADER SECTION: Cleanly Aligned with LIVE STATUS */}
+    <div className="space-y-5">
+      {/* HEADER SECTION */}
       <div className="flex flex-row items-center justify-between gap-4 pb-1">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-white">
@@ -33,9 +33,10 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* TOP ROW: CORE AGENT & ACTION ITEM */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="nova-card lg:col-span-2 p-5 rounded-2xl flex flex-col justify-between">
+      {/* TOP ROW: CORE AGENT (2 COLS) & ACTION ITEM (1 COL) SIDE-BY-SIDE */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Core Agent Online Card */}
+        <div className="nova-card md:col-span-2 p-5 rounded-2xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
@@ -55,12 +56,13 @@ export default function OverviewPage() {
 
           <div className="pt-3 border-t border-[#16273A] flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono">
             <span className="text-slate-400">Latency: <span className="text-white font-bold">12ms</span></span>
-            <span className="text-slate-400">Vault: <span className="metric-cyan text-[#00E5FF] font-bold">Synced</span></span>
-            <span className="text-slate-400">Security: <span className="metric-green text-[#00F5A0] font-bold">Zero-Secret</span></span>
+            <span className="text-slate-400">Vault: <span className="stat-cyan text-[#00E5FF] font-bold">Synced</span></span>
+            <span className="text-slate-400">Security: <span className="stat-green text-[#00F5A0] font-bold">Zero-Secret</span></span>
           </div>
         </div>
 
-        <div className="nova-card p-5 rounded-2xl flex flex-col justify-between">
+        {/* Action Item Card */}
+        <div className="nova-card md:col-span-1 p-5 rounded-2xl flex flex-col justify-between">
           <div>
             <span className="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase block mb-1.5">
               ACTION ITEM
@@ -73,10 +75,9 @@ export default function OverviewPage() {
             </p>
           </div>
 
-          {/* Original Sleek Button Style */}
           <Link
             href="/api-models"
-            className="btn-action-card w-full py-2.5 px-4 rounded-xl font-mono text-xs font-semibold tracking-wider transition-all flex items-center justify-center gap-2 mt-4"
+            className="btn-dark-action w-full py-2.5 px-4 rounded-xl font-mono text-xs font-semibold tracking-wider transition-all flex items-center justify-center gap-2 mt-4"
           >
             <span>Configure Keys</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -84,7 +85,7 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* PROVIDERS STATUS ROW: Stacks cleanly on mobile, 3 cols on tablet/desktop */}
+      {/* PROVIDERS STATUS ROW: 3 COLS SIDE-BY-SIDE */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="nova-card p-3.5 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -126,8 +127,8 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* BOTTOM ROW: WORKSPACE ACTIVITY & QUICK ACCESS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* BOTTOM ROW: WORKSPACE ACTIVITY & QUICK ACCESS (2 COLS SIDE-BY-SIDE) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="nova-card p-5 rounded-2xl">
           <span className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-3">
             WORKSPACE ACTIVITY
@@ -155,14 +156,14 @@ export default function OverviewPage() {
           <div className="grid grid-cols-2 gap-3">
             <Link
               href="/api-models"
-              className="quick-access-btn p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
+              className="quick-btn p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
             >
               <span>API & Models</span>
               <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
             </Link>
             <Link
               href="/plugins"
-              className="quick-access-btn p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
+              className="quick-btn p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
             >
               <span>Plugins Hub</span>
               <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
@@ -170,7 +171,7 @@ export default function OverviewPage() {
           </div>
           <Link
             href="/guide"
-            className="quick-access-btn mt-3 p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
+            className="quick-btn mt-3 p-3 rounded-xl transition-colors flex items-center justify-between text-xs font-mono"
           >
             <span>Architecture & System Guide</span>
             <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />

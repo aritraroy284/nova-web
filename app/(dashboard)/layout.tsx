@@ -65,7 +65,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
       <div className="flex flex-col text-left">
         <span className="font-bold tracking-wider text-sm font-mono leading-tight">NOVA AI</span>
-        <span className="text-[10px] font-mono tracking-widest text-[#00E5FF] font-semibold uppercase leading-tight">CORE ONLINE</span>
+        <span className="text-[10px] font-mono tracking-widest core-online-sub text-[#00E5FF] font-semibold uppercase leading-tight">CORE ONLINE</span>
       </div>
     </Link>
   );
