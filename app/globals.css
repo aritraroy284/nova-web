@@ -59,13 +59,84 @@
 }
 
 /* Scoped Dashboard Light Theme (Homepage & Video 100% Protected) */
+
+
+
+/* =========================================================
+   NATIVE HIGH-CONTRAST LIGHT THEME (ZERO INVERT GLITCHES)
+   ========================================================= */
 .dashboard-light {
-  filter: invert(0.92) hue-rotate(180deg) !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+.dashboard-light header,
+.dashboard-light aside {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.dashboard-light main {
   background-color: #f8fafc !important;
 }
-.dashboard-light img,
-.dashboard-light video,
-.dashboard-light canvas,
-.dashboard-light iframe {
-  filter: invert(1) hue-rotate(180deg) !important;
+
+/* Crisp White Card Surfaces */
+.dashboard-light div[class*="bg-[#0B1520]"],
+.dashboard-light div[class*="bg-[#060B11]"],
+.dashboard-light div[class*="bg-slate-900"],
+.dashboard-light div[class*="bg-cyan-950"],
+.dashboard-light div[class*="bg-[#081018]"] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Sharp Typography */
+.dashboard-light h1,
+.dashboard-light h2,
+.dashboard-light h3,
+.dashboard-light h4,
+.dashboard-light .text-white {
+  color: #0f172a !important;
+}
+
+.dashboard-light p,
+.dashboard-light div[class*="text-slate"],
+.dashboard-light div[class*="text-gray"] {
+  color: #475569 !important;
+}
+
+.dashboard-light .text-slate-400,
+.dashboard-light .text-gray-400,
+.dashboard-light .text-[#9fb3bf],
+.dashboard-light .text-[#8CA4B5] {
+  color: #64748b !important;
+}
+
+/* Border lines */
+.dashboard-light .border-[#1E3045],
+.dashboard-light .border-cyan-500\/20,
+.dashboard-light .border-cyan-500\/30,
+.dashboard-light .border-cyan-500\/15 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Pill Toggle Switch Styling */
+.nova-theme-bar {
+  background-color: #101B2B;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+.nova-theme-dot {
+  transform: translateX(0px);
+  background-color: #00E5FF;
+  box-shadow: 0 0 6px #00E5FF;
+}
+.dashboard-light .nova-theme-bar {
+  background-color: #00E5FF !important;
+  border-color: #00E5FF !important;
+}
+.dashboard-light .nova-theme-dot {
+  transform: translateX(14px) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 8px #ffffff !important;
 }
