@@ -47,7 +47,7 @@ html.light-theme .nova-theme-bar {
   border-color: #00E5FF !important;
 }
 html.light-theme .nova-theme-dot {
-  transform: translateX(16px) !important;
+  transform: translateX(14px) !important;
   background-color: #ffffff !important;
   box-shadow: 0 0 8px #ffffff !important;
 }
