@@ -194,8 +194,16 @@ canvas {
   </div>
 </div>
 
-<audio id="studioAudio" src="/audio/nova_vo.mp3" preload="auto"></audio>
-<audio id="bgm" src="/audio/bgm.mp3" loop preload="auto"></audio>
+<audio id="studioAudio" preload="auto">
+  <source src="/audio/nova_vo.mp3" type="audio/mpeg">
+  <source src="./nova_vo.mp3" type="audio/mpeg">
+  <source src="nova_vo.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgm" loop preload="auto">
+  <source src="/audio/bgm.mp3" type="audio/mpeg">
+  <source src="./bgm.mp3" type="audio/mpeg">
+  <source src="bgm.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const W = 1280, H = 720, DUR = 70;
@@ -274,7 +282,7 @@ function rRect(x, y, w, h, r) {
 let T = 0, playing = false, last = 0, dirty = true, bi = 0, ci = 0, li = -1, AU = true, ac, noiseBuf, hasStudio = false, lastTick = 0;
 const $ = id => document.getElementById(id);
 
-studio.addEventListener('canplaythrough', () => { hasStudio = true; });
+studio.addEventListener('canplay', () => { hasStudio = true; });
 studio.addEventListener('error', () => { hasStudio = false; });
 
 function ensureAudio() {
