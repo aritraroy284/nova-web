@@ -54,12 +54,6 @@ export default function LandingPage() {
         <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
         <span className="font-black tracking-widest text-base sm:text-lg font-mono text-white drop-shadow-[0_0_14px_rgba(0,229,255,0.5)]">NOVA AI</span>
       </div>
-        <Link
-          href="/overview"
-          className="px-4 py-2 text-xs font-mono font-bold rounded-lg bg-nova-cyan text-black hover:opacity-90 transition shadow-[0_0_15px_rgba(0,229,255,0.25)] uppercase tracking-wider"
-        >
-          Launch Console ↗
-        </Link>
       </header>
 
       {/* Hero Section */}
@@ -67,9 +61,17 @@ export default function LandingPage() {
         {/* Full Form Badge */}
         <div className="flex items-center justify-center gap-2 mb-4 select-none">
             <span className="w-2 h-2 rounded-full bg-[#00F5A0] shadow-[0_0_8px_#00F5A0] animate-pulse"></span>
-            <span className="font-extrabold font-mono text-sm sm:text-base tracking-widest bg-gradient-to-r from-[#00E5FF] via-[#00F5A0] to-[#00E5FF] bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(0,229,255,0.4)] uppercase">
-              NEURAL OPERATIONS & VIRTUAL AUTOMATION (NOVA)
-            </span>
+          {/* High-Impact Cyber Definition of NOVA */}
+          <div className="flex flex-col items-center justify-center mb-6 select-none">
+            <div className="flex items-center gap-3 sm:gap-4 mb-2">
+              <span className="hidden sm:inline-block h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-[#00E5FF]/70" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF] animate-pulse" />
+              <span className="hidden sm:inline-block h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-[#00E5FF]/70" />
+            </div>
+            <h2 className="text-sm sm:text-base md:text-xl lg:text-2xl font-mono font-black tracking-[0.22em] sm:tracking-[0.32em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-slate-100 to-sky-400 drop-shadow-[0_0_24px_rgba(0,229,255,0.65)] text-center uppercase px-4 leading-relaxed">
+              NEURAL OPERATIONS &amp; VIRTUAL AUTOMATION
+            </h2>
+          </div>
           </div>
 
         {/* Kinetic Headline */}
