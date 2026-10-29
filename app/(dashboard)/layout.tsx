@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   Key, 
@@ -11,7 +11,9 @@ import {
   Menu, 
   X, 
   LogOut,
-  ShieldCheck
+  ShieldCheck,
+  ShieldAlert,
+  LogIn
 } from "lucide-react";
 import { supabase } from "@/app/lib/supabase";
 
@@ -24,26 +26,36 @@ const navItems = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [themeMode, setThemeMode] = useState<"dark" | "light">("dark");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isDevMode, setIsDevMode] = useState<boolean>(false);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("nova_theme");
-      if (saved === "light" || saved === "dark") setThemeMode(saved);
-    } catch (e) {}
-  }, []);
+      const savedTheme = localStorage.getItem("nova_theme");
+      if (savedTheme === "light" || savedTheme === "dark") setThemeMode(savedTheme);
 
-  useEffect(() => {
-    try {
-      if (supabase?.auth) {
-        supabase.auth.getUser().then(({ data: { user } }: { data: { user: any } }) => {
-          if (user?.email) setUserEmail(user.email);
-        });
+      const savedDev = localStorage.getItem("nova_dev_mode");
+      if (savedDev === "true") {
+        setIsDevMode(true);
+        setUserEmail("dev.roy@nova.internal");
       }
     } catch (e) {}
   }, []);
+
+  useEffect(() => {
+    try {
+      if (supabase?.auth && !isDevMode) {
+        supabase.auth.getUser().then(({ data: { user } }: { data: { user: any } }) => {
+          if (user?.email) {
+            setUserEmail(user.email);
+          }
+        });
+      }
+    } catch (e) {}
+  }, [isDevMode]);
 
   const toggleTheme = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -53,11 +65,36 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     try { localStorage.setItem("nova_theme", next); } catch (e) {}
   };
 
+  const toggleDevMode = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const nextState = !isDevMode;
+    setIsDevMode(nextState);
+    if (nextState) {
+      setUserEmail("dev.roy@nova.internal");
+      try { localStorage.setItem("nova_dev_mode", "true"); } catch (e) {}
+    } else {
+      setUserEmail(null);
+      try { localStorage.removeItem("nova_dev_mode"); } catch (e) {}
+    }
+  };
+
   const handleLogout = async () => {
     try {
-      if (supabase?.auth) await supabase.auth.signOut();
+      setIsDevMode(false);
+      setUserEmail(null);
+      try {
+        localStorage.removeItem("nova_dev_mode");
+      } catch (e) {}
+      if (supabase?.auth) {
+        await supabase.auth.signOut();
+      }
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    } catch (e) {
       if (typeof window !== "undefined") window.location.href = "/";
-    } catch (e) {}
+    }
   };
 
   const BrandElement = (
@@ -89,26 +126,58 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const BottomAccountSection = (
     <div className="pt-3.5 border-t border-[#142334] space-y-3">
-      {/* Dev Active Badge Header */}
+      {/* Dev Access Interactive Toggle Button */}
       <div className="flex items-center justify-between px-1">
-        <span className="px-3 py-1.5 rounded-full text-xs font-mono font-semibold tracking-wider text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 flex items-center gap-2">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#00F5A0]" />
-          DEV ACTIVE
+        <button
+          type="button"
+          onClick={toggleDevMode}
+          className={`px-3 py-1.5 rounded-full text-xs font-mono font-semibold tracking-wider transition-all flex items-center gap-2 cursor-pointer select-none focus:outline-none ${
+            isDevMode 
+              ? "text-[#00F5A0] bg-[#00F5A0]/15 border border-[#00F5A0]/50 shadow-[0_0_12px_rgba(0,245,160,0.3)]"
+              : "text-slate-400 bg-slate-800/40 border border-slate-700/50 hover:border-cyan-500/40 hover:text-white"
+          }`}
+          title="Click to Toggle Local Dev Access Bypass"
+        >
+          {isDevMode ? (
+            <ShieldCheck className="w-3.5 h-3.5 text-[#00F5A0]" />
+          ) : (
+            <ShieldAlert className="w-3.5 h-3.5 text-slate-400" />
+          )}
+          {isDevMode ? "DEV ACTIVE" : "DEV INACTIVE"}
+        </button>
+        <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider font-medium">
+          {isDevMode ? "LOCAL BYPASS" : "CLOUD"}
         </span>
-        <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider font-medium">CLOUD</span>
       </div>
 
-      {/* User Card */}
+      {/* Dynamic User Account Card */}
       <div className="p-3 rounded-xl user-account-box flex items-center justify-between">
         <div className="min-w-0 pr-2">
           <p className="text-xs sm:text-sm font-mono font-medium truncate text-white">
-            {userEmail || "roy•••@gmail.com"}
+            {userEmail ? userEmail : "Guest User"}
           </p>
-          <p className="text-xs font-mono text-[#00F5A0] mt-0.5">Authenticated</p>
+          <p className={`text-xs font-mono mt-0.5 ${userEmail ? "text-[#00F5A0]" : "text-amber-400"}`}>
+            {userEmail ? (isDevMode ? "Dev Authenticated" : "Authenticated") : "Not Signed In"}
+          </p>
         </div>
-        <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-red-400 transition-colors" title="Sign Out">
-          <LogOut className="w-4 h-4" />
-        </button>
+        {userEmail ? (
+          <button 
+            type="button"
+            onClick={handleLogout} 
+            className="p-2 text-slate-400 hover:text-red-400 transition-colors cursor-pointer" 
+            title="Sign Out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        ) : (
+          <Link 
+            href="/" 
+            className="p-2 text-slate-400 hover:text-[#00E5FF] transition-colors"
+            title="Go to Sign In"
+          >
+            <LogIn className="w-4 h-4" />
+          </Link>
+        )}
       </div>
 
       {/* Core Online Status Indicator */}
@@ -139,10 +208,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {BrandElement}
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-full text-xs font-mono font-semibold tracking-wider text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#00F5A0]" />
-            DEV ACTIVE
-          </span>
+          <button
+            type="button"
+            onClick={toggleDevMode}
+            className={`px-2.5 py-1 rounded-full text-xs font-mono font-semibold tracking-wider flex items-center gap-1.5 transition-all ${
+              isDevMode 
+                ? "text-[#00F5A0] bg-[#00F5A0]/15 border border-[#00F5A0]/40"
+                : "text-slate-400 bg-slate-800/40 border border-slate-700/50"
+            }`}
+          >
+            <ShieldCheck className={`w-3.5 h-3.5 ${isDevMode ? "text-[#00F5A0]" : "text-slate-400"}`} />
+            {isDevMode ? "DEV ACTIVE" : "DEV OFF"}
+          </button>
         </div>
       </header>
 
