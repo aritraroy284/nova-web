@@ -20,3 +20,14 @@
   border-color: rgba(0, 229, 255, 0.35);
   background-color: #101B2A;
 }
+
+/* Light Theme Engine */
+html.light-theme {
+  filter: invert(0.92) hue-rotate(180deg) !important;
+  background-color: #f8fafc !important;
+}
+html.light-theme img,
+html.light-theme video,
+html.light-theme canvas {
+  filter: invert(1) hue-rotate(180deg) !important;
+}

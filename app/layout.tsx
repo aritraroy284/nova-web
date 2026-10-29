@@ -14,6 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem("nova_theme")==="light"){document.documentElement.classList.add("light-theme");}}catch(e){}` }} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </head>
       <body className="antialiased font-sans bg-[#040B14] text-slate-100 selection:bg-[#00E5FF]/20">
