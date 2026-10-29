@@ -52,7 +52,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#060B11]/80 px-6 py-4 flex items-center justify-between border-b border-[#1E3045]/60">
         <div className="flex items-center gap-2.5 select-none pointer-events-none cursor-default">
         <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
-        <span className="font-bold tracking-wider text-sm text-cyan-400">NOVA AI</span>
+        <span className="font-extrabold tracking-widest text-base sm:text-lg font-mono text-white drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]">NOVA AI</span>
       </div>
         <Link
           href="/overview"
@@ -65,10 +65,12 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="px-6 pt-16 pb-24 max-w-5xl mx-auto text-center flex flex-col items-center">
         {/* Full Form Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-nova-cyan/30 bg-nova-cyan/5 text-xs font-mono text-nova-cyan mb-8 tracking-wider">
-          <Radio className="w-3.5 h-3.5 animate-pulse text-nova-cyan" />
-          <span>NEURAL OPERATIONS & VIRTUAL AUTOMATION (NOVA)</span>
-        </div>
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 shadow-[0_0_20px_rgba(0,229,255,0.25)] backdrop-blur-md select-none mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF] animate-pulse"></span>
+            <span className="text-xs sm:text-sm font-mono font-bold tracking-widest text-[#00E5FF] uppercase">
+              NEURAL OPERATIONS & VIRTUAL AUTOMATION <span className="text-white/60 font-medium">(NOVA)</span>
+            </span>
+          </div>
 
         {/* Kinetic Headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 animate-kinetic-shrink">
