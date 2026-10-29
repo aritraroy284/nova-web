@@ -52,7 +52,7 @@ canvas {
   background: radial-gradient(circle at center, rgba(6,11,17,0.35) 0%, rgba(4,8,14,0.82) 100%);
   backdrop-filter: blur(6px);
   cursor: pointer;
-  z-index: 99;
+  z-index: 40;
   transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
 }
 #playOverlay.hidden {
@@ -110,7 +110,7 @@ canvas {
   flex-direction: column;
   justify-content: space-between;
   padding: 14px 18px;
-  z-index: 20;
+  z-index: 100;
   opacity: 1;
   transition: opacity 0.4s ease;
 }
@@ -176,7 +176,7 @@ canvas {
 <body>
 <div class="st" id="stage">
   <canvas id="cv"></canvas>
-  <div id="playOverlay">
+  <div id="playOverlay" onclick="startFilm()">
     <div class="playBtn">
       <svg width="28" height="28" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
@@ -1441,6 +1441,17 @@ function seek(x) {
   }
   dirty = true;
 }
+
+
+function startFilm() {
+  const ov = document.getElementById("playOverlay");
+  if (ov) {
+    ov.style.display = "none";
+    ov.classList.add("hidden");
+  }
+  setPlay(true);
+}
+window.startFilm = startFilm;
 
 function setPlay(p) {
   playing = p;
