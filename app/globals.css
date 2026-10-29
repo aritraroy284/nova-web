@@ -20,3 +20,92 @@
   border-color: rgba(0, 229, 255, 0.35);
   background-color: #101B2A;
 }
+
+/* =========================================================
+   2ND IMAGE PRISTINE HIGH-TECH CYBER THEME PALETTE
+   ========================================================= */
+:root {
+  --bg-deep: #050B14;
+  --bg-sidebar: #060C16;
+  --bg-card: #09121E;
+  --border-card: #152538;
+  --border-highlight: rgba(0, 229, 255, 0.25);
+  --cyan-glow: #00E5FF;
+  --green-glow: #00F5A0;
+}
+
+/* Base Body Vibe */
+body {
+  background-color: #050B14 !important;
+  color: #E6F7FB;
+}
+
+/* Card Glows Matching 2nd Image */
+.cyber-card {
+  background-color: #09121E !important;
+  border: 1px solid #16273A !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+}
+.cyber-card:hover {
+  border-color: rgba(0, 229, 255, 0.35) !important;
+}
+
+/* Active Nav Pill Matching 2nd Image */
+.nav-active-pill {
+  border: 1px solid rgba(0, 229, 255, 0.6) !important;
+  background-color: rgba(0, 229, 255, 0.12) !important;
+  color: #00E5FF !important;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.22) !important;
+}
+
+/* Bottom Pill Switch */
+.nova-theme-bar {
+  background-color: #0F1B2B;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+}
+.nova-theme-dot {
+  transform: translateX(0px);
+  background-color: #00E5FF;
+  box-shadow: 0 0 8px #00E5FF;
+}
+
+/* Clean Isolated Light Theme (Never Inverts or Ruins Text) */
+.dashboard-light {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+.dashboard-light header,
+.dashboard-light aside {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+.dashboard-light main {
+  background-color: #F8FAFC !important;
+}
+.dashboard-light div[class*="bg-[#0"],
+.dashboard-light .cyber-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+.dashboard-light h1, .dashboard-light h2, .dashboard-light h3, .dashboard-light h4, .dashboard-light .text-white {
+  color: #0F172A !important;
+}
+.dashboard-light p, .dashboard-light .text-[#8CA4B5], .dashboard-light .text-slate-400 {
+  color: #475569 !important;
+}
+.dashboard-light .nav-active-pill {
+  border-color: #0284C7 !important;
+  background-color: #E0F2FE !important;
+  color: #0369A1 !important;
+  box-shadow: none !important;
+}
+.dashboard-light .nova-theme-bar {
+  background-color: #00E5FF !important;
+  border-color: #00E5FF !important;
+}
+.dashboard-light .nova-theme-dot {
+  transform: translateX(16px) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3) !important;
+}

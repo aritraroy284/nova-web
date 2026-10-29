@@ -19,6 +19,25 @@ import {
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [isLight, setIsLight] = React.useState(false);
+
+  React.useEffect(() => {
+    try {
+      if (typeof window !== "undefined" && localStorage.getItem("nova_theme") === "light") {
+        setIsLight(true);
+      }
+    } catch(e) {}
+  }, []);
+
+  const handleThemeToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsLight(prev => {
+      const next = !prev;
+      try { localStorage.setItem("nova_theme", next ? "light" : "dark"); } catch(err) {}
+      return next;
+    });
+  };
   const pathname = usePathname();
   const router = useRouter();
 
@@ -225,7 +244,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen bg-[#060B11] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20">
+    <div className={`min-h-screen bg-[#050B14] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${isLight ? "dashboard-light" : ""}`}>
       {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E3045] px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -304,6 +323,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <div className="text-xs font-medium text-white truncate">{maskEmail(userEmail)}</div>
                     <div className="text-[10px] font-mono text-[#00F5A0]">Authenticated</div>
                   </div>
+
+        {/* Sleek Bottom Light/Dark Theme Switch */}
+        <div className="pt-3 mt-3 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+          <span className="text-[10px] font-mono tracking-wider font-semibold uppercase text-cyan-400">
+            {isLight ? "LIGHT MODE" : "DARK MODE"}
+          </span>
+          <button
+            type="button"
+            onClick={handleThemeToggle}
+            className="nova-theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation focus:outline-none"
+            title="Toggle Theme"
+          >
+            <div className="nova-theme-dot w-3.5 h-3.5 rounded-full transition-transform duration-200" />
+          </button>
+        </div>
                   <button onClick={handleSignOut} title="Sign Out" className="p-2 text-rose-400 hover:bg-rose-950/30 rounded-lg transition">
                     <LogOut className="w-4 h-4" />
                   </button>
