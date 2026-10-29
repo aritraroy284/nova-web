@@ -176,7 +176,7 @@ canvas {
 <body>
 <div class="st" id="stage">
   <canvas id="cv"></canvas>
-  <div id="playOverlay" onclick="startFilm()">
+  <div id="playOverlay" onclick="startFilm()" style="z-index: 40; cursor: pointer;">
     <div class="playBtn">
       <svg width="28" height="28" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
@@ -1452,6 +1452,14 @@ function startFilm() {
   setPlay(true);
 }
 window.startFilm = startFilm;
+
+
+window.addEventListener("message", function(e) {
+  if (e.data === "PLAY" || (e.data && e.data.type === "PLAY")) {
+    if (typeof startFilm === "function") startFilm();
+    else setPlay(true);
+  }
+});
 
 function setPlay(p) {
   playing = p;
