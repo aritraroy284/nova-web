@@ -7,9 +7,9 @@ import { Radio, ArrowRight, Download, Play } from "lucide-react";
 
   const triggerFilmPlay = () => {
     try {
-      const iframe = document.getElementById("filmIframe");
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage("PLAY", "*");
+      const iframe = (document.getElementById("filmIframe") as HTMLIFrameElement | null);
+      if (iframe && (iframe as HTMLIFrameElement).contentWindow) {
+        (iframe as HTMLIFrameElement).contentWindow!.postMessage("PLAY", "*");
       }
     } catch (e) {}
   };
@@ -110,11 +110,7 @@ export default function LandingPage() {
 
           {/* Player Container */}
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-nova-cyan/30 bg-[#060B11] shadow-[0_0_50px_rgba(0,229,255,0.12)]" onClick={triggerFilmPlay} >
-            <iframe id="filmIframe" allow="autoplay; fullscreen" style={{ pointerEvents: "auto", position: "relative", zIndex: 30 }} allow="autoplay; fullscreen" style={{ pointerEvents: "auto", position: "relative", zIndex: 30 }} allow="autoplay; fullscreen" style={{ pointerEvents: "auto", position: "relative", zIndex: 20 }} src="/film/index.html"
-              className="w-full h-full border-0"
-              title="NOVA AI Product Film"
-              allow="autoplay; fullscreen"
-            />
+            <iframe id="filmIframe" src="/film/index.html" allow="autoplay; fullscreen" style={{ pointerEvents: "auto", position: "relative", zIndex: 20 }} className="w-full h-full border-0" />
           </div>
 
           {/* Telemetry Bar Under Player */}
