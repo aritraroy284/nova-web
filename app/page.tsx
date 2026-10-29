@@ -102,8 +102,7 @@ export default function LandingPage() {
 
           {/* Player Container */}
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-nova-cyan/30 bg-[#060B11] shadow-[0_0_50px_rgba(0,229,255,0.12)]">
-            <iframe
-              src="/film/index.html"
+            <iframe allow="autoplay; fullscreen" style={{ pointerEvents: "auto", position: "relative", zIndex: 20 }} src="/film/index.html"
               className="w-full h-full border-0"
               title="NOVA AI Product Film"
               allow="autoplay; fullscreen"

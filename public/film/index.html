@@ -52,7 +52,7 @@ canvas {
   background: radial-gradient(circle at center, rgba(6,11,17,0.35) 0%, rgba(4,8,14,0.82) 100%);
   backdrop-filter: blur(6px);
   cursor: pointer;
-  z-index: 15;
+  z-index: 99;
   transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
 }
 #playOverlay.hidden {
@@ -1508,20 +1508,16 @@ function loop(n) {
   requestAnimationFrame(loop);
 }
 
-let lastActionTime = 0;
 function handleTrigger(e) {
-  if (e) {
-    e.stopPropagation();
-    if (e.cancelable) e.preventDefault();
+  if (e) e.stopPropagation();
+  if (playOverlay) {
+    playOverlay.style.display = "none";
+    playOverlay.classList.add("hidden");
   }
-  const now = performance.now();
-  if (now - lastActionTime < 600) return;
-  lastActionTime = now;
   setPlay(true);
 }
-
-playOverlay.addEventListener("pointerup", handleTrigger);
 playOverlay.addEventListener("click", handleTrigger);
+playOverlay.addEventListener("touchend", handleTrigger);
 
 cv.addEventListener("click", e => {
   e.stopPropagation();
