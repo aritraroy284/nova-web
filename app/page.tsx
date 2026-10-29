@@ -15,6 +15,13 @@ import { Radio, ArrowRight, Download, Play } from "lucide-react";
   };
 
 export default function LandingPage() {
+
+  React.useEffect(() => {
+    // cleanThemeOnLanding
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.remove("light-theme");
+    }
+  }, []);
   const [apkTooltip, setApkTooltip] = useState(false);
 
   return (
