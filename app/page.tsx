@@ -1,6 +1,6 @@
-import { supabase } from "@/app/lib/supabase";
 "use client";
 
+import { supabase } from "@/app/lib/supabase";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Radio, ArrowRight, Download, Play } from "lucide-react";
