@@ -1,3 +1,4 @@
+import { supabase } from "@/app/lib/supabase";
 "use client";
 
 import React, { useState } from "react";
@@ -15,6 +16,41 @@ import { Radio, ArrowRight, Download, Play } from "lucide-react";
   };
 
 export default function LandingPage() {
+
+  const handleSignIn = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    try {
+      if (typeof window !== "undefined") {
+        const origin = window.location.origin;
+        // Check if supabase is configured with a real URL
+        const isConfigured = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                             !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
+        
+        if (isConfigured && supabase?.auth) {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: `${origin}/overview`,
+            },
+          });
+          if (error) {
+            console.warn("Supabase auth redirecting to overview fallback:", error.message);
+            window.location.href = "/overview";
+          }
+        } else {
+          // Direct fallback to dashboard if Supabase credentials are placeholder
+          window.location.href = "/overview";
+        }
+      }
+    } catch (err) {
+      console.error("Sign in error:", err);
+      if (typeof window !== "undefined") window.location.href = "/overview";
+    }
+  };
+
 
   React.useEffect(() => {
     // cleanThemeOnLanding
@@ -89,12 +125,12 @@ export default function LandingPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-14">
-          <Link
-            href="/overview"
+          <button onClick={handleSignIn} 
+            
             className="px-6 py-3.5 rounded-xl bg-nova-cyan text-black font-mono font-semibold text-sm flex items-center gap-2 shadow-[0_0_25px_rgba(0,229,255,0.3)] hover:scale-105 transition"
           >
             Open Control Plane <ArrowRight className="w-4 h-4" />
-          </Link>
+          </button>
 
           <div className="relative">
             <button
