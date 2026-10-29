@@ -2,10 +2,19 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Download, Play } from "lucide-react";
+import { ArrowRight, Download, Play, Clock } from "lucide-react";
 
 export default function LandingPage() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [comingSoonToast, setComingSoonToast] = useState(false);
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setComingSoonToast(true);
+    setTimeout(() => {
+      setComingSoonToast(false);
+    }, 3500);
+  };
 
   return (
     <div className="min-h-screen bg-[#040B15] text-[#E6F7FB] selection:bg-[#00E5FF]/20 flex flex-col font-sans relative overflow-x-hidden">
@@ -13,7 +22,7 @@ export default function LandingPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-[#00E5FF]/10 to-transparent blur-[120px] pointer-events-none" />
 
       {/* Top Navbar */}
-      <header className="w-full max-w-7xl mx-auto px-6 pt-5 pb-2 flex items-center justify-between z-20">
+      <header className="w-full max-w-7xl mx-auto px-6 pt-6 pb-2 flex items-center justify-between z-20">
         <div className="flex items-center gap-3 select-none">
           <img 
             src="/logo.png" 
@@ -26,50 +35,59 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section - Directly under Header */}
-      <section className="px-6 pt-3 pb-16 max-w-5xl mx-auto text-center flex flex-col items-center z-10 w-full">
-        {/* Full Form Header */}
-        <div className="flex flex-col items-center justify-center mb-4 select-none">
-          <div className="flex items-center gap-3 sm:gap-4 mb-2">
+      {/* Hero Section - Balanced Spacing */}
+      <section className="px-6 pt-10 sm:pt-14 pb-16 max-w-5xl mx-auto text-center flex flex-col items-center z-10 w-full">
+        {/* Full Form Title */}
+        <div className="flex flex-col items-center justify-center mb-6 select-none">
+          <div className="flex items-center gap-3 sm:gap-4 mb-2.5">
             <span className="hidden sm:inline-block h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-[#00E5FF]/70" />
             <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF] animate-pulse" />
             <span className="hidden sm:inline-block h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-[#00E5FF]/70" />
           </div>
-          <h2 className="text-xs sm:text-sm md:text-base font-mono font-black tracking-[0.22em] sm:tracking-[0.32em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-slate-100 to-sky-400 drop-shadow-[0_0_24px_rgba(0,229,255,0.65)] text-center uppercase px-4 leading-relaxed">
+          <h2 className="text-xs sm:text-sm md:text-base font-mono font-black tracking-[0.24em] sm:tracking-[0.32em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-slate-100 to-sky-400 drop-shadow-[0_0_24px_rgba(0,229,255,0.65)] text-center uppercase px-4 leading-relaxed">
             NEURAL OPERATIONS &amp; VIRTUAL AUTOMATION
           </h2>
         </div>
 
-        {/* Kinetic Headline */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-3 leading-tight">
-          AI that fits your workflow. <br />
-          <span className="bg-gradient-to-r from-[#00E5FF] via-[#00F5A0] to-[#00E5FF] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(0,245,160,0.35)]">
+        {/* Kinetic Headline with Extra Line Gap */}
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.3] sm:leading-[1.22]">
+          AI that fits your workflow. <br className="hidden sm:inline" />
+          <span className="inline-block mt-2 bg-gradient-to-r from-[#00E5FF] via-[#00F5A0] to-[#00E5FF] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(0,245,160,0.35)]">
             Control that stays yours.
           </span>
         </h1>
 
-        <p className="text-xs sm:text-sm md:text-base text-slate-400 font-sans max-w-2xl mx-auto mb-7 leading-relaxed">
+        {/* Description Subtitle */}
+        <p className="text-xs sm:text-sm md:text-base text-slate-400 font-sans max-w-2xl mx-auto mb-10 leading-relaxed sm:leading-loose">
           Connect multi-tier LLM models, manage on-device Ghost Protocol automations, and sync offline Gmail summaries from one secure control plane.
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-10">
+        {/* Compact Refined CTA Buttons & Coming Soon Toast */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto mb-12 relative">
           <Link
             href="/overview"
-            className="w-full sm:w-auto px-8 sm:px-10 py-4 rounded-2xl bg-[#00E5FF] hover:bg-[#33ECFF] active:scale-95 text-[#04080E] font-mono text-sm sm:text-base font-extrabold tracking-wider shadow-[0_0_28px_rgba(0,229,255,0.55)] transition-all flex items-center justify-center gap-3 cursor-pointer group"
+            className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-[#00E5FF] hover:bg-[#33ECFF] active:scale-95 text-[#04080E] font-mono text-xs sm:text-sm font-bold tracking-wider shadow-[0_0_22px_rgba(0,229,255,0.45)] transition-all flex items-center justify-center gap-2.5 cursor-pointer group"
           >
             <span>Open Control Plane</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
 
-          <a
-            href="/NovaAI.apk"
-            download
-            className="w-full sm:w-auto px-8 sm:px-10 py-4 rounded-2xl bg-[#0D1726] hover:bg-[#122238] active:scale-95 border border-[#1C3A5A] hover:border-[#00E5FF]/60 text-white font-mono text-sm sm:text-base font-bold tracking-wider shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all flex items-center justify-center gap-3 cursor-pointer"
+          <button
+            type="button"
+            onClick={handleDownloadClick}
+            className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-[#0D1726] hover:bg-[#122238] active:scale-95 border border-[#1C3A5A] hover:border-[#00E5FF]/60 text-white font-mono text-xs sm:text-sm font-semibold tracking-wider shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all flex items-center justify-center gap-2.5 cursor-pointer"
           >
-            <Download className="w-5 h-5 text-[#00E5FF]" />
-            <span>Download Nova APK</span>
-          </a>
+            <Download className="w-4 h-4 text-[#00E5FF]" />
+            <span>{comingSoonToast ? "Staging // Coming Soon" : "Download Nova APK"}</span>
+          </button>
+
+          {/* Floating Coming Soon Cyber Badge */}
+          {comingSoonToast && (
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#071321] border border-cyan-400/50 shadow-[0_0_16px_rgba(0,229,255,0.4)] text-[11px] font-mono text-cyan-300 flex items-center gap-2 animate-bounce select-none whitespace-nowrap">
+              <Clock className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Public APK v1.0 Coming Soon // Staging Build Active</span>
+            </div>
+          )}
         </div>
 
         {/* 16:9 Cinematic Video Frame */}
@@ -106,7 +124,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-6 mt-auto text-center text-[11px] font-mono text-slate-600">
+      <footer className="py-6 text-center text-[11px] font-mono text-slate-600">
         NOVA AI OS CORE &bull; CLOUD VAULT SECURED
       </footer>
     </div>
