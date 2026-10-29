@@ -219,12 +219,12 @@ const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
 const studio = document.getElementById('studioAudio'), bgm = document.getElementById('bgm');
 
 const SC = [
-  ['HOOK', 0, 10],
-  ['CORE', 10, 18],
-  ['BRAIN', 18, 32],
-  ['GHOST', 32, 48],
-  ['VAULT', 48, 58],
-  ['CLIMAX', 58, 70]
+  ['HOOK', 0, 10.4],
+  ['CORE', 10.4, 18.2],
+  ['BRAIN', 18.2, 32.4],
+  ['GHOST', 32.4, 48.6],
+  ['VAULT', 48.6, 58.4],
+  ['CLIMAX', 58.4, 70]
 ];
 
 const LINES = [
@@ -1066,31 +1066,31 @@ function s5(t, l) {
 }
 
 function s6(t, l) {
-  const e = t < 63.4;
-  const R = e ? 40 + 180 * ex(cl((t - 58.6) / 1.8)) : lerp(180, 62, ex(cl((t - 63.4) / 0.8)));
-  const cy = e ? 320 : lerp(320, 235, ex(cl((t - 63.4) / 0.8)));
+  const e = t < 63.8;
+  const R = e ? 40 + 180 * ex(cl((t - 58.6) / 1.8)) : lerp(180, 62, ex(cl((t - 63.8) / 0.8)));
+  const cy = e ? 320 : lerp(320, 235, ex(cl((t - 63.8) / 0.8)));
   core(t, W / 2, cy, R, e ? 3 : 1);
 
-  slam('AUTONOMOUS.', t, 58.8, 60.8, W / 2, 310, 120, '#fff', { sh: '#00E5FF', sb: 55 });
-  slam('IN YOUR', t, 61.0, 63.2, W / 2, 235, 96, '#fff');
-  slam('POCKET.', t, 61.5, 63.2, W / 2, 385, 175, '#FFB300', { sh: '#FFB300', sb: 50 });
+  slam("AUTONOMOUS.", t, 59.0, 61.2, W / 2, 310, 120, "#fff", { sh: "#00E5FF", sb: 55 });
+  slam("IN YOUR", t, 61.5, 63.6, W / 2, 235, 96, "#fff");
+  slam("POCKET.", t, 61.9, 63.6, W / 2, 385, 175, "#FFB300", { sh: "#FFB300", sb: 50 });
 
-  slam('NOVA AI', t, 63.6, 70, W / 2, 235, 140, '#fff', { sh: '#00E5FF' });
-  slam('Control that stays yours.', t, 64.6, 70, W / 2, 360, 48, '#00E5FF', { w: 700 });
+  slam("NOVA AI", t, 64.0, 70, W / 2, 235, 140, "#fff", { sh: "#00E5FF" });
+  slam("Control that stays yours.", t, 65.6, 70, W / 2, 360, 48, "#00E5FF", { w: 700 });
 
-  if (t > 66.4) {
-    const a = ex(cl((t - 66.4) / 0.5));
+  if (t > 66.8) {
+    const a = ex(cl((t - 66.8) / 0.5));
     ctx.save();
     ctx.translate(W / 2, 460);
     A(a);
-    ctx.fillStyle = 'rgba(0, 229, 255, 0.14)';
-    ctx.strokeStyle = '#00E5FF';
+    ctx.fillStyle = "rgba(0, 229, 255, 0.14)";
+    ctx.strokeStyle = "#00E5FF";
     ctx.lineWidth = 2;
     rRect(-190, -30, 380, 60, 30);
     ctx.fill(); ctx.stroke();
     ctx.restore();
-    tx('LAUNCH CONTROL PLANE  ↗', W / 2, 460, 20, '#00E5FF', { f: MONO, w: 700, tr: 2, a });
-    tx('nova-copilot-ai.vercel.app', W / 2, 520, 16, '#8CA4B5', { f: MONO, w: 500, a });
+    tx("LAUNCH CONTROL PLANE  ↗", W / 2, 460, 20, "#00E5FF", { f: MONO, w: 700, tr: 2, a });
+    tx("nova-copilot-ai.vercel.app", W / 2, 520, 16, "#8CA4B5", { f: MONO, w: 500, a });
   }
 }
 
@@ -1100,31 +1100,31 @@ const F = [s1, s2, s3, s4, s5, s6];
 // LAYER 2: FOREGROUND KINETIC TYPOGRAPHY (SAFE-BOUNDS ADJUSTED)
 // ---------------------------------------------------------
 const KC = [
-  [0.5, 2.5, 'gl', [['Another chatbot. Another *tab*.', 120, 520, 40, 'l', 'ty']]],
-  [2.5, 4.7, 'sm', [['A box that waits for you to *type.*', 1160, 520, 40, 'r', 'rg', '#9fb3bf']]],
-  [5.2, 7.4, 'up', [['Nova doesn’t wait.', 120, 105, 48, 'l', 'sc']]],
-  [7.4, 9.8, 'gl', [['Nova', 120, 470, 34, 'l', 'dr', '#9fb3bf'], ['*lives*', 120, 535, 76, 'l', 'zm', , , 0.1], ['on your phone —', 315, 520, 38, 'l', 'ri', , , 0.3], ['and acts on your *world.*', 1160, 535, 36, 'r', 'rg', '#00E5FF', , 0.5]]],
-  [10.4, 12.5, 'up', [['Meet *NOVA.*', 640, 115, 46, 'c', 'dr']]],
-  [14.5, 16.4, 'zo', [['An operating layer,', 120, 475, 42, 'l', 'le'], ['not an *app.*', 1160, 530, 68, 'r', 'rg', , , 0.25]]],
-  [18.4, 20.8, 'gl', [['Every request hits a router', 120, 475, 36, 'l', 'le', '#9fb3bf'], ['in *milliseconds.*', 120, 535, 68, 'l', 'zm', , , 0.2]]],
-  [20.9, 23.4, 'sm', [['Gemini first. Then Groq', 1160, 95, 38, 'r', 'rg'], ['for raw *speed.*', 1160, 535, 66, 'r', 'ri', , , 0.3]]],
-  [24.0, 26.6, 'up', [['OpenRouter', 120, 465, 36, 'l', 'dr', '#9fb3bf'], ['for *depth.*', 120, 530, 76, 'l', 'sc', , , 0.1]]],
-  [26.7, 29.2, 'gl', [['One model stumbles —', 160, 495, 38, 'l', 'ty', '#FF6B6B', '#FF3D6E'], ['the signal *reroutes.*', 1160, 535, 70, 'r', 'rg', , , 0.9]]],
-  [29.3, 31.9, 'zo', [['Nova never goes', 640, 105, 38, 'c', 'dr'], ['*dark.*', 640, 530, 88, 'c', 'zm', , , 0.25]]],
-  [32.4, 34.4, 'gl', [['Now', 410, 210, 36, 'l', 'dr', '#9fb3bf'], ['*watch.*', 410, 275, 74, 'l', 'zm', , , 0.1]]],
-  [34.5, 36.0, 'sm', [['No API.', 410, 275, 68, 'l', 'le'], ['No tap.', 410, 345, 68, 'l', 'le', '#9fb3bf', , 0.25]]],
-  [36.0, 38.0, 'up', [['Nova looks at your screen…', 120, 495, 36, 'l', 'ty'], ['and *understands* it.', 120, 535, 52, 'l', 'ri', , , 0.9]]],
-  [38.0, 39.9, 'gl', [['It opens', 410, 230, 36, 'l', 'dr', '#9fb3bf'], ['*Spotify.*', 410, 298, 70, 'l', 'zm', , '#00F5A0', 0.1]]],
-  [39.9, 41.6, 'sm', [['Finds the', 1160, 275, 36, 'r', 'ri', '#9fb3bf'], ['track.', 1160, 335, 64, 'r', 'rg', , , 0.15]]],
-  [41.6, 43.2, 'gl', [['Hits', 410, 230, 36, 'l', 'dr', '#9fb3bf'], ['*play.*', 410, 298, 76, 'l', 'zm', , '#00F5A0', 0.1]]],
-  [43.3, 44.4, 'up', [['Reads your inbox *out loud.*', 120, 535, 40, 'l', 'ty']]],
-  [44.5, 46.2, 'gl', [['*Ghost Protocol.*', 120, 535, 70, 'l', 'sc']]],
-  [46.3, 48.0, 'zo', [['Your phone,', 120, 480, 36, 'l', 'dr', '#9fb3bf'], ['*operated.*', 120, 535, 70, 'l', 'zm', , , 0.12]]],
-  [48.6, 50.0, 'sm', [['Your keys never ride', 120, 200, 32, 'l', 'le', '#9fb3bf'], ['inside the', 120, 240, 32, 'l', 'le', '#9fb3bf', , 0.1], ['*app.*', 120, 320, 88, 'l', 'zm', , , 0.25]]],
-  [50.0, 51.3, 'up', [['They sync from a', 1160, 210, 32, 'r', 'rg', '#9fb3bf'], ['*cryptographic*', 1160, 260, 46, 'r', 'rg', , , 0.15], ['vault —', 1160, 310, 32, 'r', 'ri', '#9fb3bf', , 0.3]]],
-  [51.3, 52.35, 'gl', [['yours *alone.*', 120, 535, 60, 'l', 'sc']]],
-  [58.6, 61.0, 'up', [['This is autonomous', 120, 115, 38, 'l', 'ty'], ['*intelligence* —', 120, 180, 68, 'l', 'le', , , 0.7]]],
-  [61.1, 63.4, 'zo', [['engineered for your', 640, 490, 36, 'c', 'ri', '#9fb3bf'], ['*pocket.*', 640, 545, 74, 'c', 'zm', , , 0.15]]]
+  [0.5, 2.5, "gl", [["Another chatbot. Another *tab*.", 120, 520, 40, "l", "ty"]]],
+  [2.6, 4.8, "sm", [["A box that waits for you to *type.*", 1160, 520, 40, "r", "rg", "#9fb3bf"]]],
+  [5.2, 7.1, "up", [["Nova doesn’t wait.", 120, 105, 48, "l", "sc"]]],
+  [7.3, 10.0, "gl", [["Nova", 120, 470, 34, "l", "dr", "#9fb3bf"], ["*lives*", 120, 535, 76, "l", "zm", , , 0.1], ["on your phone —", 315, 520, 38, "l", "ri", , , 0.3], ["and acts on your *world.*", 1160, 535, 36, "r", "rg", "#00E5FF", , 0.5]]],
+  [10.6, 12.8, "up", [["Meet *NOVA.*", 640, 115, 46, "c", "dr"]]],
+  [14.8, 17.0, "zo", [["An operating layer,", 120, 475, 42, "l", "le"], ["not an *app.*", 1160, 530, 68, "r", "rg", , , 0.25]]],
+  [18.4, 20.8, "gl", [["Every request hits a router", 120, 475, 36, "l", "le", "#9fb3bf"], ["in *milliseconds.*", 120, 535, 68, "l", "zm", , , 0.2]]],
+  [21.0, 23.6, "sm", [["Gemini first. Then Groq", 1160, 95, 38, "r", "rg"], ["for raw *speed.*", 1160, 535, 66, "r", "ri", , , 0.3]]],
+  [24.2, 26.6, "up", [["OpenRouter", 120, 465, 36, "l", "dr", "#9fb3bf"], ["for *depth.*", 120, 530, 76, "l", "sc", , , 0.1]]],
+  [26.8, 29.5, "gl", [["One model stumbles —", 160, 495, 38, "l", "ty", "#FF6B6B", "#FF3D6E"], ["the signal *reroutes.*", 1160, 535, 70, "r", "rg", , , 0.9]]],
+  [29.8, 32.2, "zo", [["Nova never goes", 640, 105, 38, "c", "dr"], ["*dark.*", 640, 530, 88, "c", "zm", , , 0.25]]],
+  [32.6, 34.4, "gl", [["Now", 410, 210, 36, "l", "dr", "#9fb3bf"], ["*watch.*", 410, 275, 74, "l", "zm", , , 0.1]]],
+  [34.5, 36.2, "sm", [["No API.", 410, 275, 68, "l", "le"], ["No tap.", 410, 345, 68, "l", "le", "#9fb3bf", , 0.25]]],
+  [36.4, 38.4, "up", [["Nova looks at your screen…", 120, 495, 36, "l", "ty"], ["and *understands* it.", 120, 535, 52, "l", "ri", , , 0.9]]],
+  [38.6, 40.2, "gl", [["It opens", 410, 230, 36, "l", "dr", "#9fb3bf"], ["*Spotify.*", 410, 298, 70, "l", "zm", , "#00F5A0", 0.1]]],
+  [40.3, 41.7, "sm", [["Finds the", 1160, 275, 36, "r", "ri", "#9fb3bf"], ["track.", 1160, 335, 64, "r", "rg", , , 0.15]]],
+  [41.8, 43.2, "gl", [["Hits", 410, 230, 36, "l", "dr", "#9fb3bf"], ["*play.*", 410, 298, 76, "l", "zm", , "#00F5A0", 0.1]]],
+  [43.3, 45.4, "up", [["Reads your inbox *out loud.*", 120, 535, 40, "l", "ty"]]],
+  [45.6, 47.4, "gl", [["*Ghost Protocol.*", 120, 535, 70, "l", "sc"]]],
+  [47.5, 48.8, "zo", [["Your phone,", 120, 480, 36, "l", "dr", "#9fb3bf"], ["*operated.*", 120, 535, 70, "l", "zm", , , 0.12]]],
+  [48.8, 51.5, "sm", [["Your keys never ride", 120, 200, 32, "l", "le", "#9fb3bf"], ["inside the", 120, 240, 32, "l", "le", "#9fb3bf", , 0.1], ["*app.*", 120, 320, 88, "l", "zm", , , 0.25]]],
+  [51.6, 53.4, "up", [["They sync from a", 1160, 210, 32, "r", "rg", "#9fb3bf"], ["*cryptographic*", 1160, 260, 46, "r", "rg", , , 0.15], ["vault —", 1160, 310, 32, "r", "ri", "#9fb3bf", , 0.3]]],
+  [53.5, 54.8, "gl", [["yours *alone.*", 120, 535, 60, "l", "sc"]]],
+  [58.8, 61.3, "up", [["This is autonomous", 120, 115, 38, "l", "ty"], ["*intelligence* —", 120, 180, 68, "l", "le", , , 0.7]]],
+  [61.4, 63.8, "zo", [["engineered for your", 640, 490, 36, "c", "ri", "#9fb3bf"], ["*pocket.*", 640, 545, 74, "c", "zm", , , 0.15]]]
 ];
 
 function kin(t) {
@@ -1248,7 +1248,7 @@ function kin(t) {
 }
 
 function cut(t) {
-  const a = 53.9, b = 57.5;
+  const a = 54.7, b = 58.2;
   if (t < a || t > b + 0.3) return;
   const e = t < a + 0.2 ? ex((t - a) / 0.2) : 1 - ex(cl((t - b) / 0.25));
   ctx.save();
@@ -1256,16 +1256,13 @@ function cut(t) {
   ctx.globalAlpha = 1;
   ctx.translate(W / 2, H / 2);
   ctx.scale(1, Math.max(0.001, e));
-  ctx.fillStyle = '#FFB300';
+  ctx.fillStyle = "#FFB300";
   ctx.fillRect(-W / 2, -H / 2, W, H);
   ctx.restore();
-  if (t < 54.4) {
-    tx('↵', W / 2, H / 2, 220, '#04080E', { w: 300, a: ex(cl((t - a) / 0.15)) });
-    return;
-  }
+  if (t < 54.95) return;
   if (t > b) return;
-  const q = [[54.2, 'LOCAL-FIRST.', 100], [55.3, 'LOCKED DOWN.', 100], [56.4, 'YOURS.', 220]].filter(x => t >= x[0]).pop();
-  slam(q[1], t, q[0], 999, W / 2, H / 2, q[2], '#04080E');
+  const q = [[54.95, "LOCAL-FIRST.", 100], [56.1, "LOCKED DOWN.", 100], [57.2, "YOURS.", 220]].filter(x => t >= x[0]).pop();
+  if (q) slam(q[1], t, q[0], 999, W / 2, H / 2, q[2], "#04080E");
 }
 
 // ---------------------------------------------------------
@@ -1566,12 +1563,12 @@ function initAutoRecorder() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = isMp4 ? "NOVA_AI_Film_Synced.mp4" : "NOVA_AI_Film_Synced.webm";
+    a.download = isMp4 ? "NOVA_AI_Film_MasterSync.mp4" : "NOVA_AI_Film_MasterSync.webm";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    alert("✓ Synced master video downloaded to your phone!");
+    alert("✓ Synced Master Video saved to Downloads!");
   };
   mediaRecorder.start();
   const timer = setInterval(() => {
