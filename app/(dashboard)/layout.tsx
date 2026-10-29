@@ -19,26 +19,6 @@ import {
 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [isLight, setIsLight] = React.useState(false);
-
-  React.useEffect(() => {
-    try {
-      if (typeof window !== "undefined" && localStorage.getItem("nova_theme") === "light") {
-        setIsLight(true);
-      }
-    } catch (e) {}
-  }, []);
-
-  const toggleTheme = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsLight(prev => {
-      const next = !prev;
-      try { localStorage.setItem("nova_theme", next ? "light" : "dark"); } catch (err) {}
-      return next;
-    });
-  };
-
   const pathname = usePathname();
   const router = useRouter();
 
@@ -245,7 +225,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className={`min-h-screen bg-[#060B11] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${isLight ? "dashboard-light" : ""}`}>
+    <div className="min-h-screen bg-[#060B11] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20">
       {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E3045] px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -341,30 +321,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="flex items-center gap-2 px-1">
                 <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
                 <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
-
-        {/* Absolute Bottom Theme Switch */}
-        <div className="mt-3 pt-3 border-t border-[#1E3045] flex items-center justify-between px-1 select-none">
-          <span className="text-[10px] font-mono tracking-wider text-cyan-400/80 font-semibold uppercase">LIGHT THEME</span>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="relative w-8 h-4 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation"
-            style={{
-              backgroundColor: isLight ? "#00E5FF" : "#101B2B",
-              border: "1px solid rgba(0, 229, 255, 0.4)"
-            }}
-            title="Toggle Light / Dark Mode"
-          >
-            <div
-              className="w-3 h-3 rounded-full transition-all duration-200"
-              style={{
-                transform: isLight ? "translateX(14px)" : "translateX(0px)",
-                backgroundColor: isLight ? "#ffffff" : "#00E5FF",
-                boxShadow: isLight ? "0 0 8px #ffffff" : "0 0 6px #00E5FF"
-              }}
-            />
-          </button>
-        </div>
               </div>
             </div>
           </aside>
@@ -445,30 +401,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-2 px-1 pt-1">
             <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
             <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
-
-        {/* Absolute Bottom Theme Switch */}
-        <div className="mt-3 pt-3 border-t border-[#1E3045] flex items-center justify-between px-1 select-none">
-          <span className="text-[10px] font-mono tracking-wider text-cyan-400/80 font-semibold uppercase">LIGHT THEME</span>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="relative w-8 h-4 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation"
-            style={{
-              backgroundColor: isLight ? "#00E5FF" : "#101B2B",
-              border: "1px solid rgba(0, 229, 255, 0.4)"
-            }}
-            title="Toggle Light / Dark Mode"
-          >
-            <div
-              className="w-3 h-3 rounded-full transition-all duration-200"
-              style={{
-                transform: isLight ? "translateX(14px)" : "translateX(0px)",
-                backgroundColor: isLight ? "#ffffff" : "#00E5FF",
-                boxShadow: isLight ? "0 0 8px #ffffff" : "0 0 6px #00E5FF"
-              }}
-            />
-          </button>
-        </div>
           </div>
         </div>
       </aside>
