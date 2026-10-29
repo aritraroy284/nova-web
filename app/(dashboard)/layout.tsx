@@ -298,8 +298,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             
-        {/* Sleek Minimalist Cyber Theme Toggle Switch */}
-        <div className="mx-3 mb-3 p-2.5 rounded-xl border border-cyan-500/20 bg-[#0B1520]/80 flex items-center justify-between select-none">
+        
+
+        {/* Theme Toggle Pill Switch */}
+        <div className="mx-3 mb-2.5 px-3 py-2 rounded-xl border border-cyan-500/20 bg-[#0B1520]/80 flex items-center justify-between select-none">
           <span className="text-[11px] font-mono tracking-wider text-cyan-400 font-semibold uppercase">LIGHT THEME</span>
           <button
             type="button"
@@ -382,7 +384,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </div>
 
-        <div className="pt-4 border-t border-[#1E3045]/60 space-y-3">
+        
+        {/* Theme Toggle Pill Switch */}
+        <div className="mx-3 mb-2.5 px-3 py-2 rounded-xl border border-cyan-500/20 bg-[#0B1520]/80 flex items-center justify-between select-none">
+          <span className="text-[11px] font-mono tracking-wider text-cyan-400 font-semibold uppercase">LIGHT THEME</span>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof document !== "undefined") {
+                const isL = document.documentElement.classList.toggle("light-theme");
+                try { localStorage.setItem("nova_theme", isL ? "light" : "dark"); } catch (e) {}
+              }
+            }}
+            className="nova-theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation"
+            title="Toggle Light / Dark Mode"
+          >
+            <div className="nova-theme-dot w-3.5 h-3.5 rounded-full transition-all duration-200" />
+          </button>
+        </div>
+<div className="pt-4 border-t border-[#1E3045]/60 space-y-3">
           <button
             onClick={() => { setDevErrorMsg(""); setIsDevModalOpen(true); }}
             className={`w-full py-2.5 px-3 rounded-xl font-mono text-xs border flex items-center justify-between transition ${
@@ -504,7 +524,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               <div className="relative py-2 text-center">
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest bg-[#0D1520] px-2 relative z-10">OR</span>
-                <div className="absolute inset-x-0 top-1/2 border-t border-[#1E3045]" />
+                
+        {/* Theme Toggle Pill Switch */}
+        <div className="mx-3 mb-2.5 px-3 py-2 rounded-xl border border-cyan-500/20 bg-[#0B1520]/80 flex items-center justify-between select-none">
+          <span className="text-[11px] font-mono tracking-wider text-cyan-400 font-semibold uppercase">LIGHT THEME</span>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof document !== "undefined") {
+                const isL = document.documentElement.classList.toggle("light-theme");
+                try { localStorage.setItem("nova_theme", isL ? "light" : "dark"); } catch (e) {}
+              }
+            }}
+            className="nova-theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation"
+            title="Toggle Light / Dark Mode"
+          >
+            <div className="nova-theme-dot w-3.5 h-3.5 rounded-full transition-all duration-200" />
+          </button>
+        </div>
+<div className="absolute inset-x-0 top-1/2 border-t border-[#1E3045]" />
               </div>
 
               <button

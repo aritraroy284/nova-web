@@ -43,10 +43,10 @@ export default function LandingPage() {
 
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#060B11]/80 px-6 py-4 flex items-center justify-between border-b border-[#1E3045]/60">
-        <Link href="/console" className="flex items-center gap-2.5 cursor-pointer relative z-50 pointer-events-auto select-none touch-manipulation hover:opacity-90 transition-opacity">
+        <div className="flex items-center gap-2.5 select-none pointer-events-none cursor-default">
         <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
         <span className="font-bold tracking-wider text-sm text-cyan-400">NOVA AI</span>
-      </Link>
+      </div>
         <Link
           href="/overview"
           className="px-4 py-2 text-xs font-mono font-bold rounded-lg bg-nova-cyan text-black hover:opacity-90 transition shadow-[0_0_15px_rgba(0,229,255,0.25)] uppercase tracking-wider"
