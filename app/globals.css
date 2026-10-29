@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 60fps Smooth Transitions */
 @keyframes pageSlideFade {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -13,7 +14,7 @@
   }
 }
 .page-transition-enter {
-  animation: pageSlideFade 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageSlideFade 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes drawerSlideIn {
@@ -29,32 +30,35 @@
 }
 
 /* ---------------------------------------------------------
-   DARK MODE (19615 EXACT OBSIDIAN NAVY)
+   IMAGE 19842 / 19843 / 19844 EXACT COLOR CODES (DARK MODE)
    --------------------------------------------------------- */
 .dashboard-dark {
-  background-color: #060B11 !important;
+  background-color: #040B15 !important;
   color: #E6F7FB !important;
 }
 
+/* Sidebar #07101F */
 .dashboard-dark aside,
 .dashboard-dark header {
-  background-color: #060B11 !important;
+  background-color: #07101F !important;
   border-color: #142334 !important;
 }
 
 .dashboard-dark main {
-  background-color: #060B11 !important;
+  background-color: #040B15 !important;
 }
 
+/* Card Container #0D1726 */
 .dashboard-dark .nova-card {
-  background-color: #09131F !important;
+  background-color: #0D1726 !important;
   border: 1px solid #16273A !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 .dashboard-dark .nova-card:hover {
   border-color: rgba(0, 229, 255, 0.35) !important;
 }
 
+/* Active Nav Pill */
 .dashboard-dark a[data-active="true"] {
   background-color: #0B2538 !important;
   border: 1px solid rgba(0, 229, 255, 0.55) !important;
@@ -69,17 +73,17 @@
   color: #8CA4B5 !important;
 }
 .dashboard-dark a[data-active="false"]:hover {
-  background-color: #0D1A29 !important;
+  background-color: #0E1B2E !important;
   color: #FFFFFF !important;
 }
 
 .dashboard-dark .user-account-box {
-  background-color: #09131F !important;
+  background-color: #07101F !important;
   border: 1px solid #16273A !important;
 }
 
 .dashboard-dark .nova-switch-bar {
-  background-color: #0A1420;
+  background-color: #07101F;
   border: 1px solid rgba(0, 229, 255, 0.4);
 }
 .dashboard-dark .nova-switch-dot {
@@ -100,7 +104,7 @@
 }
 
 .dashboard-dark .quick-btn {
-  background-color: rgba(13, 26, 41, 0.7);
+  background-color: rgba(7, 16, 31, 0.7);
   border: 1px solid #16273A;
   color: #94A3B8;
 }
@@ -110,7 +114,7 @@
 }
 
 /* ---------------------------------------------------------
-   LIGHT MODE (HIGH CONTRAST SAAS - ZERO FADED TEXT)
+   HIGH CONTRAST SAAS LIGHT MODE
    --------------------------------------------------------- */
 .dashboard-light {
   background-color: #F8FAFC !important;
@@ -127,12 +131,10 @@
   background-color: #F8FAFC !important;
 }
 
-.dashboard-light .nova-card,
-.dashboard-light div[class*="bg-[#0"],
-.dashboard-light div[class*="bg-slate-9"] {
+.dashboard-light .nova-card {
   background-color: #FFFFFF !important;
   border: 1px solid #E2E8F0 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
 }
 
 .dashboard-light h1,
@@ -145,8 +147,7 @@
 
 .dashboard-light p,
 .dashboard-light .text-slate-400,
-.dashboard-light .text-slate-300,
-.dashboard-light .text-gray-400 {
+.dashboard-light .text-slate-300 {
   color: #334155 !important;
 }
 
@@ -205,25 +206,16 @@
   border: 1px solid #0F172A !important;
   color: #FFFFFF !important;
 }
-.dashboard-light .btn-dark-action:hover {
-  background-color: #1E293B !important;
-}
 
 .dashboard-light .quick-btn {
   background-color: #F8FAFC !important;
   border: 1px solid #E2E8F0 !important;
   color: #334155 !important;
 }
-.dashboard-light .quick-btn:hover {
-  background-color: #F1F5F9 !important;
-  color: #0F172A !important;
-  border-color: #CBD5E1 !important;
-}
 
 .dashboard-light .live-status-pill {
   background-color: #ECFDF5 !important;
   border-color: #A7F3D0 !important;
-  box-shadow: none !important;
 }
 .dashboard-light .live-status-text {
   color: #059669 !important;
