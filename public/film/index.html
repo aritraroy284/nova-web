@@ -507,7 +507,7 @@ function slam(s, t, t0, t1, x, y, sz, col, o = {}) {
     rgb,
     sc: lerp(2.4, 1, q),
     sy: lerp(0.48, 1, q) * lerp(2.4, 1, q),
-    tr: lerp(sz * 0.6, sz * 0.02, q)
+    tr: lerp(Math.min(22, sz * 0.16), sz * 0.02, q)
   });
 
   if (p > 0.08 && p < 0.75 && sz >= 90) {
@@ -721,9 +721,9 @@ function s1(t) {
       ctx.restore();
     }
   }
-  slam('NOT A TAB.', t, 5.3, 7.5, W / 2, 245, 145, '#fff', { sh: '#00E5FF' });
-  slam('AN OS', t, 7.6, 10, W / 2, 215, 125, '#fff');
-  slam('LAYER.', t, 8.1, 10, W / 2, 375, 200, '#00E5FF', { sh: '#00E5FF', sb: 55 });
+  slam("DOESN’T WAIT.", t, 5.2, 7.1, W / 2, 280, 115, "#fff", { sh: "#00E5FF", sb: 35 });
+  slam("LIVES ON", t, 7.3, 9.8, W / 2, 220, 110, "#fff");
+  slam("YOUR PHONE.", t, 7.8, 9.8, W / 2, 360, 140, "#00E5FF", { sh: "#00E5FF", sb: 55 });
 }
 
 function s2(t, l) {
@@ -826,8 +826,8 @@ function s3(t, l) {
   }
 }
 
-const KF = [[37, 120, 260], [38.5, 0, -186], [39, 0, -186], [41.6, 0, -60], [42, 0, -60], [42.8, 0, 150], [43.3, 0, 150], [44.6, 70, -90], [47, 10, 40], [48, 10, 40]];
-const TP = [38.6, 41.7, 42.9, 44.9];
+const KF = [[37, 120, 260], [38.2, 0, -186], [38.6, 0, -186], [39.6, 0, -60], [40.0, 0, -60], [41.2, 0, 150], [41.5, 0, 150], [43.0, 70, -90], [45, 10, 40], [48, 10, 40]];
+const TP = [38.6, 40.0, 41.5, 43.2];
 
 function s4(t, l) {
   slam('GHOST PROTOCOL', t, 32.4, 48, 90, 85, 54, t > 44.4 ? '#FFB300' : '#fff', { al: 'l' });
@@ -893,8 +893,8 @@ function s4(t, l) {
   rRect(-w / 2 + 8, -h / 2 + 8, w - 16, h - 16, 28);
   ctx.clip();
 
-  const rows = [-120, -52, 16], mail = t >= 44.3;
-  const ty = t > 39 ? 'lofi beats'.slice(0, Math.floor((t - 39.4) * 8)) : '';
+  const rows = [-120, -52, 16], mail = t >= 43.0;
+  const ty = t > 38.6 ? 'lofi beats'.slice(0, Math.floor((t - 38.6) * 14)) : '';
 
   if (!mail) {
     ctx.fillStyle = 'rgba(0, 229, 255, 0.06)';
@@ -905,7 +905,7 @@ function s4(t, l) {
     tx(ty + (t > 38.6 && t < 41 && Math.floor(t * 4) % 2 ? '▍' : ''), -82, -177, 14, '#fff', { al: 'l', f: MONO, w: 500 });
 
     rows.forEach((y, i) => {
-      const sel = t > 41.7 && i === 1;
+      const sel = t > 40.0 && i === 1;
       A(t < 40.6 ? 0.35 : 1);
       ctx.fillStyle = sel ? 'rgba(0, 245, 160, 0.18)' : 'rgba(13, 25, 40, 0.65)';
       rRect(-94, y - 26, 188, 52, 10);
@@ -920,7 +920,7 @@ function s4(t, l) {
     });
     A(1);
 
-    if (t >= 43) {
+    if (t >= 41.6) {
       ctx.fillStyle = '#00F5A0';
       for (let i = 0; i < 14; i++) {
         const bh = 7 + 34 * Math.abs(Math.sin(t * 8.5 + i * 0.9));
@@ -1002,7 +1002,7 @@ function s4(t, l) {
       }
     });
 
-    [['CLICK: search', 38.6], ['TAP: result', 41.7], ['TAP: play', 42.9], ['READ: inbox', 44.9]].forEach(([n, ta]) => {
+    [['CLICK: search', 38.6], ['TAP: result', 40.0], ['TAP: play', 41.5], ['READ: inbox', 43.2]].forEach(([n, ta]) => {
       const d = t - ta + 0.15;
       if (d > 0 && d < 1.4) {
         tx('> ' + n, x + 26, y - 26, 15, '#FFB300', { al: 'l', f: MONO, w: 700, a: ex(d * 5) * (1 - cl((d - 1) / 0.4)), sh: '#FFB300', sb: 12 });
@@ -1061,7 +1061,7 @@ function s5(t, l) {
     ctx.restore();
   }
 
-  slam('SECRETS STAY LOCKED.', t, 52.3, 58, W / 2, 495, 62, '#fff', { sh: '#00E5FF' });
+  slam('YOURS ALONE.', t, 51.2, 53.6, W / 2, 495, 76, '#00E5FF', { sh: '#00E5FF', sb: 40 });
   tx('ZERO HARDCODED KEYS · SUPABASE VAULT SYNCED', W / 2, 545, 16, '#FFB300', { f: MONO, w: 600, tr: 3, a: ex(cl((t - 53.0) * 2)) });
 }
 
@@ -1071,9 +1071,9 @@ function s6(t, l) {
   const cy = e ? 320 : lerp(320, 235, ex(cl((t - 63.4) / 0.8)));
   core(t, W / 2, cy, R, e ? 3 : 1);
 
-  slam('AUTONOMOUS.', t, 58.9, 61.2, W / 2, 310, 130, '#fff', { sh: '#00E5FF', sb: 55 });
-  slam('IN YOUR', t, 61.4, 63.4, W / 2, 235, 96, '#fff');
-  slam('POCKET.', t, 61.9, 63.4, W / 2, 385, 190, '#FFB300', { sh: '#FFB300', sb: 50 });
+  slam('AUTONOMOUS.', t, 58.8, 60.8, W / 2, 310, 120, '#fff', { sh: '#00E5FF', sb: 55 });
+  slam('IN YOUR', t, 61.0, 63.2, W / 2, 235, 96, '#fff');
+  slam('POCKET.', t, 61.5, 63.2, W / 2, 385, 175, '#FFB300', { sh: '#FFB300', sb: 50 });
 
   slam('NOVA AI', t, 63.6, 70, W / 2, 235, 140, '#fff', { sh: '#00E5FF' });
   slam('Control that stays yours.', t, 64.6, 70, W / 2, 360, 48, '#00E5FF', { w: 700 });
@@ -1264,7 +1264,7 @@ function cut(t) {
     return;
   }
   if (t > b) return;
-  const q = [[54.4, 'LOCAL-FIRST.', 125], [55.5, 'LOCKED DOWN.', 125], [56.5, 'YOURS.', 280]].filter(x => t >= x[0]).pop();
+  const q = [[54.2, 'LOCAL-FIRST.', 100], [55.3, 'LOCKED DOWN.', 100], [56.4, 'YOURS.', 220]].filter(x => t >= x[0]).pop();
   slam(q[1], t, q[0], 999, W / 2, H / 2, q[2], '#04080E');
 }
 
