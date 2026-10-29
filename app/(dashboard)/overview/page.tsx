@@ -14,10 +14,7 @@ export default function OverviewPage() {
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/30 text-[#00F5A0] text-xs font-mono font-semibold tracking-wider">
           <span className="w-1.5 h-1.5 rounded-full bg-[#00F5A0] animate-pulse"></span>
-          <div className="flex items-center gap-2.5">
-        <button id="themeToggleBtn" type="button" onClick={() => { if(typeof document !== "undefined") { const isL = document.documentElement.classList.toggle("light-theme"); localStorage.setItem("nova_theme", isL ? "light" : "dark"); } }} className="px-3 py-1 rounded-full border border-cyan-500/40 bg-cyan-950/60 text-cyan-400 text-xs font-mono font-medium hover:bg-cyan-900/50 hover:border-cyan-400/60 transition-all flex items-center gap-1.5 cursor-pointer select-none z-50 pointer-events-auto shadow-[0_0_10px_rgba(0,229,255,0.15)]" title="Toggle Light / Dark Mode"><span>☀️/🌙</span><span className="hidden sm:inline">THEME</span></button>
-        <span>LIVE STATUS</span>
-      </div>
+          <span>LIVE STATUS</span>
         </div>
       </div>
 
