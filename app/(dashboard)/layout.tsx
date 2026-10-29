@@ -237,9 +237,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs">
-              N
-            </div>
+            <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
             <div>
               <div className="font-mono font-bold text-xs tracking-wider text-white">NOVA AI</div>
               <div className="text-[9px] font-mono text-[#00F5A0] leading-none">CORE ONLINE</div>
@@ -265,9 +263,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div>
               <div className="flex items-center justify-between pb-5 border-b border-[#1E3045]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] text-xs shadow-[0_0_12px_rgba(0,229,255,0.2)]">
-                    N
-                  </div>
+                  <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
                   <div>
                     <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
                     <div className="text-[9px] font-mono text-[#8E9DAE] tracking-wider uppercase">AI Workspace</div>
@@ -336,13 +332,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div>
           <div className="pb-6 border-b border-[#1E3045]/60">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition cursor-pointer">
-              <div className="w-9 h-9 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.15)]">
-                N
-              </div>
+              <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
               <div>
                 <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
                 <div className="text-[10px] font-mono text-[#00E5FF] tracking-wider uppercase flex items-center gap-1">
-                  LAUNCH CONSOLE <span>↗</span>
+                   <span>↗</span>
                 </div>
               </div>
             </Link>
