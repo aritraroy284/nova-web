@@ -65,13 +65,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
       <div className="flex flex-col text-left">
         <span className="font-bold tracking-wider text-sm font-mono leading-tight">NOVA AI</span>
-        <span className="text-[10px] font-mono tracking-widest core-online-sub text-[#00E5FF] font-semibold uppercase leading-tight">CORE ONLINE</span>
+        <span className="text-[10px] font-mono tracking-widest text-[#00E5FF] font-semibold uppercase leading-tight">CORE ONLINE</span>
       </div>
     </Link>
   );
 
   const ThemeToggleElement = (
-    <div className="pt-2 mt-1 border-t border-[#142334] flex items-center justify-between px-2 select-none">
+    <div className="pt-2.5 mt-2 border-t border-[#142334] flex items-center justify-between px-2 select-none">
       <span className="text-[10px] font-mono tracking-wider font-semibold uppercase theme-label text-cyan-400">
         {themeMode === "light" ? "LIGHT THEME" : "DARK THEME"}
       </span>
@@ -90,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className={`min-h-screen flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${themeMode === "light" ? "dashboard-light" : "dashboard-dark"}`}>
       
-      {/* MOBILE STICKY TOP BAR - Clean, zero clutter */}
+      {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full border-b border-[#142334] px-4 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button
@@ -111,16 +111,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </header>
 
-      {/* MOBILE DRAWER (Smooth 60fps Slide-in Animation) */}
+      {/* MOBILE DRAWER */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div 
             className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setMobileMenuOpen(false)} 
           />
-          <div className="animate-drawer-slide relative w-72 max-w-[82vw] h-[100dvh] bg-[#060B11] border-r border-[#142334] p-4 flex flex-col justify-between z-10">
+          <div className="animate-drawer-slide relative w-72 max-w-[82vw] h-[100dvh] bg-[#060B11] border-r border-[#142334] p-5 flex flex-col justify-between z-10">
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-[#142334] mb-4">
+              <div className="flex items-center justify-between pb-4 border-b border-[#142334] mb-6">
                 {BrandElement}
                 <button 
                   onClick={() => setMobileMenuOpen(false)} 
@@ -129,7 +129,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <X className="w-5 h-5 text-cyan-400" />
                 </button>
               </div>
-              <nav className="space-y-1.5">
+              <nav className="space-y-2.5">
                 {navItems.map((item) => {
                   const isActive = pathname === item.href;
                   const Icon = item.icon;
@@ -139,13 +139,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       href={item.href}
                       data-active={isActive}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all ${
+                      className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-sans font-medium tracking-wide transition-all ${
                         isActive
                           ? "bg-[#0B2538] border border-cyan-500/50 text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.2)]"
                           : "text-[#8CA4B5] hover:text-white hover:bg-[#0D1A29]"
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-5 h-5 shrink-0" />
                       <span>{item.name}</span>
                     </Link>
                   );
@@ -153,9 +153,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </nav>
             </div>
 
-            {/* Mobile Drawer Bottom: Docked cleanly */}
-            <div className="pt-3 border-t border-[#142334] space-y-2.5">
-              <div className="p-2.5 rounded-xl user-account-box flex items-center justify-between">
+            {/* Mobile Drawer Bottom */}
+            <div className="pt-4 border-t border-[#142334] space-y-3">
+              <div className="p-3 rounded-xl user-account-box flex items-center justify-between">
                 <div className="min-w-0 pr-2">
                   <p className="text-xs font-mono font-medium truncate text-white">
                     {userEmail || "roy•••@gmail.com"}
@@ -178,13 +178,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* DESKTOP SIDEBAR: Fits 100dvh without scrolling */}
-      <aside className="hidden md:flex md:w-64 lg:w-72 flex-col justify-between border-r border-[#142334] h-[100dvh] sticky top-0 p-4 z-30 shrink-0 overflow-hidden">
+      {/* DESKTOP SIDEBAR */}
+      <aside className="hidden md:flex md:w-64 lg:w-72 flex-col justify-between border-r border-[#142334] h-[100dvh] sticky top-0 p-5 z-30 shrink-0 overflow-hidden">
         <div>
-          <div className="mb-6 px-1">
+          <div className="mb-8 px-1">
             {BrandElement}
           </div>
-          <nav className="space-y-1.5">
+          <nav className="space-y-2.5">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -193,13 +193,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   key={item.href}
                   href={item.href}
                   data-active={isActive}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all ${
+                  className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-sans font-medium tracking-wide transition-all ${
                     isActive
                       ? "bg-[#0B2538] border border-cyan-500/50 text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.2)]"
                       : "text-[#8CA4B5] hover:text-white hover:bg-[#0D1A29]"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-5 h-5 shrink-0" />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -208,7 +208,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Desktop Sidebar Bottom */}
-        <div className="pt-3 border-t border-[#142334] space-y-2.5">
+        <div className="pt-4 border-t border-[#142334] space-y-3">
           <div className="flex items-center justify-between px-1">
             <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold tracking-wider text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 flex items-center gap-1.5">
               <ShieldCheck className="w-3 h-3 text-[#00F5A0]" />
@@ -217,7 +217,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">CLOUD</span>
           </div>
 
-          <div className="p-2.5 rounded-xl user-account-box flex items-center justify-between">
+          <div className="p-3 rounded-xl user-account-box flex items-center justify-between">
             <div className="min-w-0 pr-2">
               <p className="text-xs font-mono font-medium truncate text-white">
                 {userEmail || "roy•••@gmail.com"}
@@ -238,7 +238,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
+      {/* MAIN CONTENT */}
       <main className="flex-1 min-w-0 h-[100dvh] overflow-y-auto">
         <div className="w-full p-4 md:p-8 max-w-7xl mx-auto">
           {children}
