@@ -90,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className={`min-h-screen flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20 ${themeMode === "light" ? "dashboard-light" : "dashboard-dark"}`}>
       
-      {/* MOBILE STICKY TOP BAR - Zero switch clutter */}
+      {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full border-b border-[#142334] px-4 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
           <button
@@ -147,7 +147,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </nav>
             </div>
 
-            {/* Mobile Drawer Bottom: Switch docked cleanly below Core Online */}
             <div className="pt-4 border-t border-[#142334] space-y-3">
               <div className="p-2.5 rounded-xl user-account-box flex items-center justify-between">
                 <div className="min-w-0 pr-2">
@@ -172,7 +171,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* DESKTOP SIDEBAR: Image 19615 Dark Palette & Clean Bottom Switch */}
+      {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex md:w-64 lg:w-72 flex-col justify-between border-r border-[#142334] h-screen sticky top-0 p-4 z-30 shrink-0">
         <div>
           <div className="mb-6 px-1">
@@ -201,7 +200,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </nav>
         </div>
 
-        {/* Desktop Sidebar Bottom */}
         <div className="pt-4 border-t border-[#142334] space-y-3">
           <div className="flex items-center justify-between px-1">
             <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold tracking-wider text-[#00F5A0] bg-[#00F5A0]/10 border border-[#00F5A0]/30 flex items-center gap-1.5">
@@ -232,7 +230,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* MAIN CONTENT WITH 60FPS PAGE TRANSITION */}
+      {/* MAIN CONTENT WITH PAGE TRANSITION */}
       <main className="flex-1 min-w-0 overflow-y-auto">
         <div key={pathname} className="page-transition-enter w-full p-4 md:p-8 max-w-7xl mx-auto">
           {children}

@@ -21,7 +21,7 @@ export default function OverviewPage() {
           </p>
         </div>
 
-        {/* Clean Single Live Status Capsule (Zero Glitch) */}
+        {/* Clean Single Live Status Capsule */}
         <div className="live-status-pill self-start sm:self-auto flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00F5A0]/10 border border-[#00F5A0]/35 shadow-[0_0_12px_rgba(0,245,160,0.25)] select-none">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F5A0] opacity-75"></span>

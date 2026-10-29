@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 60fps Smooth Page Transition */
 @keyframes pageSlideFade {
   from {
     opacity: 0;
@@ -17,25 +16,19 @@
   animation: pageSlideFade 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* ---------------------------------------------------------
-   IMAGE 19615 EXACT DARK MODE (PRISTINE CYAN-NAVY CYBERPUNK)
-   --------------------------------------------------------- */
+/* 19615 DARK MODE (PRISTINE OBSIDIAN NAVY) */
 .dashboard-dark {
   background-color: #060B11 !important;
   color: #E6F7FB !important;
 }
-
 .dashboard-dark aside,
 .dashboard-dark header {
   background-color: #060B11 !important;
   border-color: #142334 !important;
 }
-
 .dashboard-dark main {
   background-color: #060B11 !important;
 }
-
-/* 19615 Deep Obsidian Navy Cards */
 .dashboard-dark .nova-card {
   background-color: #09131F !important;
   border: 1px solid #16273A !important;
@@ -44,8 +37,6 @@
 .dashboard-dark .nova-card:hover {
   border-color: rgba(0, 229, 255, 0.35) !important;
 }
-
-/* 19615 Active Nav Pill */
 .dashboard-dark a[data-active="true"] {
   background-color: #0B2538 !important;
   border: 1px solid rgba(0, 229, 255, 0.55) !important;
@@ -55,7 +46,6 @@
 .dashboard-dark a[data-active="true"] svg {
   color: #00E5FF !important;
 }
-
 .dashboard-dark a[data-active="false"] {
   color: #8CA4B5 !important;
 }
@@ -63,13 +53,10 @@
   background-color: #0D1A29 !important;
   color: #FFFFFF !important;
 }
-
 .dashboard-dark .user-account-box {
   background-color: #09131F !important;
   border: 1px solid #16273A !important;
 }
-
-/* Switch in Dark Mode */
 .dashboard-dark .nova-switch-bar {
   background-color: #0A1420;
   border: 1px solid rgba(0, 229, 255, 0.4);
@@ -80,64 +67,35 @@
   box-shadow: 0 0 8px #00E5FF;
 }
 
-/* ---------------------------------------------------------
-   CLEAN LUXURY SAAS LIGHT MODE (ZERO INVERT, 100% READABLE)
-   --------------------------------------------------------- */
+/* CLEAN SAAS LIGHT MODE (ZERO INVERT) */
 .dashboard-light {
   background-color: #F8FAFC !important;
   color: #0F172A !important;
 }
-
 .dashboard-light aside,
 .dashboard-light header {
   background-color: #FFFFFF !important;
   border-color: #E2E8F0 !important;
 }
-
 .dashboard-light main {
   background-color: #F8FAFC !important;
 }
-
-/* Pure Crisp White Cards with Slate Borders */
 .dashboard-light .nova-card {
   background-color: #FFFFFF !important;
   border: 1px solid #E2E8F0 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
 }
-.dashboard-light .nova-card:hover {
-  border-color: #CBD5E1 !important;
-}
-
-/* Crisp Dark Slate Typography */
-.dashboard-light h1,
-.dashboard-light h2,
-.dashboard-light h3,
-.dashboard-light h4,
-.dashboard-light span.text-white,
-.dashboard-light p.text-white,
-.dashboard-light div.text-white,
-.dashboard-light .text-white {
+.dashboard-light h1, .dashboard-light h2, .dashboard-light h3, .dashboard-light h4, .dashboard-light .text-white {
   color: #0F172A !important;
 }
-
-.dashboard-light p,
-.dashboard-light .text-[#8CA4B5],
-.dashboard-light .text-slate-400,
-.dashboard-light .text-gray-400 {
+.dashboard-light p, .dashboard-light .text-[#8CA4B5], .dashboard-light .text-slate-400 {
   color: #475569 !important;
 }
-
-/* Sky-Blue Active Tab in Light Mode */
 .dashboard-light a[data-active="true"] {
   background-color: #E0F2FE !important;
   border: 1px solid #38BDF8 !important;
   color: #0369A1 !important;
-  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.12) !important;
 }
-.dashboard-light a[data-active="true"] svg {
-  color: #0284C7 !important;
-}
-
 .dashboard-light a[data-active="false"] {
   color: #64748B !important;
 }
@@ -145,7 +103,6 @@
   background-color: #F1F5F9 !important;
   color: #0F172A !important;
 }
-
 .dashboard-light .user-account-box {
   background-color: #F1F5F9 !important;
   border: 1px solid #E2E8F0 !important;
@@ -153,8 +110,6 @@
 .dashboard-light .user-account-box .text-white {
   color: #0F172A !important;
 }
-
-/* Switch in Light Mode */
 .dashboard-light .theme-label {
   color: #0284C7 !important;
 }
@@ -167,19 +122,13 @@
   background-color: #FFFFFF !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
 }
-
-/* Action Buttons in Light Mode */
 .dashboard-light .btn-primary-action {
   background-color: #0284C7 !important;
   color: #FFFFFF !important;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
 }
-
-/* Live Status Capsule in Light Mode */
 .dashboard-light .live-status-pill {
   background-color: #ECFDF5 !important;
   border-color: #A7F3D0 !important;
-  box-shadow: none !important;
 }
 .dashboard-light .live-status-text {
   color: #059669 !important;
