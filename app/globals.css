@@ -31,3 +31,23 @@ html.light-theme video,
 html.light-theme canvas {
   filter: invert(1) hue-rotate(180deg) !important;
 }
+
+/* Cyber Theme Pill Switch */
+.nova-theme-bar {
+  background-color: #101B2B;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+.nova-theme-dot {
+  transform: translateX(0px);
+  background-color: #00E5FF;
+  box-shadow: 0 0 6px #00E5FF;
+}
+html.light-theme .nova-theme-bar {
+  background-color: #00E5FF !important;
+  border-color: #00E5FF !important;
+}
+html.light-theme .nova-theme-dot {
+  transform: translateX(16px) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 8px #ffffff !important;
+}

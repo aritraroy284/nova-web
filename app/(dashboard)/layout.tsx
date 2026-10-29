@@ -228,7 +228,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen bg-[#060B11] text-white flex flex-col md:flex-row font-sans selection:bg-[#00E5FF]/20">
       {/* MOBILE STICKY TOP BAR */}
       <header className="md:hidden sticky top-0 z-40 h-14 w-full bg-[#060B11]/95 backdrop-blur-md border-b border-[#1E3045] px-4 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2.5 cursor-pointer z-50 pointer-events-auto select-none touch-manipulation hover:opacity-85 transition-opacity" title="Return to Launch Page"><div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             className="p-1.5 rounded-lg bg-[#0D1520] border border-[#1E3045] text-[#00E5FF] active:scale-95 transition"
@@ -236,10 +236,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={() => { if (typeof window !== "undefined") window.location.href = "/"; }} style={{ cursor: "pointer" }} title="Return to Launch Page">
             <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
             <div>
-              <div className="font-mono font-bold text-xs tracking-wider text-white">NOVA AI</div></a>
+              <div className="font-mono font-bold text-xs tracking-wider text-white">NOVA AI</div>
               <div className="text-[9px] font-mono text-[#00F5A0] leading-none">CORE ONLINE</div>
             </div>
           </div>
@@ -261,11 +261,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
           <aside className="relative w-[78%] max-w-[280px] bg-[#060B11] border-r border-[#1E3045] h-full flex flex-col justify-between z-10 p-5 shadow-2xl">
             <div>
-              <a href="/" className="flex items-center gap-2.5 cursor-pointer z-50 pointer-events-auto select-none touch-manipulation hover:opacity-85 transition-opacity" title="Return to Launch Page"><div className="flex items-center justify-between pb-5 border-b border-[#1E3045]">
-                <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-between pb-5 border-b border-[#1E3045]">
+                <div className="flex items-center gap-2.5" onClick={() => { if (typeof window !== "undefined") window.location.href = "/"; }} style={{ cursor: "pointer" }} title="Return to Launch Page">
                   <img src="/logo.png" alt="Nova AI" className="w-8 h-8 rounded-lg object-contain drop-shadow-[0_0_10px_rgba(0,229,255,0.45)]" />
                   <div>
-                    <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div></a>
+                    <div className="font-mono font-bold text-sm tracking-widest text-white">NOVA AI</div>
                     <div className="text-[9px] font-mono text-[#8E9DAE] tracking-wider uppercase">AI Workspace</div>
                   </div>
                 </div>
@@ -298,31 +298,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             
-        {/* Modern Cyberpunk Theme Toggle Switch */}
-        <div className="mx-3 my-2 px-3 py-2.5 rounded-xl border border-cyan-500/20 bg-cyan-950/20 backdrop-blur-sm flex items-center justify-between select-none">
-          <span className="text-[11px] font-mono tracking-wider text-cyan-400/90 font-medium uppercase">LIGHT THEME</span>
+        {/* Sleek Minimalist Cyber Theme Toggle Switch */}
+        <div className="mx-3 mb-3 p-2.5 rounded-xl border border-cyan-500/20 bg-[#0B1520]/80 flex items-center justify-between select-none">
+          <span className="text-[11px] font-mono tracking-wider text-cyan-400 font-semibold uppercase">LIGHT THEME</span>
           <button
             type="button"
-            id="sidebarThemeToggle"
             onClick={() => {
               if (typeof document !== "undefined") {
-                const isLight = document.documentElement.classList.toggle("light-theme");
-                localStorage.setItem("nova_theme", isLight ? "light" : "dark");
-                const dot = document.getElementById("themeToggleDot");
-                const track = document.getElementById("themeToggleTrack");
-                if (dot && track) {
-                  dot.style.transform = isLight ? "translateX(18px)" : "translateX(0px)";
-                  dot.style.backgroundColor = isLight ? "#ffffff" : "#00E5FF";
-                  track.style.backgroundColor = isLight ? "#00E5FF" : "rgba(15, 23, 42, 0.85)";
-                }
+                const isL = document.documentElement.classList.toggle("light-theme");
+                try { localStorage.setItem("nova_theme", isL ? "light" : "dark"); } catch (e) {}
               }
             }}
-            className="cursor-pointer relative z-50 touch-manipulation p-1"
-            title="Toggle Light / Dark Interface"
+            className="nova-theme-bar relative w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer touch-manipulation"
+            title="Toggle Light / Dark Mode"
           >
-            <div id="themeToggleTrack" className="w-10 h-5 rounded-full bg-slate-900/90 border border-cyan-500/40 p-0.5 transition-colors duration-200">
-              <div id="themeToggleDot" className="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00E5FF] transition-all duration-200"></div>
-            </div>
+            <div className="nova-theme-dot w-3.5 h-3.5 rounded-full transition-all duration-200" />
           </button>
         </div>
 <div className="pt-4 border-t border-[#1E3045] space-y-3">
@@ -346,7 +336,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </button>
               )}
 
-              <div className="flex items-center gap-2 px-1">
+              <div className="flex items-center gap-2 px-1" onClick={() => { if (typeof window !== "undefined") window.location.href = "/"; }} style={{ cursor: "pointer" }} title="Return to Launch Page">
                 <span className="w-2 h-2 rounded-full bg-[#00F5A0] animate-pulse"></span>
                 <span className="text-[10px] font-mono tracking-wider text-[#8E9DAE]">CORE ONLINE</span>
               </div>
