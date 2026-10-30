@@ -15,6 +15,18 @@ import { Radio, ArrowRight, Download, Play, Clock } from "lucide-react";
   };
 
 export default function LandingPage() {
+  const [iframeHeight, setIframeHeight] = useState(2500);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      if (e.data && e.data.type === "RESIZE_SLIDES" && e.data.height) {
+        setIframeHeight(e.data.height + 60);
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
+
 
   const [comingSoonToast, setComingSoonToast] = useState(false);
   const handleDownloadClick = (e: React.MouseEvent) => {
@@ -134,9 +146,10 @@ export default function LandingPage() {
             <span>70.0s TIMELINE // 16:9 VIEWPORT</span>
           </div>
 
-        {/* Continuous 10-Slide Architectural Showcase Deck */}
-        <div className="w-full max-w-6xl mt-20 mb-10 flex flex-col items-center">
-          <div className="flex items-center gap-3 mb-6 select-none">
+        
+        {/* Seamless 10-Slide Architectural Showcase Deck */}
+        <div className="w-full max-w-6xl mt-16 mb-16 flex flex-col items-center">
+          <div className="flex items-center gap-3 mb-8 select-none">
             <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#00E5FF]/70" />
             <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] text-cyan-300 uppercase">
               ARCHITECTURAL SHOWCASE // 10 SLIDES
@@ -144,14 +157,17 @@ export default function LandingPage() {
             <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#00E5FF]/70" />
           </div>
 
-          <div className="w-full rounded-2xl overflow-hidden border border-[#00E5FF]/30 shadow-[0_0_60px_rgba(0,229,255,0.18)] bg-[#040B15]">
+          <div className="w-full bg-transparent">
             <iframe 
               src="/slides.html" 
-              className="w-full h-[750px] sm:h-[880px] md:h-[1050px] lg:h-[1150px] border-0" 
+              style={{ height: iframeHeight + "px" }}
+              className="w-full border-0 transition-all duration-300" 
               title="Nova AI Product Showcase"
+              scrolling="no"
             />
           </div>
         </div>
+  
   
         </div>
       </section>
