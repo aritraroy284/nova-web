@@ -133,6 +133,26 @@ export default function LandingPage() {
             </span>
             <span>70.0s TIMELINE // 16:9 VIEWPORT</span>
           </div>
+
+        {/* Continuous 10-Slide Architectural Showcase Deck */}
+        <div className="w-full max-w-6xl mt-20 mb-10 flex flex-col items-center">
+          <div className="flex items-center gap-3 mb-6 select-none">
+            <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#00E5FF]/70" />
+            <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] text-cyan-300 uppercase">
+              ARCHITECTURAL SHOWCASE // 10 SLIDES
+            </span>
+            <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#00E5FF]/70" />
+          </div>
+
+          <div className="w-full rounded-2xl overflow-hidden border border-[#00E5FF]/30 shadow-[0_0_60px_rgba(0,229,255,0.18)] bg-[#040B15]">
+            <iframe 
+              src="/slides.html" 
+              className="w-full h-[750px] sm:h-[880px] md:h-[1050px] lg:h-[1150px] border-0" 
+              title="Nova AI Product Showcase"
+            />
+          </div>
+        </div>
+  
         </div>
       </section>
     </div>

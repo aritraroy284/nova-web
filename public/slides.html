@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>NOVA AI — Product Showcase Deck</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#02060c;font-family:Inter,Outfit,"Segoe UI",Roboto,"Liberation Sans","DejaVu Sans",Arial,sans-serif;color:#e8f4f8}
+.deck{max-width:1600px;margin:0 auto}
+.fr{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;margin-bottom:14px}
+.cv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;padding:84px 96px;color:var(--tx,#e8f4f8);background:linear-gradient(135deg,var(--b1),var(--b2))}
+.cv>*{position:relative}.cv>.p3,.cv>.abs{position:absolute}
+.gr{background-image:linear-gradient(rgba(255,255,255,.045) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(255,255,255,.045) 1.5px,transparent 1.5px),linear-gradient(135deg,var(--b1),var(--b2));background-size:64px 64px,64px 64px,100% 100%}
+.dt{background-image:radial-gradient(rgba(255,255,255,.1) 2px,transparent 2.5px),linear-gradient(135deg,var(--b1),var(--b2));background-size:36px 36px,100% 100%}
+.dg{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 2px,transparent 2px 26px),linear-gradient(135deg,var(--b1),var(--b2))}
+.t1{--b1:#040B15;--b2:#071220;--ac:#00E5FF;--a2:#00F5A0}
+.t2{--b1:#14060B;--b2:#260B14;--ac:#FF4D6D;--a2:#FFB300}
+.t3{--b1:#070B24;--b2:#101640;--ac:#8C9BFF;--a2:#00E5FF}
+.t4{--b1:#03120C;--b2:#062A1E;--ac:#00F5A0;--a2:#C6FF3D}
+.t5{--b1:#150A26;--b2:#24123F;--ac:#C77DFF;--a2:#FF7AC6}
+.t6{--b1:#0B1015;--b2:#18222C;--ac:#FFB300;--a2:#00E5FF}
+.t7{--b1:#08142B;--b2:#0E2650;--ac:#4DA3FF;--a2:#FF6B6B}
+.t8{--b1:#F6F2E9;--b2:#E9E2D2;--ac:#D9663F;--a2:#0B6E8A;--tx:#17202A}
+.t9{--b1:#041216;--b2:#07262B;--ac:#2DE2E6;--a2:#FFB300}
+.t10{--b1:#05101C;--b2:#1B0A2E;--ac:#00E5FF;--a2:#FFB300}
+.tag{font:700 21px "JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;letter-spacing:.16em;color:var(--ac);text-transform:uppercase}
+.top{display:flex;justify-content:space-between;align-items:center;width:100%}
+.top .tag:last-child{color:var(--a2);opacity:.9}
+.h{font-weight:800;font-size:92px;line-height:1.03;letter-spacing:-.025em;margin:34px 0 22px}
+.h em{font-style:normal;color:var(--ac)}.h u{text-decoration:none;color:var(--a2)}
+.lead{font-size:30px;line-height:1.45;opacity:.82;max-width:980px}
+.c{background:rgba(255,255,255,.055);border:1.5px solid color-mix(in srgb,var(--ac) 38%,transparent);border-radius:22px;padding:24px 28px;backdrop-filter:blur(16px)}
+.t8 .c{background:#fff;border-color:#DDD3BF}
+.c b{display:block;font-size:30px;margin-bottom:8px}.c p,.c li{font-size:25px;line-height:1.4;opacity:.8}.c ul{list-style:none}
+.c li{padding:5px 0 5px 34px;position:relative}.c li:before{content:"▸";position:absolute;left:0;color:var(--ac)}
+.m{font-family:"JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace}
+.chip{display:inline-block;font:700 20px "JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;padding:8px 16px;border-radius:99px;border:1.5px solid var(--ac);color:var(--ac);margin:0 10px 10px 0;background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.chip.g{border-color:var(--a2);color:var(--a2);background:color-mix(in srgb,var(--a2) 10%,transparent)}
+.row{display:flex;gap:22px}.row>*{flex:1}.col{display:flex;flex-direction:column;gap:20px}
+.num{font-weight:800;font-size:66px;color:var(--ac);line-height:1}.num small{display:block;font:700 19px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;color:var(--tx,#e8f4f8);opacity:.7;margin-top:8px}
+.code{font:500 24px/1.6 "JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;background:rgba(0,0,0,.45);border:1.5px solid color-mix(in srgb,var(--ac) 40%,transparent);border-radius:18px;padding:22px 26px;color:#bfe9f0}
+.code i{font-style:normal;color:var(--a2)}.code s{text-decoration:none;color:var(--ac)}
+.p3{transform:perspective(1500px) rotateY(var(--ry,-22deg)) rotateX(var(--rx,7deg)) rotateZ(var(--rz,0deg))}
+.ph{width:var(--w,400px);aspect-ratio:356/792;border-radius:58px;padding:11px;position:relative;background:linear-gradient(145deg,#233443,#05090e);box-shadow:16px 18px 0 -3px color-mix(in srgb,var(--ac) 45%,#000),0 0 0 3px color-mix(in srgb,var(--ac) 70%,transparent),30px 40px 80px rgba(0,0,0,.65),0 0 110px color-mix(in srgb,var(--ac) 32%,transparent)}
+.ph img{width:100%;height:100%;object-fit:cover;border-radius:47px;display:block;background:#050a10}
+.ph:after{content:"";position:absolute;inset:11px;border-radius:47px;background:linear-gradient(115deg,rgba(255,255,255,.24),rgba(255,255,255,0) 36%,rgba(255,255,255,0) 68%,rgba(255,255,255,.1))}
+.fl{position:absolute;font:700 21px "JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;padding:12px 20px;border-radius:14px;background:rgba(4,11,21,.88);border:1.5px solid var(--ac);color:var(--ac);box-shadow:8px 10px 0 rgba(0,0,0,.35);white-space:nowrap}
+.fl.g{border-color:var(--a2);color:var(--a2)}
+.ft{position:absolute!important;left:96px;right:96px;bottom:30px;display:flex;justify-content:space-between;font:700 17px "JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;letter-spacing:.14em;opacity:.55}
+.btn{display:inline-block;font:700 30px "JetBrains Mono",ui-monospace,"DejaVu Sans Mono",monospace;padding:26px 46px;border-radius:18px;background:var(--ac);color:#02121a;margin-right:24px;text-decoration:none;cursor:pointer}.btn.o{background:none;border:2px solid var(--ac);color:var(--ac)}
+.wf{border:3px solid var(--ac);border-radius:56px;padding:20px;width:380px;height:800px;background:rgba(0,0,0,.4);box-shadow:16px 18px 0 -3px color-mix(in srgb,var(--ac) 40%,#000),0 0 100px color-mix(in srgb,var(--ac) 30%,transparent)}
+.wf div{border:2px solid var(--ac);border-radius:14px;margin-bottom:18px;height:70px;position:relative;opacity:.9}.wf div:after{content:attr(data-id);position:absolute;top:-24px;left:4px;font:700 17px "JetBrains Mono",monospace;color:var(--a2)}
+.wf div.hot{border-color:var(--a2);background:color-mix(in srgb,var(--a2) 14%,transparent)}
+.tb{width:100%;border-collapse:collapse;font-size:25px}.tb td,.tb th{padding:15px 20px;border-bottom:1.5px solid rgba(255,255,255,.12);text-align:left}.tb th{font:700 20px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--ac)}.tb .y{color:var(--a2);font-weight:800}.tb .n{color:#ff6b6b}
+.arr{align-self:center;font-size:54px;color:var(--ac)}
+.tb.s td{padding:9px 12px;font-size:22px;white-space:nowrap}
+@media print{@page{size:1920px 1080px;margin:0}.deck{max-width:none}.fr{width:1920px;height:1080px;margin:0;break-after:page}.cv{transform:none!important}}
+</style></head><body><div class="deck">
+
+<!-- SLIDE 1 -->
+<section class="fr"><div class="cv t1 gr">
+<div class="top"><span class="tag">01 // The Identity</span><span class="tag">NOVA OS · Android 9+ · v1.0</span></div>
+<h1 class="h" style="width:1060px;font-size:84px;margin:26px 0 18px">Not a chatbot.<br><em>An operating layer</em> for your phone.</h1>
+<p class="lead" style="width:1000px">Nova AI lives on your hardware, sees your screen and physically operates your apps. You speak. It taps, types, scrolls and reports back.</p>
+<div class="row" style="width:1060px;margin-top:28px"><div class="c" style="border-color:#ff6b6b66"><span class="tag" style="color:#ff8a8a">The chat-bubble era</span><ul style="margin-top:12px"><li>Lives in a browser tab or app sandbox</li><li>Replies with text and web links</li><li>You still do every tap yourself</li></ul></div>
+<div class="c"><span class="tag">Nova OS</span><ul style="margin-top:12px"><li>Runs on-device as a system-level co-pilot</li><li>Acts through native accessibility control</li><li>Hands-free: voice, volume keys, fingerprint</li></ul></div></div>
+<div class="row" style="width:1060px;margin-top:18px"><div class="num">9<small>NATIVE TOOLS</small></div><div class="num">6<small>MODEL FAILOVER STAGES</small></div><div class="num">60<small>FPS ARC REACTOR HUD</small></div><div class="num">22<small>AGENT STEPS PER TASK</small></div></div>
+<div class="p3" style="right:130px;top:60px;--ry:-22deg;--w:400px"><div class="ph"><img src="/img1.jpg" alt="Nova core HUD"></div></div>
+<div class="fl" style="right:560px;top:150px">CORE: ACTIVE</div><div class="fl g" style="right:90px;top:760px">SYSTEM IDLE → LISTENING</div>
+</div></section>
+
+<!-- SLIDE 2 -->
+<section class="fr"><div class="cv t2 dg">
+<div class="top"><span class="tag">02 // The Real-World Problem</span><span class="tag">Assistants that only talk</span></div>
+<h1 class="h" style="width:1150px">Your assistant <em>answers</em>.<br>It never <u>does</u>.</h1>
+<div class="row" style="width:1130px"><div class="c"><b>Talks, doesn’t act</b><p>You get a sentence, then open the app yourself.</p></div><div class="c"><b>Links, not outcomes</b><p>“Here’s what I found on the web.”</p></div><div class="c"><b>Closed sandboxes</b><p>Can’t press buttons inside other apps.</p></div></div>
+<table class="tb" style="width:1130px;margin-top:22px"><tr><th>CAPABILITY</th><th>VOICE ASSISTANTS</th><th>CHAT APPS</th><th>NOVA</th></tr>
+<tr><td>Operates third-party apps</td><td class="n">✕ Limited</td><td class="n">✕</td><td class="y">✓ Ghost Protocol</td></tr>
+<tr><td>Understands what’s on screen</td><td class="n">✕ Limited</td><td class="n">✕ Upload only</td><td class="y">✓ Live vision</td></tr>
+<tr><td>Hands-free, screen untouched</td><td>✓ Wake word</td><td class="n">✕</td><td class="y">✓ Volume + fingerprint</td></tr>
+<tr><td>Your keys, your model routing</td><td class="n">✕</td><td class="n">✕ One vendor</td><td class="y">✓ Cloud vault + failover</td></tr>
+<tr><td>Reads your inbox aloud</td><td class="n">✕ Limited</td><td class="n">✕</td><td class="y">✓ Gmail plugin</td></tr></table>
+<div class="p3" style="right:110px;top:90px;--ry:20deg;--rx:6deg;--w:370px"><div class="ph"><img src="/img2.jpg" alt="Nova chat HUD"></div></div>
+<div class="fl g" style="right:430px;top:900px">0 TAPS REQUIRED</div>
+</div></section>
+
+<!-- SLIDE 3 -->
+<section class="fr"><div class="cv t3 gr">
+<div class="top"><span class="tag">03 // Holographic Arc Reactor HUD</span><span class="tag">Hands-free · Headless</span></div>
+<h1 class="h" style="width:1000px">A <em>60 FPS</em> reactor core that reacts to your voice.</h1>
+<div class="m" style="font-size:25px;color:var(--a2);margin-bottom:18px">[ PWR: 74% ] [ CORE: ACTIVE ] [ ARCH: 64-BIT ] [ LATENCY: 12ms ]</div>
+<div style="width:1000px"><span class="chip">IDLE</span><span class="chip g">LISTENING</span><span class="chip">THINKING</span><span class="chip g">SPEAKING</span></div>
+<div class="row" style="width:1060px;margin-top:14px"><div class="c"><b>Double-tap volume</b><p>Press Vol Up/Down twice to open a 30-second silent voice session. Screen can stay off.</p></div><div class="c"><b>Fingerprint wake</b><p>Touch or swipe the sensor to summon Nova. No wake word, no unlock needed to talk.</p></div></div>
+<div class="c" style="width:1060px;margin-top:22px"><b>One-tap tactical shortcuts</b><span class="chip">[ WA_DISPATCH ]</span><span class="chip g">[ MEDIA_FLOW ]</span><span class="chip">[ TORCH_CTRL ]</span><p>Plus a floating orb overlay that follows you into any app.</p></div>
+<div class="p3" style="right:360px;top:150px;--ry:-18deg;--w:400px;z-index:1"><div class="ph"><img src="/img3.jpg" alt="Settings"></div></div>
+<div class="p3" style="right:80px;top:60px;--ry:-22deg;--w:430px;z-index:2"><div class="ph"><img src="/img1.jpg" alt="HUD"></div></div>
+<div class="fl" style="right:820px;top:90px;z-index:3">DOUBLE-TAP: ON/OFF</div><div class="fl g" style="right:70px;top:880px;z-index:3">FINGERPRINT: ON</div>
+</div></section>
+
+<!-- SLIDE 4 -->
+<section class="fr"><div class="cv t4 dt">
+<div class="top"><span class="tag">04 // Ghost Protocol</span><span class="tag">Autonomous on-device UI control</span></div>
+<h1 class="h" style="width:1180px">Nova <em>drives</em> your apps.<br>No API. <u>No hands.</u></h1>
+<div class="row" style="width:1260px"><div class="c"><b>SENSE</b><p>Reads the live screen tree: buttons, inputs, lists.</p></div><div class="arr">→</div><div class="c"><b>DECIDE</b><p>Gemini picks ONE next action per step.</p></div><div class="arr">→</div><div class="c"><b>ACT</b><p>Click · Type · Enter · Tap · Scroll · Back · Launch.</p></div></div>
+<div class="row" style="width:1260px;margin-top:24px"><div class="c"><b>♫ Spotify</b><p>Search → type query → best result → Play.</p></div><div class="c"><b>✆ WhatsApp</b><p>Contact lookup → deep link → auto-press Send.</p></div><div class="c"><b>▤ Docs</b><p>Create → title → write body → save.</p></div></div>
+<div class="code" style="width:1260px;margin-top:24px"><s>&gt; SENSE</s>  screen tree · 24 nodes<br><s>&gt; CLICK</s>  search &nbsp;&nbsp;<s>&gt; TYPE</s>  “lofi beats”<br><s>&gt; TAP</s>  top result &nbsp;&nbsp;<s>&gt; TAP</s>  play &nbsp;<i>&gt; COMPLETE ✓</i></div>
+<div class="p3" style="right:150px;top:100px;--ry:-20deg;--rx:6deg"><div class="wf"><div data-id="[03] search" class="hot"></div><div data-id="[07]"></div><div data-id="[08] top result" class="hot"></div><div data-id="[09]"></div><div data-id="[11]"></div><div data-id="[14]" style="height:150px"></div><div data-id="[18] PLAY" class="hot" style="width:150px;height:150px;border-radius:50%;margin:30px auto 0"></div></div></div>
+<div class="fl g" style="right:520px;top:210px">GHOST CURSOR · TAP</div><div class="fl" style="right:70px;top:930px">22-STEP SAFETY CAP</div>
+</div></section>
+
+<!-- SLIDE 5 -->
+<section class="fr"><div class="cv t5 dg">
+<div class="top"><span class="tag">05 // Zero-Touch Optical Vision Cortex</span><span class="tag">“What’s on my screen?”</span></div>
+<h1 class="h" style="width:1250px">Nova <em>looks</em> at your screen,<br>then <u>tells you</u> what matters.</h1>
+<div class="row" style="width:1300px"><div class="c"><b>① Capture</b><p>Instant screenshot through the accessibility service.</p></div><div class="arr">→</div><div class="c"><b>② Perceive</b><p>Gemini vision reads text, UI and context.</p></div><div class="arr">→</div><div class="c"><b>③ Speak</b><p>A short spoken brief, streamed sentence by sentence.</p></div></div>
+<div class="row" style="width:1300px;margin-top:24px"><div class="c"><b>Instagram reels</b><p>“Who posted this, what is it about?”</p></div><div class="c"><b>College portals</b><p>“Read my timetable and pending fees.”</p></div><div class="c"><b>Receipts</b><p>“What’s the total and the date?”</p></div><div class="c"><b>Code</b><p>“Explain the error on screen.”</p></div></div>
+<div class="c" style="width:1300px;margin-top:24px"><span class="chip">YOU</span> “What is on my screen?”<br><span class="chip g" style="margin-top:12px">NOVA</span> “You’re on a receipt from the cafe — total ₹420, paid by UPI. Want me to save it?”</div>
+<div class="p3" style="right:140px;top:110px;--ry:-20deg"><div class="wf" style="--ac:#C77DFF"><div data-id="[HEADER]"></div><div data-id="[CONTENT]" style="height:240px" class="hot"></div><div data-id="[TEXT]"></div><div data-id="[TOTAL]" class="hot"></div><div data-id="[PAY]"></div><div data-id="[NAV]"></div></div></div>
+<div class="fl g" style="right:80px;top:140px">SCREEN → TEXT + CONTEXT</div>
+</div></section>
+
+<!-- SLIDE 6 -->
+<section class="fr"><div class="cv t6 gr">
+<div class="top"><span class="tag">06 // Multi-Tier Cognitive Routing</span><span class="tag">Edge → Gemini → Groq → OpenRouter</span></div>
+<h1 class="h" style="width:1500px">Built to <em>fail over</em>, not to fail.</h1>
+<div class="row" style="width:1730px;align-items:stretch"><div class="c"><span class="tag">Edge fast-path</span><ul style="margin-top:10px"><li>Battery &amp; telemetry</li><li>Flashlight</li><li>Alarms</li><li>WhatsApp dispatch</li><li>Gmail briefings</li></ul></div><div class="arr">→</div>
+<div class="c" style="flex:2.5"><span class="tag">Model chain</span><table class="tb s" style="margin-top:6px"><tr><td class="m">1 · gemini-3.5-flash-lite</td><td>Primary router</td><td class="y">145 ms</td></tr><tr><td class="m">2 · gemini-3.1-flash-lite</td><td>Speed fallback</td><td class="y">159 ms</td></tr><tr><td class="m">3 · gemini-3.7-flash</td><td>Deep cortex</td><td class="y">173 ms</td></tr><tr><td class="m">4 · gemini-3.5-flash</td><td>Reasoning</td><td class="y">187 ms</td></tr><tr><td class="m">5 · groq / qwen3.8-27b</td><td>Token speed</td><td class="y">107 ms</td></tr><tr><td class="m">6 · openrouter / free</td><td>Standby depth</td><td class="y">100 ms</td></tr></table></div><div class="arr">→</div>
+<div class="code" style="flex:1;font-size:20px;padding:18px"><s>CortexDirective</s> {<br>&nbsp;tier: <i>"TOOL_CALL"</i>,<br>&nbsp;action: <i>"GHOST_PROTOCOL"</i>,<br>&nbsp;tool: <i>"dispatch_whatsapp"</i>,<br>&nbsp;tool_args: {…},<br>&nbsp;payload: {app, intent,<br>&nbsp;&nbsp;query, speech_reply}<br>}</div></div>
+<div class="row" style="width:1730px;margin-top:24px"><div class="c"><b>Streaming</b><p>Sentences go to TTS as they arrive.</p></div><div class="c"><b>Auto failover</b><p>429 / 503 → next model, instantly.</p></div><div class="c"><b>Live diagnostics</b><p>Latency &amp; quota per model on the web console.</p></div></div>
+</div></section>
+
+<!-- SLIDE 7 -->
+<section class="fr"><div class="cv t7 dt">
+<div class="top"><span class="tag">07 // Real-Time Gmail Digestion</span><span class="tag">OAuth2 · read-only</span></div>
+<h1 class="h" style="width:1100px">Your inbox, <em>briefed</em> before coffee.</h1>
+<p class="lead" style="width:1050px">Nova scans unread mail, ranks what matters and reads a calm, spoken summary. It never reads raw email addresses out loud.</p>
+<div class="row" style="width:1150px;margin-top:34px"><div class="c"><b>OTPs</b><p>Codes surfaced the moment they land.</p></div><div class="c"><b>Urgent alerts</b><p>Deployment and security notices first.</p></div><div class="c"><b>Action items</b><p>Deadlines and replies you owe.</p></div></div>
+<div class="row" style="width:1150px;margin-top:22px"><div class="c"><b>Privacy-first</b><ul><li>Scope: gmail.readonly only</li><li>Per-account tokens, refreshed on expiry</li><li>Addresses masked in speech</li></ul></div><div class="c"><b>Plugin state in the cloud</b><p>Connect once on the web console; the app picks it up on any device signed into your account.</p></div></div>
+<div class="c" style="position:absolute;right:96px;top:230px;width:540px;--ac:#4DA3FF"><span class="tag">Plugins &amp; Integrations</span><b style="margin-top:16px">✉ Gmail Assistant Plugin</b><p>Scans unread emails and generates AI audio briefings.</p><div class="code" style="font-size:19px;margin:16px 0">scope: googleapis.com/auth/gmail.readonly</div><span class="btn" style="font-size:22px;padding:14px 26px">CONNECT GMAIL</span></div>
+<div class="c" style="position:absolute;right:96px;top:690px;width:540px"><span class="chip g">NOVA · MORNING BRIEF</span><p>“You have 3 unread. Top one: a deployment alert. I’ve pulled the code and the action you need.”</p></div>
+</div></section>
+
+<!-- SLIDE 8 -->
+<section class="fr"><div class="cv t8 dt">
+<div class="top"><span class="tag">08 // Persistent Memory &amp; Linguistic Adaptation</span><span class="tag">Dark &amp; light interfaces</span></div>
+<h1 class="h" style="width:940px">It <em>remembers</em> you, then talks like you.</h1>
+<div class="row" style="width:940px"><div class="c"><b>Memory vault</b><p>Name, device specs, preferences and facts. Bound to your account, synced to the cloud.</p></div><div class="c"><b>Passive learning</b><p>Notices technical English vs casual Hinglish and shifts tone to match.</p></div></div>
+<div class="row" style="width:940px;margin-top:22px"><div class="c"><b>6 voices</b><p>Nova Jarvis · MCU Jarvis · Kabir · Aarav · Ananya · Maya</p></div><div class="c"><b>4 personalities</b><p>Classy · Professional · Casual · Chill</p></div></div>
+<div class="c" style="width:940px;margin-top:22px"><b>Languages</b><span class="chip">English</span><span class="chip">Hindi</span><span class="chip">Bengali (বাংলা)</span><span class="chip g">Hybrid blend: English + Hindi</span></div>
+<div class="p3" style="right:480px;top:230px;--ry:-14deg;--w:290px;z-index:1"><div class="ph"><img src="/img5.jpg" alt="Voice model"></div></div>
+<div class="p3" style="right:250px;top:150px;--ry:-18deg;--w:300px;z-index:2"><div class="ph"><img src="/img6.jpg" alt="Personality"></div></div>
+<div class="p3" style="right:30px;top:70px;--ry:-22deg;--w:310px;z-index:3"><div class="ph"><img src="/img7.jpg" alt="Languages"></div></div>
+</div></section>
+
+<!-- SLIDE 9 -->
+<section class="fr"><div class="cv t9 gr">
+<div class="top"><span class="tag">09 // Cloud Credential Vault</span><span class="tag">Next.js · Supabase · Vercel</span></div>
+<h1 class="h" style="width:1150px">Keys live in a <em>vault</em>,<br>not inside the <u>APK</u>.</h1>
+<div class="row" style="width:1100px"><div class="c"><b>Remote key sync</b><p>Sign in and your Gemini, Groq and OpenRouter keys flow to the app at runtime.</p></div><div class="c"><b>Developer masterkey</b><p>DEV LOCK / DEV ACTIVE clearance unlocks creator-level control.</p></div></div>
+<div class="row" style="width:1100px;margin-top:22px"><div class="c"><b>Cloud Bridge Node</b><p>Optional port-8080 listener for remote MCP commands.</p></div><div class="c"><b>Web console</b><p>Overview · API &amp; Models · Plugins · Nova Guide.</p></div></div>
+<div style="width:1100px;margin-top:22px"><span class="chip">Next.js</span><span class="chip g">Supabase</span><span class="chip">Vercel</span><span class="chip g">OAuth2</span><span class="chip">Row-per-account</span></div>
+<div class="c" style="position:absolute;right:96px;top:170px;width:620px"><span class="tag">API Credentials &amp; Model Diagnostics</span>
+<p style="margin-top:16px;font-size:21px">Gemini API Key <span class="chip g" style="float:right;font-size:15px">COMPULSORY</span></p><div class="code" style="padding:14px;font-size:22px">••••••••••••••••••••••</div>
+<p style="margin-top:14px;font-size:21px">Groq (backup 1) · OpenRouter (backup 2)</p><div class="code" style="padding:14px;font-size:22px">•••••••••• &nbsp;&nbsp;••••••••••</div>
+<div style="margin-top:20px"><span class="chip">▷ Test All Keys</span><span class="chip" style="border-color:#ff6b6b;color:#ff8a8a">Remove Keys</span><span class="chip g">Save All Keys</span></div></div>
+<div class="c" style="position:absolute;right:96px;top:690px;width:620px"><b>Live diagnostics</b><p>gemini-3.5-flash-lite · <span style="color:var(--a2)">REACHABLE</span> · 145 ms</p></div>
+</div></section>
+
+<!-- SLIDE 10 -->
+<section class="fr"><div class="cv t10 gr">
+<div class="top"><span class="tag">10 // The Verdict</span><span class="tag">Daily-driver co-pilot</span></div>
+<h1 class="h" style="width:1100px">Install it once.<br><em>Stop tapping</em> forever.</h1>
+<div class="row" style="width:1080px"><div class="c"><b>Power users</b><p>Chain tasks by voice and keep your hands free.</p></div><div class="c"><b>Developers</b><p>Own the routing, keys and the open Ghost Protocol agent.</p></div><div class="c"><b>Creators</b><p>Docs, music, messages and briefings in one sentence.</p></div></div>
+<div class="row" style="width:1080px;margin-top:22px"><div class="c"><b>Today</b><p>Ghost Protocol · Vision · Gmail · Memory · 6-stage failover.</p></div><div class="c"><b>Tomorrow</b><p>Spotify and more app plugins on the same cloud plane.</p></div></div>
+<div style="margin-top:44px"><a class="btn" href="/overview" target="_top">Open Control Plane →</a><a class="btn o" href="/NovaAI.apk" download>⬇ Download Nova APK</a></div>
+<div class="m" style="margin-top:28px;font-size:26px;color:var(--a2)">nova-copilot-ai.vercel.app</div>
+<div class="p3" style="right:400px;top:170px;--ry:20deg;--w:330px;z-index:1"><div class="ph"><img src="/img9.jpg" alt="Light mode"></div></div>
+<div class="p3" style="right:40px;top:80px;--ry:-22deg;--w:380px;z-index:2"><div class="ph"><img src="/img2.jpg" alt="Dark HUD"></div></div>
+</div></section>
+</div>
+<script>
+var fr=document.querySelectorAll('.fr');
+fr.forEach(function(f,i){var d=document.createElement('div');d.className='ft';d.innerHTML='<span>NOVA AI // NEURAL OPERATIONS &amp; VIRTUAL AUTOMATION</span><span>'+String(i+1).padStart(2,'0')+' / '+String(fr.length).padStart(2,'0')+'</span>';f.firstElementChild.appendChild(d)});
+function fit(){fr.forEach(function(f){f.firstElementChild.style.transform='scale('+f.clientWidth/1920+')'})}
+addEventListener('resize',fit);fit();
+</script></body></html>
