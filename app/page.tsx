@@ -15,14 +15,18 @@ import { Radio, ArrowRight, Download, Play, Clock } from "lucide-react";
   };
 
 export default function LandingPage() {
+  
+
+
+  const [comingSoonToast, setComingSoonToast] = useState(false);
   const [iframeHeight, setIframeHeight] = useState<number | null>(null);
 
   React.useEffect(() => {
     let lastH = 0;
-    const onMsg = (e: MessageEvent) => {
-      if (e.data && e.data.type === "RESIZE_SLIDES" && typeof e.data.height === "number") {
+    const onMsg = (e: any) => {
+      if (e && e.data && e.data.type === "RESIZE_SLIDES" && typeof e.data.height === "number") {
         const h = Math.ceil(e.data.height);
-        if (Math.abs(h - lastH) > 15) {
+        if (Math.abs(h - lastH) > 10) {
           lastH = h;
           setIframeHeight(h);
         }
@@ -31,9 +35,6 @@ export default function LandingPage() {
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
   }, []);
-
-
-  const [comingSoonToast, setComingSoonToast] = useState(false);
   const handleDownloadClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setComingSoonToast(true);
@@ -133,16 +134,16 @@ export default function LandingPage() {
           )}
         </div>
 
-        <div className="w-full max-w-4xl relative group">
-          {/* Ambient Glow Backplate */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-teal-500/20 via-nova-cyan/20 to-[#00F5A0]/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition duration-700" />
-
-          {/* Player Container */}
-          <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-nova-cyan/30 bg-[#060B11] shadow-[0_0_50px_rgba(0,229,255,0.12)]" onClick={triggerFilmPlay} >
+        <div className="w-full max-w-4xl mb-4">
+          {/* Video Player Box with strictly isolated glow */}
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-teal-500/20 via-cyan-500/20 to-[#00F5A0]/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition duration-700 pointer-events-none" />
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-nova-cyan/30 bg-[#060B11] shadow-[0_0_50px_rgba(0,229,255,0.12)]" onClick={triggerFilmPlay} >
             <iframe id="filmIframe" src="/film/index.html" allow="autoplay; fullscreen" style={{ pointerEvents: "auto", position: "relative", zIndex: 20 }} className="w-full h-full border-0" />
           </div>
 
           {/* Telemetry Bar Under Player */}
+          </div>
           <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-[#7d95a6] px-2">
             <span className="flex items-center gap-1.5 text-nova-cyan">
               <span className="w-1.5 h-1.5 rounded-full bg-nova-cyan animate-ping" />
@@ -150,32 +151,28 @@ export default function LandingPage() {
             </span>
             <span>70.0s TIMELINE // 16:9 VIEWPORT</span>
           </div>
-
-        
-        {/* Seamless 10-Slide Architectural Showcase Deck */}
-        <div className="w-full max-w-6xl mt-16 mb-16 flex flex-col items-center">
-          <div className="flex items-center gap-3 mb-8 select-none">
-            <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#00E5FF]/70" />
-            <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] text-cyan-300 uppercase">
-              ARCHITECTURAL SHOWCASE // 10 SLIDES
-            </span>
-            <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#00E5FF]/70" />
-          </div>
-
-          <div className="w-full bg-transparent">
-            <iframe 
-              src="/slides.html" 
-              style={{ height: iframeHeight + "px" }}
-              className="w-full border-0 transition-all duration-300" 
-              title="Nova AI Product Showcase"
-              scrolling="no"
-            />
-          </div>
-        </div>
-  
-  
         </div>
       </section>
-    </div>
+
+      {/* Dedicated 10-Slide Architectural Showcase Section (Clean & Isolated) */}
+      <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 my-16 flex flex-col items-center z-10">
+        <div className="flex items-center gap-3 mb-8 select-none">
+          <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#00E5FF]/70" />
+          <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] text-cyan-300 uppercase">
+            ARCHITECTURAL SHOWCASE // 10 SLIDES
+          </span>
+          <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#00E5FF]/70" />
+        </div>
+
+        <div className="w-full">
+          <iframe 
+            src="/slides.html" 
+            style={{ height: iframeHeight ? (iframeHeight + "px") : "2000px" }}
+            className="w-full border-0 block bg-transparent" 
+            title="Nova AI Product Showcase"
+            scrolling="no"
+          />
+        </div>
+      </section>    </div>
   );
 }
