@@ -15,12 +15,17 @@ import { Radio, ArrowRight, Download, Play, Clock } from "lucide-react";
   };
 
 export default function LandingPage() {
-  const [iframeHeight, setIframeHeight] = useState(2500);
+  const [iframeHeight, setIframeHeight] = useState<number | null>(null);
 
   React.useEffect(() => {
-    const onMsg = (e) => {
-      if (e.data && e.data.type === "RESIZE_SLIDES" && e.data.height) {
-        setIframeHeight(e.data.height + 60);
+    let lastH = 0;
+    const onMsg = (e: MessageEvent) => {
+      if (e.data && e.data.type === "RESIZE_SLIDES" && typeof e.data.height === "number") {
+        const h = Math.ceil(e.data.height);
+        if (Math.abs(h - lastH) > 15) {
+          lastH = h;
+          setIframeHeight(h);
+        }
       }
     };
     window.addEventListener("message", onMsg);
