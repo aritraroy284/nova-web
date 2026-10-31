@@ -268,14 +268,10 @@ export async function POST(req: Request) {
         }
       }
 
-      if (existing) {
-        const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
-        const filterVal = existing.user_id || existing.email || existing.id;
-        await supabase
-          .from("user_memory")
-          .update({ profile: currentProfile })
-          .eq(filterCol, filterVal);
-      }
+      await supabase
+        .from("user_memory")
+        .update({ profile: currentProfile })
+        .eq("email", cleanEmail);
 
       return NextResponse.json({
         success: true,
