@@ -4,27 +4,34 @@ import { supabase as defaultClient } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();
-  const token = cookieStore.get("nova_spotify_token")?.value;
-  if (token) {
-    return NextResponse.json({ connected: true });
-  }
-
   const email = req.nextUrl.searchParams.get("email")?.trim().toLowerCase();
-  if (email) {
-    try {
-      const { data } = await defaultClient
-        .from("user_memory")
-        .select("profile")
-        .eq("email", email)
-        .maybeSingle();
 
-      if (data?.profile?.spotify_connected) {
-        return NextResponse.json({ connected: true });
-      }
-    } catch (e) {}
+  // Agar user email nahi hai to seedha false aur cookie delete
+  if (!email) {
+    cookieStore.delete("nova_spotify_token");
+    cookieStore.delete("nova_spotify_refresh");
+    return NextResponse.json({ connected: false });
   }
 
-  return NextResponse.json({ connected: false });
+  try {
+    const { data } = await defaultClient
+      .from("user_memory")
+      .select("profile")
+      .eq("email", email)
+      .maybeSingle();
+
+    const isConnected = Boolean(data?.profile?.spotify_connected);
+
+    // Agar Supabase me disconnect ho chuka hai, to browser cookie turant destroy karo
+    if (!isConnected) {
+      cookieStore.delete("nova_spotify_token");
+      cookieStore.delete("nova_spotify_refresh");
+    }
+
+    return NextResponse.json({ connected: isConnected });
+  } catch (e) {
+    return NextResponse.json({ connected: false });
+  }
 }
 
 export async function POST(req: NextRequest) {
