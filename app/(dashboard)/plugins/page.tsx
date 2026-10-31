@@ -275,7 +275,7 @@ export default function PluginsPage() {
               if (spotifyConnected) {
                 fetch("/api/spotify/status", { method: "POST" }).then(() => setSpotifyConnected(false));
               } else {
-                window.location.href = "/api/auth/spotify/login";
+                window.location.href = "/api/auth/spotify/login?email=" + encodeURIComponent(userEmail || "");
               }
             }}
               className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 ${
