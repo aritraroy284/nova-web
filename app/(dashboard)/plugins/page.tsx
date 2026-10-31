@@ -235,6 +235,47 @@ export default function PluginsPage() {
             </div>
           </div>
         </div>
+
+        {/* Spotify Music Plugin */}
+        <div className="glass-panel p-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-[#041216]/60 to-[#071220]/40 backdrop-blur-xl relative overflow-hidden group mt-6">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/10 transition-all duration-500" />
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative z-10">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              </div>
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h3 className="font-bold text-base text-white">Spotify Music Plugin</h3>
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full border bg-[#091726] text-slate-400 border-[#17344D]">
+                    DISCONNECTED
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
+                  Enables direct Spotify Web API deep-link dispatch and zero-touch track search. Fallback to Ghost Protocol when disconnected.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => alert("Spotify OAuth flow will connect to your account vault.")}
+              className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+            >
+              CONNECT SPOTIFY
+            </button>
+          </div>
+
+          <div className="pt-4 mt-4 border-t border-[#17344D] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Scope: user-modify-playback-state, streaming</span>
+            </div>
+            <div className="text-[11px] text-emerald-400 flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Playback: Hybrid Intent / Ghost</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
