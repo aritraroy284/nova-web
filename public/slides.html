@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>NOVA AI — Product Showcase Deck</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-serif;color:#e8f4f8;overflow-x:hidden;height:auto;min-height:0}
@@ -20,7 +20,6 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 .t7{--b1:#08142B;--b2:#0E2650;--ac:#4DA3FF;--a2:#FF6B6B}
 .t8{--b1:#F6F2E9;--b2:#E9E2D2;--ac:#D9663F;--a2:#0B6E8A;--tx:#17202A}
 .t9{--b1:#041216;--b2:#07262B;--ac:#2DE2E6;--a2:#FFB300}
-.t10{--b1:#05101C;--b2:#1B0A2E;--ac:#00E5FF;--a2:#FFB300}
 .tag{font:700 21px "JetBrains Mono",monospace;letter-spacing:.16em;color:var(--ac);text-transform:uppercase}
 .top{display:flex;justify-content:space-between;align-items:center;width:100%}
 .top .tag:last-child{color:var(--a2);opacity:.9}
@@ -40,8 +39,8 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 .code i{font-style:normal;color:var(--a2)}.code s{text-decoration:none;color:var(--ac)}
 .p3{transform:perspective(1500px) rotateY(var(--ry,-22deg)) rotateX(var(--rx,7deg)) rotateZ(var(--rz,0deg))}
 .ph{width:var(--w,400px);aspect-ratio:356/792;border-radius:58px;padding:11px;position:relative;background:linear-gradient(145deg,#233443,#05090e);box-shadow:16px 18px 0 -3px color-mix(in srgb,var(--ac) 45%,#000),0 0 0 3px color-mix(in srgb,var(--ac) 70%,transparent),24px 30px 60px rgba(0,0,0,.6)}
-.ph img{width:100%;height:100%;object-fit:cover;border-radius:47px;display:block;background:#050a10;pointer-events:none;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none;}
-.ph:after{content:"";position:absolute;inset:11px;border-radius:47px;background:linear-gradient(115deg,rgba(255,255,255,.24),rgba(255,255,255,0) 36%,rgba(255,255,255,0) 68%,rgba(255,255,255,.1))}
+.ph img{width:100%;height:100%;object-fit:cover;border-radius:47px;display:block;background:#050a10;pointer-events:none;-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
+.ph:after{content:"";position:absolute;inset:11px;border-radius:47px;background:linear-gradient(115deg,rgba(255,255,255,.24),rgba(255,255,255,0) 36%,rgba(255,255,255,0) 68%,rgba(255,255,255,.1));pointer-events:none}
 .fl{position:absolute;font:700 21px "JetBrains Mono",monospace;padding:12px 20px;border-radius:14px;background:rgba(4,11,21,.88);border:1.5px solid var(--ac);color:var(--ac);box-shadow:8px 10px 0 rgba(0,0,0,.35);white-space:nowrap}
 .fl.g{border-color:var(--a2);color:var(--a2)}
 .ft{position:absolute!important;left:96px;right:96px;bottom:30px;display:flex;justify-content:space-between;font:700 17px "JetBrains Mono",monospace;letter-spacing:.14em;opacity:.55}
@@ -52,8 +51,12 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 .tb{width:100%;border-collapse:collapse;font-size:25px}.tb td,.tb th{padding:15px 20px;border-bottom:1.5px solid rgba(255,255,255,.12);text-align:left}.tb th{font:700 20px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--ac)}.tb .y{color:var(--a2);font-weight:800}.tb .n{color:#ff6b6b}
 .arr{align-self:center;font-size:54px;color:var(--ac)}
 .tb.s td{padding:9px 12px;font-size:22px;white-space:nowrap}
-@media print{@page{size:1920px 1080px;margin:0}.deck{max-width:none}.fr{width:1920px;height:1080px;margin:0;break-after:page}.cv{transform:none!important}}
-</style></head><body oncontextmenu="return false;"><div class="deck">
+
+/* Two faces split */
+.cv-split{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;padding:70px 90px;background:linear-gradient(90deg,#EEF2F7 0 50%,#040B15 50% 100%)}
+.cv-verdict{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;padding:60px 80px;background:radial-gradient(1100px 700px at 50% 100%,#0b5568,transparent 62%),radial-gradient(700px 500px at 10% 0%,#06503c,transparent 70%),linear-gradient(160deg,#040B15,#071220)}
+</style></head><body oncontextmenu="return false;">
+<div class="deck">
 
 <!-- SLIDE 1 -->
 <section class="fr"><div class="cv t1 gr">
@@ -95,9 +98,26 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="fl" style="right:820px;top:90px;z-index:3">DOUBLE-TAP: ON/OFF</div><div class="fl g" style="right:70px;top:880px;z-index:3">FINGERPRINT: ON</div>
 </div></section>
 
-<!-- SLIDE 4 -->
+<!-- SLIDE 4: TWO FACES. ONE BRAIN (INSERTED AFTER SLIDE 3) -->
+<section class="fr"><div class="cv-split">
+<div class="ab" style="left:0;top:54px;width:1920px;text-align:center"><h2 style="font-size:88px;color:#0B1F3A;font-weight:900">Two faces. <span style="color:#00B8D4">One brain.</span></h2></div>
+<div class="ab col" style="left:90px;top:230px;width:440px;color:#0B1F3A;gap:18px">
+<div class="m" style="font-size:22px;font-weight:700;letter-spacing:.12em;color:#2F6BFF">MINIMAL MODE</div><div style="font-weight:800;font-size:42px;color:#0B1F3A">Calm, clean, fast.</div>
+<div class="card" style="background:#fff;border:1.5px solid rgba(47,107,255,.3);padding:18px 22px;border-radius:18px"><div class="cp" style="font-size:24px;color:#41566f">A light interface for daily use. Same engine, same Ghost Protocol.</div></div>
+<div class="card" style="background:#fff;border:1.5px solid rgba(47,107,255,.3);padding:18px 22px;border-radius:18px"><div style="font-weight:800;font-size:27px;color:#0B1F3A;margin-bottom:6px">System Permissions</div><div class="cp" style="font-size:23px;color:#41566f">Overlays, Accessibility and Hardware access. You approve each one.</div></div>
+<div class="card" style="background:#fff;border:1.5px solid rgba(47,107,255,.3);padding:18px 22px;border-radius:18px"><div style="font-weight:800;font-size:27px;color:#0B1F3A;margin-bottom:6px">Toggle anytime</div><div class="cp" style="font-size:23px;color:#41566f">Interface mode is one switch in settings.</div></div></div>
+<div class="ph" style="left:540px;top:180px;transform:perspective(1400px) rotateY(-14deg) rotateX(4deg) scale(.84);box-shadow:0 0 0 2px rgba(47,107,255,.4),0 0 50px rgba(47,107,255,.3)"><img src="/img1.jpg" alt="Minimal light mode"></div>
+<div class="ph" style="left:980px;top:180px;transform:perspective(1400px) rotateY(14deg) rotateX(4deg) scale(.84);box-shadow:0 0 0 2px rgba(0,229,255,.4),0 0 50px rgba(0,229,255,.3)"><img src="/img9.jpg" alt="Classic HUD mode"></div>
+<div class="ab col" style="left:1430px;top:230px;width:400px;gap:18px;color:#EAF6FF">
+<div class="m" style="font-size:22px;font-weight:700;letter-spacing:.12em;color:#00E5FF">CLASSIC MODE</div><div style="font-weight:800;font-size:42px;color:#fff">Holographic HUD.</div>
+<div class="c" style="padding:18px 22px;border-radius:18px"><div class="cp" style="font-size:24px">The 60 fps Arc Reactor with live system telemetry.</div></div>
+<div class="c" style="padding:18px 22px;border-radius:18px"><div style="font-weight:800;font-size:27px;color:#00F5A0;margin-bottom:6px">Quick actions</div><div class="cp" style="font-size:23px">WA_DISPATCH, MEDIA_FLOW and TORCH_CTRL one tap away.</div></div>
+<div class="c" style="padding:18px 22px;border-radius:18px"><div style="font-weight:800;font-size:27px;color:#00E5FF;margin-bottom:6px">Status at a glance</div><div class="cp" style="font-size:23px">Core, architecture and latency on the header line.</div></div></div>
+</div></section>
+
+<!-- SLIDE 5: GHOST PROTOCOL -->
 <section class="fr"><div class="cv t4 dt">
-<div class="top"><span class="tag">04 // Ghost Protocol</span><span class="tag">Autonomous on-device UI control</span></div>
+<div class="top"><span class="tag">05 // Ghost Protocol</span><span class="tag">Autonomous on-device UI control</span></div>
 <h1 class="h" style="width:1180px">Nova <em>drives</em> your apps.<br>No API. <u>No hands.</u></h1>
 <div class="row" style="width:1260px"><div class="c"><b>SENSE</b><p>Reads the live screen tree: buttons, inputs, lists.</p></div><div class="arr">→</div><div class="c"><b>DECIDE</b><p>Gemini picks ONE next action per step.</p></div><div class="arr">→</div><div class="c"><b>ACT</b><p>Click · Type · Enter · Tap · Scroll · Back · Launch.</p></div></div>
 <div class="row" style="width:1260px;margin-top:24px"><div class="c"><b>♫ Spotify</b><p>Search → type query → best result → Play.</p></div><div class="c"><b>✆ WhatsApp</b><p>Contact lookup → deep link → auto-press Send.</p></div><div class="c"><b>▤ Docs</b><p>Create → title → write body → save.</p></div></div>
@@ -106,9 +126,9 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="fl g" style="right:520px;top:210px">GHOST CURSOR · TAP</div><div class="fl" style="right:70px;top:930px">22-STEP SAFETY CAP</div>
 </div></section>
 
-<!-- SLIDE 5 -->
+<!-- SLIDE 6: OPTICAL VISION -->
 <section class="fr"><div class="cv t5 dg">
-<div class="top"><span class="tag">05 // Zero-Touch Optical Vision Cortex</span><span class="tag">“What’s on my screen?”</span></div>
+<div class="top"><span class="tag">06 // Zero-Touch Optical Vision Cortex</span><span class="tag">“What’s on my screen?”</span></div>
 <h1 class="h" style="width:1250px">Nova <em>looks</em> at your screen,<br>then <u>tells you</u> what matters.</h1>
 <div class="row" style="width:1300px"><div class="c"><b>① Capture</b><p>Instant screenshot through the accessibility service.</p></div><div class="arr">→</div><div class="c"><b>② Perceive</b><p>Gemini vision reads text, UI and context.</p></div><div class="arr">→</div><div class="c"><b>③ Speak</b><p>A short spoken brief, streamed sentence by sentence.</p></div></div>
 <div class="row" style="width:1300px;margin-top:24px"><div class="c"><b>Instagram reels</b><p>“Who posted this, what is it about?”</p></div><div class="c"><b>College portals</b><p>“Read my timetable and pending fees.”</p></div><div class="c"><b>Receipts</b><p>“What’s the total and the date?”</p></div><div class="c"><b>Code</b><p>“Explain the error on screen.”</p></div></div>
@@ -117,9 +137,9 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="fl g" style="right:80px;top:140px">SCREEN → TEXT + CONTEXT</div>
 </div></section>
 
-<!-- SLIDE 6 -->
+<!-- SLIDE 7: MULTI-TIER ROUTING -->
 <section class="fr"><div class="cv t6 gr">
-<div class="top"><span class="tag">06 // Multi-Tier Cognitive Routing</span><span class="tag">Edge → Gemini → Groq → OpenRouter</span></div>
+<div class="top"><span class="tag">07 // Multi-Tier Cognitive Routing</span><span class="tag">Edge → Gemini → Groq → OpenRouter</span></div>
 <h1 class="h" style="width:1500px">Built to <em>fail over</em>, not to fail.</h1>
 <div class="row" style="width:1730px;align-items:stretch"><div class="c"><span class="tag">Edge fast-path</span><ul style="margin-top:10px"><li>Battery &amp; telemetry</li><li>Flashlight</li><li>Alarms</li><li>WhatsApp dispatch</li><li>Gmail briefings</li></ul></div><div class="arr">→</div>
 <div class="c" style="flex:2.5"><span class="tag">Model chain</span><table class="tb s" style="margin-top:6px"><tr><td class="m">1 · gemini-3.5-flash-lite</td><td>Primary router</td><td class="y">145 ms</td></tr><tr><td class="m">2 · gemini-3.1-flash-lite</td><td>Speed fallback</td><td class="y">159 ms</td></tr><tr><td class="m">3 · gemini-3.7-flash</td><td>Deep cortex</td><td class="y">173 ms</td></tr><tr><td class="m">4 · gemini-3.5-flash</td><td>Reasoning</td><td class="y">187 ms</td></tr><tr><td class="m">5 · groq / qwen3.8-27b</td><td>Token speed</td><td class="y">107 ms</td></tr><tr><td class="m">6 · openrouter / free</td><td>Standby depth</td><td class="y">100 ms</td></tr></table></div><div class="arr">→</div>
@@ -127,9 +147,9 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="row" style="width:1730px;margin-top:24px"><div class="c"><b>Streaming</b><p>Sentences go to TTS as they arrive.</p></div><div class="c"><b>Auto failover</b><p>429 / 503 → next model, instantly.</p></div><div class="c"><b>Live diagnostics</b><p>Latency &amp; quota per model on the web console.</p></div></div>
 </div></section>
 
-<!-- SLIDE 7 -->
+<!-- SLIDE 8: GMAIL DIGESTION -->
 <section class="fr"><div class="cv t7 dt">
-<div class="top"><span class="tag">07 // Real-Time Gmail Digestion</span><span class="tag">OAuth2 · read-only</span></div>
+<div class="top"><span class="tag">08 // Real-Time Gmail Digestion</span><span class="tag">OAuth2 · read-only</span></div>
 <h1 class="h" style="width:1100px">Your inbox, <em>briefed</em> before coffee.</h1>
 <p class="lead" style="width:1050px">Nova scans unread mail, ranks what matters and reads a calm, spoken summary. It never reads raw email addresses out loud.</p>
 <div class="row" style="width:1150px;margin-top:34px"><div class="c"><b>OTPs</b><p>Codes surfaced the moment they land.</p></div><div class="c"><b>Urgent alerts</b><p>Deployment and security notices first.</p></div><div class="c"><b>Action items</b><p>Deadlines and replies you owe.</p></div></div>
@@ -138,9 +158,9 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="c" style="position:absolute;right:96px;top:690px;width:540px"><span class="chip g">NOVA · MORNING BRIEF</span><p>“You have 3 unread. Top one: a deployment alert. I’ve pulled the code and the action you need.”</p></div>
 </div></section>
 
-<!-- SLIDE 8 -->
+<!-- SLIDE 9: VOICES & PERSONALITY -->
 <section class="fr"><div class="cv t8 dt">
-<div class="top"><span class="tag">08 // Persistent Memory &amp; Linguistic Adaptation</span><span class="tag">Dark &amp; light interfaces</span></div>
+<div class="top"><span class="tag">09 // Persistent Memory &amp; Linguistic Adaptation</span><span class="tag">Dark &amp; light interfaces</span></div>
 <h1 class="h" style="width:940px">It <em>remembers</em> you, then talks like you.</h1>
 <div class="row" style="width:940px"><div class="c"><b>Memory vault</b><p>Name, device specs, preferences and facts. Bound to your account, synced to the cloud.</p></div><div class="c"><b>Passive learning</b><p>Notices technical English vs casual Hinglish and shifts tone to match.</p></div></div>
 <div class="row" style="width:940px;margin-top:22px"><div class="c"><b>6 voices</b><p>Nova Jarvis · MCU Jarvis · Kabir · Aarav · Ananya · Maya</p></div><div class="c"><b>4 personalities</b><p>Classy · Professional · Casual · Chill</p></div></div>
@@ -150,9 +170,9 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="p3" style="right:30px;top:70px;--ry:-22deg;--w:310px;z-index:3"><div class="ph"><img src="/img3.jpg" alt="Languages"></div></div>
 </div></section>
 
-<!-- SLIDE 9 -->
+<!-- SLIDE 10: CLOUD VAULT -->
 <section class="fr"><div class="cv t9 gr">
-<div class="top"><span class="tag">09 // Cloud Credential Vault</span><span class="tag">Next.js · Supabase · Vercel</span></div>
+<div class="top"><span class="tag">10 // Cloud Credential Vault</span><span class="tag">Next.js · Supabase · Vercel</span></div>
 <h1 class="h" style="width:1150px">Keys live in a <em>vault</em>,<br>not inside the <u>APK</u>.</h1>
 <div class="row" style="width:1100px"><div class="c"><b>Remote key sync</b><p>Sign in and your Gemini, Groq and OpenRouter keys flow to the app at runtime.</p></div><div class="c"><b>Developer masterkey</b><p>DEV LOCK / DEV ACTIVE clearance unlocks creator-level control.</p></div></div>
 <div class="row" style="width:1100px;margin-top:22px"><div class="c"><b>Cloud Bridge Node</b><p>Optional port-8080 listener for remote MCP commands.</p></div><div class="c"><b>Web console</b><p>Overview · API &amp; Models · Plugins · Nova Guide.</p></div></div>
@@ -164,25 +184,42 @@ html,body{background:#040B15;font-family:Inter,Outfit,"Segoe UI",Roboto,sans-ser
 <div class="c" style="position:absolute;right:96px;top:690px;width:620px"><b>Live diagnostics</b><p>gemini-3.5-flash-lite · <span style="color:var(--a2)">REACHABLE</span> · 145 ms</p></div>
 </div></section>
 
-<!-- SLIDE 10 -->
-<section class="fr"><div class="cv t10 gr">
-<div class="top"><span class="tag">10 // The Verdict</span><span class="tag">Daily-driver co-pilot</span></div>
-<h1 class="h" style="width:1100px">Install it once.<br><em>Stop tapping</em> forever.</h1>
-<div class="row" style="width:1080px"><div class="c"><b>Power users</b><p>Chain tasks by voice and keep your hands free.</p></div><div class="c"><b>Developers</b><p>Own the routing, keys and the open Ghost Protocol agent.</p></div><div class="c"><b>Creators</b><p>Docs, music, messages and briefings in one sentence.</p></div></div>
-<div class="row" style="width:1080px;margin-top:22px"><div class="c"><b>Today</b><p>Ghost Protocol · Vision · Gmail · Memory · 6-stage failover.</p></div><div class="c"><b>Tomorrow</b><p>Spotify and more app plugins on the same cloud plane.</p></div></div>
-<div style="margin-top:44px"><a class="btn" href="/overview" target="_top">Open Control Plane →</a><a class="btn o" href="/NovaAI.apk" download>⬇ Download Nova APK</a></div>
-<div class="m" style="margin-top:28px;font-size:26px;color:var(--a2)">nova-copilot-ai.vercel.app</div>
-<div class="p3" style="right:400px;top:170px;--ry:20deg;--w:330px;z-index:1"><div class="ph"><img src="/img1.jpg" alt="Light mode"></div></div>
-<div class="p3" style="right:40px;top:80px;--ry:-22deg;--w:380px;z-index:2"><div class="ph"><img src="/img8.jpg" alt="Dark HUD"></div></div>
+<!-- SLIDE 11: THE VERDICT (IMAGE 20134 HERO WITH 3 RISING PHONES) -->
+<section class="fr"><div class="cv-verdict">
+<div class="ab" style="left:0;top:44px;width:1920px;text-align:center">
+  <div class="tag" style="padding:8px 24px;border-radius:999px;border:2px solid #00E5FF;color:#00E5FF;background:rgba(0,0,0,0.4);letter-spacing:0.18em;margin-bottom:20px">THE VERDICT</div>
+  <h2 style="font-size:98px;line-height:1.05;font-weight:900;letter-spacing:-0.03em;color:#fff">AI that fits your workflow.<br><span style="color:#00E5FF">Control that stays yours.</span></h2>
+  <p class="lead" style="font-size:28px;margin:18px auto 0;color:#9fb8cc">The daily-driver co-pilot for power users, developers and creators.</p>
+</div>
+
+<div class="ab row" style="left:0;top:440px;width:1920px;justify-content:center;gap:24px">
+  <a class="btn" href="/overview" target="_top" style="background:#00E5FF;color:#041018;font-size:26px;padding:20px 42px">Open Control Plane →</a>
+  <a class="btn" href="/NovaAI.apk" download style="border:3px solid #00F5A0;color:#00F5A0;background:rgba(0,245,160,.08);font-size:26px;padding:20px 42px">Download Nova APK</a>
+</div>
+
+<div class="ab row" style="left:0;top:545px;width:1920px;justify-content:center;gap:12px">
+  <span class="chip" style="font-size:18px">ANDROID</span>
+  <span class="chip g" style="font-size:18px">ON-DEVICE</span>
+  <span class="chip" style="font-size:18px">3-TIER ROUTING</span>
+  <span class="chip g" style="font-size:18px">CLOUD VAULT</span>
+  <span class="chip" style="font-size:18px">nova-copilot-ai.vercel.app</span>
+</div>
+
+<!-- 3 Rising Phones at Bottom -->
+<div class="ph" style="left:480px;top:610px;transform:perspective(1400px) rotateX(12deg) rotateZ(-7deg) scale(0.85);box-shadow:0 0 50px rgba(0,245,160,.35)"><img src="/img7.jpg" alt="Settings"></div>
+<div class="ph" style="left:1060px;top:610px;transform:perspective(1400px) rotateX(12deg) rotateZ(7deg) scale(0.85);box-shadow:0 0 50px rgba(0,229,255,.35)"><img src="/img8.jpg" alt="Chat Actions"></div>
+<div class="ph" style="left:770px;top:580px;z-index:4;transform:perspective(1400px) rotateX(10deg) scale(0.9);box-shadow:0 0 70px rgba(0,229,255,.5)"><img src="/img9.jpg" alt="NOVA Arc Reactor HUD"></div>
 </div></section>
+
 </div>
 
 <script>
+// Add footer without slide numbers
 var fr = document.querySelectorAll('.fr');
-fr.forEach(function(f, i){
+fr.forEach(function(f){
   var d = document.createElement('div');
   d.className = 'ft';
-  d.innerHTML = '<span>NOVA AI // NEURAL OPERATIONS &amp; VIRTUAL AUTOMATION</span><span>' + String(i + 1).padStart(2, '0') + ' / ' + String(fr.length).padStart(2, '0') + '</span>';
+  d.innerHTML = '<span>NOVA AI // NEURAL OPERATIONS &amp; VIRTUAL AUTOMATION</span><span>nova-copilot-ai.vercel.app</span>';
   f.firstElementChild.appendChild(d);
 });
 
