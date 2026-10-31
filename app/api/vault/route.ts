@@ -228,6 +228,8 @@ export async function POST(req: Request) {
       const isSpotify = Boolean(data?.profile?.spotify_connected);
       return NextResponse.json({
         gmail_connected: isConnected,
+        gmail_access_token: data?.profile?.gmail_access_token || "",
+        gmail_refresh_token: data?.profile?.gmail_refresh_token || "",
         spotify_connected: isSpotify,
         email: cleanEmail,
         success: true
@@ -250,6 +252,13 @@ export async function POST(req: Request) {
 
       if (plugin === "gmail") {
         currentProfile.gmail_connected = Boolean(connected);
+        if (connected) {
+          if (body.access_token) currentProfile.gmail_access_token = body.access_token;
+          if (body.refresh_token) currentProfile.gmail_refresh_token = body.refresh_token;
+        } else {
+          delete currentProfile.gmail_access_token;
+          delete currentProfile.gmail_refresh_token;
+        }
       }
       if (plugin === "spotify") {
         currentProfile.spotify_connected = Boolean(connected);

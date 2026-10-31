@@ -56,7 +56,7 @@ export default function PluginsPage() {
   };
 
   // Save plugin state to cloud vault
-  const savePluginState = async (email: string, state: boolean) => {
+  const savePluginState = async (email: string, state: boolean, accessToken?: string, refreshToken?: string) => {
     isUpdatingRef.current = true;
     setLoading(true);
     try {
@@ -67,7 +67,9 @@ export default function PluginsPage() {
           action: "SET_PLUGIN",
           email: email.trim().toLowerCase(),
           plugin: "gmail",
-          connected: state
+          connected: state,
+          access_token: accessToken || "",
+          refresh_token: refreshToken || ""
         })
       });
       const data = await res.json();
@@ -110,7 +112,10 @@ export default function PluginsPage() {
           sessionStorage.removeItem("nova_pending_plugin");
           window.history.replaceState({}, document.title, window.location.pathname);
         }
-        await savePluginState(email, true);
+        const { data: authData } = await supabase.auth.getSession();
+        const pAccess = authData?.session?.provider_token || "";
+        const pRefresh = authData?.session?.provider_refresh_token || "";
+        await savePluginState(email, true, pAccess, pRefresh);
       } else {
         await fetchCloudStatus(email);
       }
