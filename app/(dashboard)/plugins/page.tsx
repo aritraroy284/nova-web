@@ -5,6 +5,15 @@ import { Mail, Radio, RefreshCw, ShieldCheck, CheckCircle2, AlertTriangle } from
 import { supabase } from "@/app/lib/supabase";
 
 export default function PluginsPage() {
+  const [spotifyConnected, setSpotifyConnected] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/spotify/status")
+      .then((r) => r.json())
+      .then((d) => setSpotifyConnected(!!d.connected))
+      .catch(() => {});
+  }, []);
+
   const [gmailConnected, setGmailConnected] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -247,8 +256,12 @@ export default function PluginsPage() {
               <div>
                 <div className="flex items-center gap-2.5">
                   <h3 className="font-bold text-base text-white">Spotify Music Plugin</h3>
-                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full border bg-[#091726] text-slate-400 border-[#17344D]">
-                    DISCONNECTED
+                  <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border ${
+                    spotifyConnected
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-bold shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                      : "bg-[#091726] text-slate-400 border-[#17344D]"
+                  }`}>
+                    {spotifyConnected ? "ACTIVE • SYNCED" : "DISCONNECTED"}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
@@ -258,10 +271,20 @@ export default function PluginsPage() {
             </div>
 
             <button
-              onClick={() => alert("Spotify OAuth flow will connect to your account vault.")}
-              className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              onClick={() => {
+              if (spotifyConnected) {
+                fetch("/api/spotify/status", { method: "POST" }).then(() => setSpotifyConnected(false));
+              } else {
+                window.location.href = "/api/auth/spotify/login";
+              }
+            }}
+              className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 shrink-0 ${
+                spotifyConnected
+                  ? "border border-red-500/40 text-red-400 hover:bg-red-500/10"
+                  : "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+              }`}
             >
-              CONNECT SPOTIFY
+              {spotifyConnected ? "DISCONNECT" : "CONNECT SPOTIFY"}
             </button>
           </div>
 
