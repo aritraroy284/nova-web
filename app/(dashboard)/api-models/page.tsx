@@ -328,31 +328,35 @@ export default function ApiModelsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button
-            onClick={handleTestAll}
-            disabled={testing || (!geminiKey && !groqKey && !openRouterKey)}
-            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-[#00E5FF]/60 text-[#00E5FF] font-mono font-bold text-xs hover:bg-[#00E5FF]/10 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
-          >
-            {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
-            Test All Keys
-          </button>
-
-          {(geminiKey || groqKey || openRouterKey) && (
+        <div className="flex flex-col gap-2.5 w-full sm:w-auto">
+          {/* Row 1: First 2 options (Test All Keys & Remove Keys) */}
+          <div className="flex items-center gap-2.5 w-full">
             <button
-              onClick={handleRemoveKeys}
-              disabled={saving}
-              className="px-3.5 py-2.5 rounded-xl border border-red-500/40 text-red-400 font-mono font-bold text-xs hover:bg-red-500/10 transition disabled:opacity-50"
-              title="Remove keys from vault"
+              onClick={handleTestAll}
+              disabled={testing || (!geminiKey && !groqKey && !openRouterKey)}
+              className="flex-1 px-4 py-2.5 rounded-xl border border-[#00E5FF]/60 text-[#00E5FF] font-mono font-bold text-xs hover:bg-[#00E5FF]/10 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
-              Remove Keys
+              {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
+              Test All Keys
             </button>
-          )}
 
+            {(geminiKey || groqKey || openRouterKey) && (
+              <button
+                onClick={handleRemoveKeys}
+                disabled={saving}
+                className="px-3.5 py-2.5 rounded-xl border border-red-500/40 text-red-400 font-mono font-bold text-xs hover:bg-red-500/10 transition disabled:opacity-50"
+                title="Remove keys from vault"
+              >
+                Remove Keys
+              </button>
+            )}
+          </div>
+
+          {/* Row 2: Save All Keys placed directly underneath the first 2 options */}
           <button
             onClick={handleSaveKeys}
             disabled={saving}
-            className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm shadow-[#00E5FF]/20"
+            className="w-full px-5 py-2.5 rounded-xl bg-[#00E5FF] text-black font-mono font-bold text-xs hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm shadow-[#00E5FF]/20"
           >
             {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
             {saveSuccess ? "All Saved!" : "Save All Keys"}

@@ -266,8 +266,8 @@ export default function PluginsPage() {
         </div>
 
         {/* Spotify Music Plugin */}
-        <div className="glass-panel p-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-[#041216]/60 to-[#071220]/40 backdrop-blur-xl relative overflow-hidden group mt-6">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/10 transition-all duration-500" />
+        <div className="p-6 rounded-2xl border bg-[#06101E] border-[#17344D] space-y-5 shadow-lg nova-card mt-6">
+          
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative z-10">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">

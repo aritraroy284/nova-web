@@ -1,189 +1,199 @@
 import { NextResponse } from "next/server";
 
-function getSpeedCategory(latencyMs: number) {
-  if (latencyMs < 350) return { label: "Fast / Light Load", color: "emerald" };
-  if (latencyMs < 800) return { label: "Moderate Traffic", color: "amber" };
-  return { label: "Heavy / Server Congested", color: "red" };
+export const dynamic = 'force-dynamic';
+
+function getSpeedMetrics(ms: number, status: number) {
+  if (status === 429) {
+    return { label: "Rate Limited / Throttled", color: "text-amber-400" };
+  }
+  if (status === 503 || status === 500) {
+    return { label: "Server Overloaded (503)", color: "text-red-400" };
+  }
+  if (ms < 450) {
+    return { label: "Optimal / Light Load", color: "text-emerald-400" };
+  }
+  if (ms <= 1100) {
+    return { label: "Moderate Server Load", color: "text-cyan-400" };
+  }
+  if (ms <= 2500) {
+    return { label: "Heavy Load / High Latency", color: "text-amber-400" };
+  }
+  return { label: "Severe Congestion / Slow", color: "text-red-400" };
 }
 
-async function testGeminiDetailed(key: string) {
-  if (!key || !key.trim()) return { configured: false, models: [] };
-
-  const cleanKey = key.trim();
-  const startTime = Date.now();
-
-  try {
-    // Step 1: Base verification via models list
-    const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(cleanKey)}`);
-    const totalLatency = Date.now() - startTime;
-    const speed = getSpeedCategory(totalLatency);
-
-    if (!listRes.ok) {
-      const errStatus = listRes.status;
-      return {
-        configured: true,
-        valid: false,
-        error: errStatus === 400 || errStatus === 403 ? "Invalid API Key or Project restricted" : `Google Error (HTTP ${errStatus})`,
-        models: []
-      };
-    }
-
-    const listData = await listRes.json();
-    const availableModelNames = (listData.models || []).map((m: any) => m.name.replace("models/", ""));
-
-    // Nova defined Gemini pipeline
-    const novaGeminiModels = [
-      { id: "gemini-3.5-flash-lite", role: "Primary Router" },
-      { id: "gemini-3.1-flash-lite", role: "Speed Fallback" },
-      { id: "gemini-3.7-flash", role: "Deep Cortex" },
-      { id: "gemini-3.5-flash", role: "Reasoning Fallback" },
-    ];
-
-    const modelReports = novaGeminiModels.map((m, idx) => {
-      const isAvailableOnProject = availableModelNames.some((name: string) => name.includes(m.id) || m.id.includes(name));
-      return {
-        id: m.id,
-        role: m.role,
-        latency: `${totalLatency + (idx * 14)}ms`,
-        speedLabel: speed.label,
-        speedColor: speed.color,
-        quotaStatus: "Quota Available",
-        status: isAvailableOnProject ? "REACHABLE" : "TIER_STAGED",
-        details: isAvailableOnProject ? "Model live and ready for execution" : "Standard API key verified; route active for failover"
-      };
-    });
-
-    return {
-      configured: true,
-      valid: true,
-      latency: `${totalLatency}ms`,
-      speedLabel: speed.label,
-      models: modelReports
-    };
-  } catch (e: any) {
-    return {
-      configured: true,
-      valid: false,
-      error: e.message || "Failed to reach Google endpoint",
-      models: []
-    };
-  }
-}
-
-async function testGroqDetailed(key: string) {
-  if (!key || !key.trim()) return { configured: false, models: [] };
-
-  const cleanKey = key.trim();
-  const startTime = Date.now();
-
-  try {
-    const res = await fetch("https://api.groq.com/openai/v1/models", {
-      headers: { Authorization: `Bearer ${cleanKey}` }
-    });
-    const latency = Date.now() - startTime;
-    const speed = getSpeedCategory(latency);
-
-    if (res.ok) {
-      return {
-        configured: true,
-        valid: true,
-        latency: `${latency}ms`,
-        speedLabel: speed.label,
-        models: [
-          {
-            id: "qwen/qwen3.8-27b",
-            role: "Groq Secondary Fallback",
-            latency: `${latency}ms`,
-            speedLabel: speed.label,
-            speedColor: speed.color,
-            quotaStatus: "Tokens Available",
-            status: "REACHABLE",
-            details: "Ultra-fast fallback verified (HTTP 200)"
-          }
-        ]
-      };
-    }
-
-    return {
-      configured: true,
-      valid: false,
-      error: res.status === 401 ? "Invalid Groq API Key (401)" : `Groq Server Error (${res.status})`,
-      models: []
-    };
-  } catch (e: any) {
-    return { configured: true, valid: false, error: e.message || "Network timeout", models: [] };
-  }
-}
-
-async function testOpenRouterDetailed(key: string) {
-  if (!key || !key.trim()) return { configured: false, models: [] };
-
-  const cleanKey = key.trim();
-  const startTime = Date.now();
-
-  try {
-    const res = await fetch("https://openrouter.ai/api/v1/auth/key", {
-      headers: { Authorization: `Bearer ${cleanKey}` }
-    });
-    const latency = Date.now() - startTime;
-    const speed = getSpeedCategory(latency);
-
-    if (res.ok) {
-      const data = await res.json();
-      const usage = data.data?.usage || 0;
-      const limit = data.data?.limit;
-      const limitText = limit ? `${usage} / ${limit} credits` : "Active Free Tier";
-
-      return {
-        configured: true,
-        valid: true,
-        latency: `${latency}ms`,
-        speedLabel: speed.label,
-        models: [
-          {
-            id: "openrouter/free",
-            role: "Standby Cognitive Route",
-            latency: `${latency}ms`,
-            speedLabel: speed.label,
-            speedColor: speed.color,
-            quotaStatus: limitText,
-            status: "REACHABLE",
-            details: "OpenRouter gateway verified and standing by"
-          }
-        ]
-      };
-    }
-
-    return {
-      configured: true,
-      valid: false,
-      error: res.status === 401 ? "Invalid OpenRouter Key (401)" : `OpenRouter Error (${res.status})`,
-      models: []
-    };
-  } catch (e: any) {
-    return { configured: true, valid: false, error: e.message || "Network timeout", models: [] };
-  }
+function getQuotaStatus(status: number) {
+  if (status === 200) return "Quota Active (Normal)";
+  if (status === 429) return "Quota Exhausted (429 Rate Limit)";
+  if (status === 403 || status === 401) return "Auth Denied / Key Invalid";
+  if (status === 503) return "Service Unavailable";
+  return `Error HTTP ${status}`;
 }
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const geminiKey = body.geminiKey || "";
-    const groqKey = body.groqKey || "";
-    const openRouterKey = body.openRouterKey || "";
+    const body = await req.json().catch(() => ({}));
+    const { geminiKey, groqKey, openRouterKey } = body;
 
-    const [geminiReport, groqReport, openRouterReport] = await Promise.all([
-      testGeminiDetailed(geminiKey),
-      testGroqDetailed(groqKey),
-      testOpenRouterDetailed(openRouterKey)
-    ]);
+    const results: any = {};
 
-    return NextResponse.json({
-      gemini: geminiReport,
-      groq: groqReport,
-      openrouter: openRouterReport
-    });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    // 1. REAL TEST: GEMINI MULTI-MODEL PING
+    if (geminiKey && geminiKey.trim()) {
+      const gKey = geminiKey.trim();
+      const geminiModels = [
+        { id: "gemini-3.5-flash-lite", role: "Primary Router" },
+        { id: "gemini-3.1-flash-lite", role: "Speed Fallback" },
+        { id: "gemini-3.7-flash", role: "Deep Cortex" },
+        { id: "gemini-3.5-flash", role: "Reasoning Fallback" }
+      ];
+
+      const modelDiagnostics = await Promise.all(
+        geminiModels.map(async (m) => {
+          const start = performance.now();
+          let status = 0;
+          let details = "OK";
+          try {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${m.id}:generateContent?key=${gKey}`;
+            const res = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: "ping" }] }]
+              }),
+              signal: AbortSignal.timeout(8000)
+            });
+            status = res.status;
+            if (!res.ok) {
+              const errJson = await res.json().catch(() => ({}));
+              details = errJson?.error?.message || `HTTP ${res.status}`;
+            }
+          } catch (e: any) {
+            status = e.name === "TimeoutError" ? 504 : 500;
+            details = e.message || "Network Timeout";
+          }
+
+          const latencyMs = Math.round(performance.now() - start);
+          const speed = getSpeedMetrics(latencyMs, status);
+          const quota = getQuotaStatus(status);
+
+          return {
+            id: m.id,
+            role: m.role,
+            latency: `${latencyMs}ms`,
+            speedLabel: speed.label,
+            speedColor: speed.color,
+            quotaStatus: quota,
+            status: status === 200 ? "REACHABLE" : "UNREACHABLE",
+            details
+          };
+        })
+      );
+
+      const isAnyReachable = modelDiagnostics.some(m => m.status === "REACHABLE");
+      results.gemini = {
+        configured: true,
+        valid: isAnyReachable,
+        models: modelDiagnostics
+      };
+    } else {
+      results.gemini = { configured: false, models: [] };
+    }
+
+    // 2. REAL TEST: GROQ KEY & REMAINING TOKENS
+    if (groqKey && groqKey.trim()) {
+      const start = performance.now();
+      let status = 0;
+      let remTokens = "";
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${groqKey.trim()}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "qwen/qwen3.8-27b",
+            messages: [{ role: "user", content: "hi" }],
+            max_tokens: 1
+          }),
+          signal: AbortSignal.timeout(7000)
+        });
+        status = res.status;
+        const hTokens = res.headers.get("x-ratelimit-remaining-tokens");
+        if (hTokens) remTokens = ` (${hTokens} tokens left)`;
+      } catch {
+        status = 500;
+      }
+
+      const latencyMs = Math.round(performance.now() - start);
+      const speed = getSpeedMetrics(latencyMs, status);
+      const quota = getQuotaStatus(status) + remTokens;
+
+      results.groq = {
+        configured: true,
+        valid: status === 200,
+        models: [
+          {
+            id: "qwen/qwen3.8-27b",
+            role: "Groq Secondary Fallback",
+            latency: `${latencyMs}ms`,
+            speedLabel: speed.label,
+            speedColor: speed.color,
+            quotaStatus: quota,
+            status: status === 200 ? "REACHABLE" : "FAILED",
+            details: status === 200 ? "Active" : `HTTP ${status}`
+          }
+        ]
+      };
+    } else {
+      results.groq = { configured: false, models: [] };
+    }
+
+    // 3. REAL TEST: OPENROUTER
+    if (openRouterKey && openRouterKey.trim()) {
+      const start = performance.now();
+      let status = 0;
+      let limitDetails = "";
+      try {
+        const res = await fetch("https://openrouter.ai/api/v1/auth/key", {
+          headers: { Authorization: `Bearer ${openRouterKey.trim()}` },
+          signal: AbortSignal.timeout(6000)
+        });
+        status = res.status;
+        if (res.ok) {
+          const kData = await res.json().catch(() => ({}));
+          const usage = kData?.data?.usage ?? 0;
+          const limit = kData?.data?.limit ?? "Unlimited";
+          limitDetails = ` (Usage: $${usage} / ${limit})`;
+        }
+      } catch {
+        status = 500;
+      }
+
+      const latencyMs = Math.round(performance.now() - start);
+      const speed = getSpeedMetrics(latencyMs, status);
+
+      results.openrouter = {
+        configured: true,
+        valid: status === 200,
+        models: [
+          {
+            id: "openrouter/free",
+            role: "Standby Cognitive Route",
+            latency: `${latencyMs}ms`,
+            speedLabel: speed.label,
+            speedColor: speed.color,
+            quotaStatus: status === 200 ? `Credits Active${limitDetails}` : getQuotaStatus(status),
+            status: status === 200 ? "REACHABLE" : "FAILED",
+            details: status === 200 ? "Active" : `HTTP ${status}`
+          }
+        ]
+      };
+    } else {
+      results.openrouter = { configured: false, models: [] };
+    }
+
+    return NextResponse.json(results);
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
