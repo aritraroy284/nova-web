@@ -1,33 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { supabase as defaultClient } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_PROJECT_URL = "https://zhrwfhtiknrboqfmvzqs.supabase.co";
+
+function getAdminSupabase() {
+  const serviceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim().replace(/^["']|["']$/g, "");
+  if (serviceKey && serviceKey.length > 20) {
+    try {
+      return createClient(SUPABASE_PROJECT_URL, serviceKey, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+    } catch (e) {}
+  }
+  return defaultClient;
+}
 
 export async function GET(req: NextRequest) {
-  const cookieStore = await cookies();
   const email = req.nextUrl.searchParams.get("email")?.trim().toLowerCase();
 
-  // Agar user email nahi hai to seedha false aur cookie delete
   if (!email) {
-    cookieStore.delete("nova_spotify_token");
-    cookieStore.delete("nova_spotify_refresh");
     return NextResponse.json({ connected: false });
   }
 
   try {
-    const { data } = await defaultClient
+    const supabase = getAdminSupabase();
+    const { data } = await supabase
       .from("user_memory")
       .select("profile")
       .eq("email", email)
       .maybeSingle();
 
     const isConnected = Boolean(data?.profile?.spotify_connected);
-
-    // Agar Supabase me disconnect ho chuka hai, to browser cookie turant destroy karo
-    if (!isConnected) {
-      cookieStore.delete("nova_spotify_token");
-      cookieStore.delete("nova_spotify_refresh");
-    }
-
     return NextResponse.json({ connected: isConnected });
   } catch (e) {
     return NextResponse.json({ connected: false });
@@ -44,7 +49,8 @@ export async function POST(req: NextRequest) {
 
   if (email) {
     try {
-      const { data: existing } = await defaultClient
+      const supabase = getAdminSupabase();
+      const { data: existing } = await supabase
         .from("user_memory")
         .select("id, user_id, profile")
         .eq("email", email)
@@ -62,7 +68,7 @@ export async function POST(req: NextRequest) {
         const filterCol = existing.user_id ? "user_id" : "id";
         const filterVal = existing.user_id || existing.id;
 
-        await defaultClient
+        await supabase
           .from("user_memory")
           .update({ profile: currentProfile })
           .eq(filterCol, filterVal);
