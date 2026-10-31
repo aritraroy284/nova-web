@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { supabase as defaultClient } from "@/lib/supabase";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_PROJECT_URL = "https://zhrwfhtiknrboqfmvzqs.supabase.co";
 
 function getAdminSupabase() {
-  const serviceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim().replace(/^["']|["']$/g, '');
+  const serviceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim().replace(/^["']|["']$/g, "");
   if (serviceKey && serviceKey.length > 20) {
     try {
       return createClient(SUPABASE_PROJECT_URL, serviceKey, {
@@ -57,32 +58,41 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(new URL("/plugins?error=token_exchange_failed", req.url));
     }
 
-    // Dynamic User Sync in Supabase
-    if (targetEmail) {
-      const supabase = getAdminSupabase();
-      const { data: existing } = await supabase
+    // 1. Browser Cookie Set Karo (Web Dashboard Live Sync)
+    const cookieStore = await cookies();
+    cookieStore.set("nova_spotify_token", data.access_token, {
+      httpOnly: false,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60,
+      path: "/"
+    });
+
+    // 2. Supabase Cloud Vault Sync (Android App Sync)
+    const supabase = getAdminSupabase();
+    const emailToSync = targetEmail || "royaritra284@gmail.com";
+
+    const { data: existing } = await supabase
+      .from("user_memory")
+      .select("id, user_id, email, profile")
+      .eq("email", emailToSync)
+      .maybeSingle();
+
+    const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
+      ? { ...existing.profile }
+      : {};
+
+    currentProfile.spotify_connected = true;
+    if (data.refresh_token) currentProfile.spotify_refresh_token = data.refresh_token;
+    currentProfile.spotify_access_token = data.access_token;
+
+    if (existing) {
+      const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
+      const filterVal = existing.user_id || existing.email || existing.id;
+      await supabase
         .from("user_memory")
-        .select("id, user_id, email, profile")
-        .eq("email", targetEmail)
-        .maybeSingle();
-
-      const currentProfile = (existing?.profile && typeof existing.profile === "object" && !Array.isArray(existing.profile))
-        ? { ...existing.profile }
-        : {};
-
-      currentProfile.spotify_connected = true;
-      if (data.refresh_token) currentProfile.spotify_refresh_token = data.refresh_token;
-      currentProfile.spotify_access_token = data.access_token;
-      currentProfile.spotify_token_expires = Date.now() + (data.expires_in || 3600) * 1000;
-
-      if (existing) {
-        const filterCol = existing.user_id ? "user_id" : (existing.email ? "email" : "id");
-        const filterVal = existing.user_id || existing.email || existing.id;
-        await supabase
-          .from("user_memory")
-          .update({ profile: currentProfile })
-          .eq(filterCol, filterVal);
-      }
+        .update({ profile: currentProfile })
+        .eq(filterCol, filterVal);
     }
 
     return NextResponse.redirect(new URL("/plugins?spotify=connected", req.url));
