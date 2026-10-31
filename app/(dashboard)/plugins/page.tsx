@@ -5,18 +5,33 @@ import { Mail, Radio, RefreshCw, ShieldCheck, CheckCircle2, AlertTriangle } from
 import { supabase } from "@/app/lib/supabase";
 
 export default function PluginsPage() {
-  const [spotifyConnected, setSpotifyConnected] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/spotify/status?email=" + encodeURIComponent(userEmail || ""))
-      .then((r) => r.json())
-      .then((d) => setSpotifyConnected(!!d.connected))
-      .catch(() => {});
-  }, []);
+  
+  
 
   const [gmailConnected, setGmailConnected] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [spotifyConnected, setSpotifyConnected] = useState(false);
+
+  // Auto-detect redirect from Spotify OAuth
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("spotify") === "connected") {
+      setSpotifyConnected(true);
+    } else if (params.get("error")) {
+      alert("Spotify Auth Error: " + decodeURIComponent(params.get("error") || ""));
+    }
+  }, []);
+
+  // Sync spotify connection state with active user email
+  useEffect(() => {
+    if (!userEmail) return;
+    fetch("/api/spotify/status?email=" + encodeURIComponent(userEmail))
+      .then((r) => r.json())
+      .then((d) => setSpotifyConnected(!!d.connected))
+      .catch(() => {});
+  }, [userEmail]);
+
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   const emailRef = useRef<string | null>(null);
