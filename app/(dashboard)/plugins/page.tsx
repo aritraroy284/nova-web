@@ -8,7 +8,7 @@ export default function PluginsPage() {
   const [spotifyConnected, setSpotifyConnected] = useState(false);
 
   useEffect(() => {
-    fetch("/api/spotify/status")
+    fetch("/api/spotify/status?email=" + encodeURIComponent(userEmail || ""))
       .then((r) => r.json())
       .then((d) => setSpotifyConnected(!!d.connected))
       .catch(() => {});
@@ -273,7 +273,11 @@ export default function PluginsPage() {
             <button
               onClick={() => {
               if (spotifyConnected) {
-                fetch("/api/spotify/status", { method: "POST" }).then(() => setSpotifyConnected(false));
+                fetch("/api/spotify/status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail })
+    }).then(() => setSpotifyConnected(false));
               } else {
                 window.location.href = "/api/auth/spotify/login?email=" + encodeURIComponent(userEmail || "");
               }
